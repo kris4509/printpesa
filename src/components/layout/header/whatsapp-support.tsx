@@ -1,5 +1,4 @@
 import React from 'react';
-import { Localize } from '@deriv-com/translations';
 import './whatsapp-support.scss';
 
 interface WhatsAppSupportProps {
@@ -20,6 +19,7 @@ const WhatsAppSupport: React.FC<WhatsAppSupportProps> = ({ phoneNumber = '+25470
             aria-label='Contact via WhatsApp'
             title='Get support on WhatsApp'
         >
+            {/* Official WhatsApp icon */}
             <svg
                 className='whatsapp-support__icon'
                 viewBox='0 0 24 24'

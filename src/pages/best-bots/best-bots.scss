@@ -1,15 +1,20 @@
 .best-bots {
     box-sizing: border-box;
     width: 100%;
+    height: auto;
     min-height: 100%;
     overflow-y: auto;
+    overflow-x: hidden;
     background: var(--general-main-1, #0e0e0e);
     padding: 3.2rem 4rem;
     font-family: 'IBM Plex Sans', 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
 
     // ── Hero ─────────────────────────────────────────────────────────────
     &__hero {
         margin-bottom: 3.2rem;
+        flex-shrink: 0;
 
         h1 {
             font-size: 3.2rem;
@@ -32,6 +37,7 @@
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 2rem;
+        width: 100%;
 
         @media (max-width: 1200px) {
             grid-template-columns: repeat(3, 1fr);

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 
 interface ExchangeRate {
     KES: number; // USD to KES rate (1 USD = X KES)
@@ -11,9 +11,24 @@ const EXCHANGE_RATES: ExchangeRate = {
 };
 
 export const useCurrencyConverter = (initialCurrency: string = 'USD') => {
-    const [displayCurrency, setDisplayCurrency] = useState<'USD' | 'KES'>(
-        (initialCurrency === 'KES' ? 'KES' : 'USD') as 'USD' | 'KES'
-    );
+    // Use global preference from localStorage
+    const [displayCurrency, setDisplayCurrencyState] = useState<'USD' | 'KES'>(() => {
+        try {
+            const saved = localStorage.getItem('preferred_currency');
+            return (saved === 'KES' ? 'KES' : 'USD') as 'USD' | 'KES';
+        } catch {
+            return (initialCurrency === 'KES' ? 'KES' : 'USD') as 'USD' | 'KES';
+        }
+    });
+
+    const setDisplayCurrency = (currency: 'USD' | 'KES') => {
+        setDisplayCurrencyState(currency);
+        try {
+            localStorage.setItem('preferred_currency', currency);
+        } catch (e) {
+            console.warn('Failed to save currency preference:', e);
+        }
+    };
 
     const convertCurrency = (amount: number, fromCurrency: string, toCurrency: string): number => {
         if (fromCurrency === toCurrency) return amount;
