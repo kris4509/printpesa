@@ -14,6 +14,7 @@ import { AppLogo } from '../app-logo';
 import AccountSwitcher from './account-switcher';
 import MenuItems from './menu-items';
 import MobileMenu from './mobile-menu';
+import WhatsAppSupport from './whatsapp-support';
 import './header.scss';
 
 const AppHeader = observer(() => {
@@ -240,6 +241,7 @@ const AppHeader = observer(() => {
                 <Wrapper variant='left'>
                     <MobileMenu onLogout={handleLogout} />
                     <AppLogo />
+                    <WhatsAppSupport phoneNumber='+254707546201' />
                     {isDesktop ? <MenuItems /> : renderAccountSection('left')}
                 </Wrapper>
                 <Wrapper variant='right'>

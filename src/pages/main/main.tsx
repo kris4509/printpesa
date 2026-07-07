@@ -42,6 +42,7 @@ import RunPanel from '../../components/run-panel';
 import ChartModal from '../chart/chart-modal';
 import Dashboard from '../dashboard';
 import BestBots from '../best-bots';
+import MarketAnalyzer from '../market-analyzer';
 import RunStrategy from '../dashboard/run-strategy';
 import './main.scss';
 
@@ -79,7 +80,7 @@ const AppWrapper = observer(() => {
     const { clear } = summary_card;
     const { DASHBOARD, BOT_BUILDER } = DBOT_TABS;
     const init_render = React.useRef(true);
-    const hash = ['dashboard', 'bot_builder', 'best_bots', 'chart', 'tutorial'];
+    const hash = ['dashboard', 'bot_builder', 'best_bots', 'chart', 'tutorial', 'market_analyzer'];
     const { isDesktop } = useDevice();
     const location = useLocation();
     const navigate = useNavigate();
@@ -471,6 +472,25 @@ const AppWrapper = observer(() => {
                                         <Tutorial handleTabChange={handleTabChange} />
                                     </Suspense>
                                 </div>
+                            </div>
+                            <div
+                                label={
+                                    <>
+                                        <svg
+                                            height='20px'
+                                            width='20px'
+                                            viewBox='0 0 24 24'
+                                            fill='var(--text-general)'
+                                            aria-hidden='true'
+                                        >
+                                            <path d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54 2.63 2.26c.52.44 1.29.44 1.81 0l3.35-2.87c.41-.34.41-1.01 0-1.35L13.04 9.29c-.52-.44-1.29-.44-1.81 0z' />
+                                        </svg>
+                                        <Localize i18n_default_text='Market Analyzer' />
+                                    </>
+                                }
+                                id='id-market-analyzer'
+                            >
+                                <MarketAnalyzer />
                             </div>
                         </Tabs>
                         {!isDesktop && right_tab_shadow && <span className='tabs-shadow tabs-shadow--right' />}{' '}

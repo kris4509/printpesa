@@ -1,0 +1,96 @@
+.currency-selector {
+    position: relative;
+    display: inline-block;
+
+    &__display {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        padding: 0.4rem 0.6rem;
+        border-radius: 0.4rem;
+        transition: background-color 0.2s ease;
+        user-select: none;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        &:active {
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+    }
+
+    &__balance {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-prominent, #ffffff);
+        white-space: nowrap;
+    }
+
+    &__chevron {
+        color: var(--text-less-prominent, #9e9e9e);
+        transition: transform 0.2s ease;
+
+        &--open {
+            transform: rotate(180deg);
+        }
+    }
+
+    &__dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        margin-top: 0.4rem;
+        background: var(--general-section-1, #1a1a2e);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 0.8rem;
+        min-width: 140px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        overflow: hidden;
+        z-index: 100;
+    }
+
+    &__option {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        width: 100%;
+        padding: 0.8rem 1.2rem;
+        background: none;
+        border: none;
+        color: var(--text-less-prominent, #9e9e9e);
+        cursor: pointer;
+        font-size: 1.1rem;
+        text-align: left;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-prominent, #ffffff);
+        }
+
+        &--active {
+            background-color: rgba(101, 43, 206, 0.15);
+            color: var(--text-prominent, #ffffff);
+            font-weight: 600;
+
+            .currency-selector__option-symbol {
+                color: #652bcf;
+                font-weight: 700;
+            }
+        }
+    }
+
+    &__option-symbol {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-less-prominent, #9e9e9e);
+        min-width: 24px;
+    }
+
+    &__option-code {
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+}
