@@ -170,22 +170,24 @@ const BestBots = observer(() => {
 
     return (
         <div className='best-bots' id='id-best-bots-content'>
-            {/* Hero */}
+            {/* Fixed Hero Header */}
             <div className='best-bots__hero'>
                 <h1>Best Bots</h1>
                 <p>Discover our top-performing trading bots designed for maximum profitability.</p>
             </div>
 
-            {/* Bot grid */}
-            <div className='best-bots__grid'>
-                {BOT_CATALOGUE.map(bot => (
-                    <BotCard
-                        key={bot.id}
-                        bot={bot}
-                        onLoad={handleLoadBot}
-                        isLoading={loadingBotId === bot.id}
-                    />
-                ))}
+            {/* Scrollable Bot Grid Container */}
+            <div className='best-bots__scroll-container'>
+                <div className='best-bots__grid'>
+                    {BOT_CATALOGUE.map(bot => (
+                        <BotCard
+                            key={bot.id}
+                            bot={bot}
+                            onLoad={handleLoadBot}
+                            isLoading={loadingBotId === bot.id}
+                        />
+                    ))}
+                </div>
             </div>
         </div>
     );

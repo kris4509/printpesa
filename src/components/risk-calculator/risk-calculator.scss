@@ -1,0 +1,165 @@
+.risk-calculator {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 1.6rem;
+    border: 1px solid rgba(101, 43, 206, 0.2);
+    overflow: hidden;
+
+    &__container {
+        padding: 3.2rem;
+    }
+
+    &__title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-prominent, #ffffff);
+        margin: 0 0 2.4rem;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        background: linear-gradient(135deg, #00d4ff 0%, #652bcf 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    &__form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.6rem;
+        margin-bottom: 2.4rem;
+    }
+
+    &__field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    &__label {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-less-prominent, #b0b0b0);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    &__input-wrapper {
+        position: relative;
+    }
+
+    &__input {
+        width: 100%;
+        padding: 1rem 1.6rem;
+        background: rgba(0, 212, 255, 0.05);
+        border: 2px solid rgba(0, 212, 255, 0.3);
+        border-radius: 0.8rem;
+        color: var(--text-prominent, #ffffff);
+        font-size: 1.3rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        font-family: 'IBM Plex Mono', monospace;
+
+        &:focus {
+            outline: none;
+            border-color: rgba(0, 212, 255, 0.8);
+            background: rgba(0, 212, 255, 0.1);
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.2);
+        }
+
+        &::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Hide number input spinner */
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        &[type='number'] {
+            -moz-appearance: textfield;
+        }
+    }
+
+    &__output {
+        padding: 1rem 1.6rem;
+        background: rgba(0, 212, 255, 0.05);
+        border: 2px solid rgba(0, 212, 255, 0.2);
+        border-radius: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        min-height: 50px;
+    }
+
+    &__output-value {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #00d4ff;
+        font-family: 'IBM Plex Mono', monospace;
+    }
+
+    &__summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1.2rem;
+        padding: 2rem;
+        background: rgba(0, 212, 255, 0.05);
+        border: 1px solid rgba(0, 212, 255, 0.2);
+        border-radius: 1rem;
+        margin-bottom: 1.6rem;
+    }
+
+    &__stat {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        text-align: center;
+    }
+
+    &__stat-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-less-prominent, #9e9e9e);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    &__stat-value {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #00d4ff;
+        font-family: 'IBM Plex Mono', monospace;
+
+        &--profit {
+            color: #00ff88;
+        }
+
+        &--loss {
+            color: #ff6b6b;
+        }
+    }
+
+    &__note {
+        font-size: 0.9rem;
+        color: var(--text-less-prominent, #9e9e9e);
+        margin: 0;
+        text-align: center;
+        font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+        &__container {
+            padding: 2rem;
+        }
+
+        &__title {
+            font-size: 1.6rem;
+        }
+
+        &__summary {
+            grid-template-columns: 1fr;
+        }
+    }
+}
