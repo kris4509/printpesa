@@ -98,38 +98,39 @@ const BOT_CATALOGUE = [
 ];
 
 
-// ─── BotCard ──────────────────────────────────────────────────────────────────
-interface BotCardProps {
+// ─── BotRow ───────────────────────────────────────────────────────────────────
+interface BotRowProps {
     bot: (typeof BOT_CATALOGUE)[number];
     onLoad: (bot: (typeof BOT_CATALOGUE)[number]) => void;
     isLoading: boolean;
 }
 
-const BotCard = ({ bot, onLoad, isLoading }: BotCardProps) => (
-    <div className='best-bots__card'>
-        <div className='best-bots__card-header'>
-            <h3 className='best-bots__card-title'>
-                {bot.id}. {bot.name}
-            </h3>
-            {bot.isPremium && (
-                <span className='best-bots__badge'>
-                    ★ PREMIUM
-                </span>
-            )}
-        </div>
-
-        <p className='best-bots__card-desc'>{bot.description}</p>
-
-        <button
-            className={`best-bots__load-btn${isLoading ? ' best-bots__load-btn--loading' : ''}`}
-            onClick={() => onLoad(bot)}
-            disabled={isLoading}
-            aria-label={`Load ${bot.name} into Bot Builder`}
-        >
-            <span className='best-bots__btn-icon' aria-hidden='true' />
-            Click to Load Bot
-        </button>
-    </div>
+const BotRow = ({ bot, onLoad, isLoading }: BotRowProps) => (
+    <tr className='best-bots__row'>
+        <td className='best-bots__cell best-bots__cell--name'>
+            <div className='best-bots__name-container'>
+                <span className='best-bots__bot-name'>{bot.name}</span>
+                {bot.isPremium && (
+                    <span className='best-bots__badge' title='Premium Bot'>
+                        ★ PREMIUM
+                    </span>
+                )}
+            </div>
+        </td>
+        <td className='best-bots__cell best-bots__cell--desc'>
+            {bot.description}
+        </td>
+        <td className='best-bots__cell best-bots__cell--action'>
+            <button
+                className={`best-bots__load-btn${isLoading ? ' best-bots__load-btn--loading' : ''}`}
+                onClick={() => onLoad(bot)}
+                disabled={isLoading}
+                aria-label={`Load ${bot.name} into Bot Builder`}
+            >
+                {isLoading ? 'LOADING...' : 'LOAD'}
+            </button>
+        </td>
+    </tr>
 );
 
 // ─── BestBots page ────────────────────────────────────────────────────────────
@@ -176,17 +177,28 @@ const BestBots = observer(() => {
                 <p>Discover our top-performing trading bots designed for maximum profitability.</p>
             </div>
 
-            {/* Scrollable Bot Grid Container */}
+            {/* Scrollable Bot Table Container */}
             <div className='best-bots__scroll-container'>
-                <div className='best-bots__grid'>
-                    {BOT_CATALOGUE.map(bot => (
-                        <BotCard
-                            key={bot.id}
-                            bot={bot}
-                            onLoad={handleLoadBot}
-                            isLoading={loadingBotId === bot.id}
-                        />
-                    ))}
+                <div className='best-bots__table-wrapper'>
+                    <table className='best-bots__table'>
+                        <thead>
+                            <tr>
+                                <th className='best-bots__header best-bots__header--name'>Bot Name</th>
+                                <th className='best-bots__header best-bots__header--desc'>Description</th>
+                                <th className='best-bots__header best-bots__header--action'>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {BOT_CATALOGUE.map(bot => (
+                                <BotRow
+                                    key={bot.id}
+                                    bot={bot}
+                                    onLoad={handleLoadBot}
+                                    isLoading={loadingBotId === bot.id}
+                                />
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
