@@ -43,6 +43,7 @@ import ChartModal from '../chart/chart-modal';
 import Dashboard from '../dashboard';
 import BestBots from '../best-bots';
 import MarketAnalyzer from '../market-analyzer';
+import Dcircles from '../dcircles';
 import RunStrategy from '../dashboard/run-strategy';
 import './main.scss';
 
@@ -80,7 +81,7 @@ const AppWrapper = observer(() => {
     const { clear } = summary_card;
     const { DASHBOARD, BOT_BUILDER } = DBOT_TABS;
     const init_render = React.useRef(true);
-    const hash = ['dashboard', 'bot_builder', 'best_bots', 'chart', 'tutorial', 'market_analyzer'];
+    const hash = ['dashboard', 'bot_builder', 'best_bots', 'chart', 'tutorial', 'market_analyzer', 'dcircles'];
     const { isDesktop } = useDevice();
     const location = useLocation();
     const navigate = useNavigate();
@@ -491,6 +492,30 @@ const AppWrapper = observer(() => {
                                 id='id-market-analyzer'
                             >
                                 <MarketAnalyzer />
+                            </div>
+                            <div
+                                label={
+                                    <>
+                                        <svg
+                                            height='20px'
+                                            width='20px'
+                                            viewBox='0 0 24 24'
+                                            fill='none'
+                                            stroke='currentColor'
+                                            strokeWidth='2'
+                                            strokeLinecap='round'
+                                            strokeLinejoin='round'
+                                            aria-hidden='true'
+                                        >
+                                            <circle cx='12' cy='12' r='10' />
+                                            <circle cx='12' cy='12' r='3' fill='currentColor' />
+                                        </svg>
+                                        <Localize i18n_default_text='Dcircles' />
+                                    </>
+                                }
+                                id='id-dcircles'
+                            >
+                                <Dcircles />
                             </div>
                         </Tabs>
                         {!isDesktop && right_tab_shadow && <span className='tabs-shadow tabs-shadow--right' />}{' '}

@@ -1,0 +1,208 @@
+@use 'components/shared/styles/mixins' as *;
+
+.dcircles {
+    box-sizing: border-box;
+    width: 100%;
+    height: var(--tab-content-height);
+    overflow: hidden;
+    background: var(--general-main-1, #0e0e0e);
+    padding: 0;
+    font-family: 'IBM Plex Sans', 'Inter', sans-serif;
+    display: flex;
+    flex-direction: column;
+
+    @include mobile-or-tablet-screen {
+        height: var(--tab-content-height-mobile);
+    }
+
+    // ── Header (Fixed) ─────────────────────────────────────────────────
+    &__header {
+        flex-shrink: 0;
+        background: var(--general-main-1, #0e0e0e);
+        padding: 2.4rem 4rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+        @include mobile-or-tablet-screen {
+            padding: 1.6rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--text-prominent, #ffffff);
+            margin: 0 0 0.8rem;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            font-size: 1.4rem;
+            color: var(--text-less-prominent, #b0b0b0);
+            margin: 0;
+        }
+    }
+
+    // ── Scrollable Content ─────────────────────────────────────────────
+    &__scroll-container {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 3.2rem 4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 3.2rem;
+
+        @include mobile-or-tablet-screen {
+            padding: 2rem 2rem;
+            gap: 2.4rem;
+        }
+
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 3px;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.25);
+            }
+        }
+    }
+
+    // ── Controls (Dropdowns) ──────────────────────────────────────────
+    &__controls {
+        display: flex;
+        gap: 2.4rem;
+        flex-wrap: wrap;
+
+        @include mobile-or-tablet-screen {
+            gap: 1.6rem;
+        }
+    }
+
+    &__control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+
+        label {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-less-prominent, #b0b0b0);
+        }
+
+        select {
+            background: var(--general-section-1, #1a1a2e);
+            color: var(--text-prominent, #ffffff);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.6rem;
+            padding: 1rem 1.6rem;
+            font-size: 1.4rem;
+            min-width: 20rem;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.15s ease;
+
+            &:focus {
+                border-color: #7b2ff7;
+            }
+
+            @include mobile-or-tablet-screen {
+                min-width: 100%;
+                width: 100%;
+            }
+        }
+    }
+
+    // ── Display Section (Big Circle) ──────────────────────────────────
+    &__display-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.6rem;
+    }
+
+    &__label-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--text-less-prominent, #b0b0b0);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    &__big-circle {
+        width: 12rem;
+        height: 12rem;
+        border-radius: 50%;
+        border: 4px solid var(--border-normal, rgba(255, 255, 255, 0.15));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4.8rem;
+        font-weight: 800;
+        color: var(--text-prominent, #ffffff);
+        background: rgba(255, 255, 255, 0.02);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        transition: border-color 0.25s ease;
+    }
+
+    // ── Stats Grid (0-9 Circles) ──────────────────────────────────────
+    &__stats-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 2rem;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+
+        @include mobile-or-tablet-screen {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.6rem;
+        }
+
+        @media (max-width: 360px) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    &__stat-item {
+        display: flex;
+        justify-content: center;
+    }
+
+    &__small-circle {
+        width: 9rem;
+        height: 9rem;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.15);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.02);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s ease;
+
+        &:hover {
+            transform: scale(1.05);
+        }
+    }
+
+    &__digit {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--text-prominent, #ffffff);
+        line-height: 1.2;
+    }
+
+    &__percentage {
+        font-size: 1.1rem;
+        color: var(--text-less-prominent, #b0b0b0);
+        margin-top: 0.2rem;
+    }
+}
