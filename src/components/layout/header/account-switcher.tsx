@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
-import { addComma } from '@/components/shared';
+import { addComma, getDecimalPlaces } from '@/components/shared';
 import { useCurrencyConverter } from '@/hooks/useCurrencyConverter';
 import { api_base } from '@/external/bot-skeleton/services/api/api-base';
 import { generateDerivApiInstance } from '@/external/bot-skeleton/services/api/appId';
