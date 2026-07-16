@@ -786,3 +786,454 @@
         }
     }
 }
+
+/** @define new-acc-switcher */
+.new-acc-switcher {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    position: relative;
+
+    // ── Currency pill ──────────────────────────────────────────────────────
+    &__currency-pill {
+        position: relative;
+    }
+
+    &__currency-btn {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 5px 12px;
+        border-radius: 20px;
+        border: none;
+        background: var(--general-section-1, #1e2236);
+        color: var(--text-prominent, #fff);
+        font-size: 1.3rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+
+        &:hover {
+            background: var(--state-hover, #2a3050);
+        }
+    }
+
+    &__currency-menu {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        z-index: 200;
+        background: var(--general-main-2, #151c2f);
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        min-width: 9rem;
+        overflow: hidden;
+    }
+
+    &__currency-option {
+        display: block;
+        width: 100%;
+        padding: 1rem 1.6rem;
+        border: none;
+        background: transparent;
+        color: var(--text-prominent, #fff);
+        font-size: 1.4rem;
+        font-weight: 600;
+        text-align: left;
+        cursor: pointer;
+        transition: background 0.15s;
+
+        &:hover {
+            background: var(--state-hover, #1e2236);
+        }
+
+        &--active {
+            background: var(--state-active, #2a3566);
+        }
+    }
+
+    // ── Balance button ─────────────────────────────────────────────────────
+    &__balance-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px 5px 6px;
+        border: none;
+        background: transparent;
+        color: var(--status-success, #4caf50);
+        font-size: 1.4rem;
+        font-weight: 700;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: background 0.2s;
+
+        &:hover:not(:disabled) {
+            background: var(--state-hover, #1e2236);
+        }
+
+        &--disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        &--open {
+            background: var(--state-hover, #1e2236);
+        }
+    }
+
+    &__balance-icon {
+        display: flex;
+        align-items: center;
+    }
+
+    &__balance-amount {
+        color: var(--status-success, #4caf50);
+        font-size: 1.4rem;
+        font-weight: 700;
+    }
+
+    // ── Shared caret ──────────────────────────────────────────────────────
+    &__caret {
+        color: var(--text-general, #aaa);
+        transition: transform 0.25s ease;
+        flex-shrink: 0;
+
+        &--up {
+            transform: rotate(180deg);
+        }
+
+        &--balance {
+            color: var(--status-success, #4caf50);
+        }
+    }
+
+    // ── Account icons ─────────────────────────────────────────────────────
+    .accs-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.4rem;
+        height: 2.4rem;
+        border-radius: 50%;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    // ── Dropdown panel ────────────────────────────────────────────────────
+    &__panel {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        z-index: 100;
+        width: 34rem;
+        background: var(--general-main-2, #151c2f);
+        border-radius: 12px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+    }
+
+    // Tabs
+    &__tabs {
+        display: flex;
+        border-bottom: 1px solid var(--general-section-1, #1e2236);
+    }
+
+    &__tab {
+        flex: 1;
+        padding: 1.2rem;
+        background: transparent;
+        border: none;
+        color: var(--text-less-prominent, #aaa);
+        font-size: 1.4rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: color 0.2s;
+        position: relative;
+
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: transparent;
+            transition: background 0.2s;
+        }
+
+        &--active {
+            color: var(--text-prominent, #fff);
+
+            &::after {
+                background: #2196f3;
+            }
+        }
+
+        &:hover:not(.new-acc-switcher__tab--active) {
+            color: var(--text-general, #ccc);
+        }
+    }
+
+    &__panel-body {
+        padding: 1.2rem 0 0;
+    }
+
+    // Group
+    &__group {
+        margin-bottom: 0.4rem;
+    }
+
+    &__group-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.4rem 1.6rem 0.8rem;
+    }
+
+    &__group-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--text-prominent, #fff);
+    }
+
+    &__collapse-btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        color: var(--text-less-prominent, #aaa);
+        display: flex;
+        align-items: center;
+        padding: 2px;
+    }
+
+    // Account rows
+    &__accounts {
+        padding: 0 0.8rem;
+    }
+
+    &__no-accounts {
+        padding: 1rem 0.8rem;
+        font-size: 1.3rem;
+        color: var(--text-less-prominent, #aaa);
+    }
+
+    &__account-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.9rem 0.8rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.15s;
+        gap: 1rem;
+
+        &:hover:not(.new-acc-switcher__account-row--active) {
+            background: var(--state-hover, #1e2236);
+        }
+
+        &--active {
+            background: var(--state-active, #232e55);
+            cursor: default;
+        }
+    }
+
+    &__account-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        min-width: 0;
+    }
+
+    &__account-info {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    &__account-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-prominent, #fff);
+        white-space: nowrap;
+    }
+
+    &__account-id {
+        font-size: 1.1rem;
+        color: var(--text-less-prominent, #aaa);
+    }
+
+    &__account-balance {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--status-success, #4caf50);
+        white-space: nowrap;
+    }
+
+    // Reset demo balance
+    &__reset-section {
+        border-top: 1px solid var(--general-section-1, #1e2236);
+        padding: 1.4rem 1.6rem;
+        margin-top: 0.4rem;
+    }
+
+    &__reset-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--text-prominent, #fff);
+        margin: 0 0 0.4rem;
+    }
+
+    &__reset-desc {
+        font-size: 1.2rem;
+        color: var(--text-less-prominent, #aaa);
+        margin: 0 0 1.2rem;
+    }
+
+    &__reset-row {
+        display: flex;
+        align-items: flex-end;
+        gap: 1rem;
+    }
+
+    &__reset-input-group {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__reset-label {
+        font-size: 1.1rem;
+        color: var(--text-less-prominent, #aaa);
+        margin-bottom: 0.4rem;
+    }
+
+    &__reset-input {
+        background: var(--general-section-1, #1e2236);
+        border: 1px solid var(--border-normal, #2a3050);
+        border-radius: 6px;
+        color: var(--text-prominent, #fff);
+        font-size: 1.3rem;
+        padding: 0.6rem 0.8rem;
+        width: 100%;
+        outline: none;
+
+        &:focus {
+            border-color: #2196f3;
+        }
+
+        &::-webkit-inner-spin-button,
+        &::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+        }
+    }
+
+    &__reset-default {
+        font-size: 1.1rem;
+        color: var(--text-less-prominent, #aaa);
+        margin-top: 0.3rem;
+    }
+
+    &__reset-btn {
+        padding: 0.8rem 1.2rem;
+        background: #2196f3;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        cursor: pointer;
+        text-align: center;
+        line-height: 1.3;
+        white-space: nowrap;
+        min-width: 9rem;
+        transition: background 0.2s, opacity 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover:not(:disabled) {
+            background: #1976d2;
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        &--success {
+            background: #4caf50;
+        }
+    }
+
+    &__reset-spinner {
+        display: inline-block;
+        width: 1.6rem;
+        height: 1.6rem;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    // CFD link
+    &__cfd-link {
+        padding: 1rem 1.6rem 0.6rem;
+        font-size: 1.2rem;
+        color: #f44336;
+        margin: 0;
+        cursor: pointer;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    // Footer
+    &__footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.6rem 1.4rem;
+        border-top: 1px solid var(--general-section-1, #1e2236);
+        margin-top: 0.4rem;
+    }
+
+    &__manage-btn {
+        background: transparent;
+        border: 1px solid var(--border-normal, #2a3050);
+        border-radius: 6px;
+        color: var(--text-prominent, #fff);
+        font-size: 1.3rem;
+        font-weight: 600;
+        padding: 0.7rem 1.4rem;
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s;
+
+        &:hover {
+            background: var(--state-hover, #1e2236);
+            border-color: var(--text-less-prominent, #aaa);
+        }
+    }
+
+    &__logout-btn {
+        display: flex;
+        align-items: center;
+        background: transparent;
+        border: none;
+        color: var(--text-general, #ccc);
+        font-size: 1.3rem;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 0.7rem 0;
+        transition: color 0.15s;
+
+        &:hover {
+            color: var(--text-prominent, #fff);
+        }
+    }
+}

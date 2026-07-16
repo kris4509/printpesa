@@ -142,19 +142,29 @@ const Dcircles = observer(() => {
     const total = lastDigits.length || 1;
     const percentages = counts.map(count => ((count / total) * 100).toFixed(1));
 
-    // Circular color theme helpers matching standard statistics
-    const circleColors = [
-        '#E91E63', // 0: Redish-pink
-        '#2196F3', // 1: Blue
-        '#4CAF50', // 2: Green
-        '#FFEB3B', // 3: Yellow
-        '#FF9800', // 4: Orange
-        '#9C27B0', // 5: Purple
-        '#00BCD4', // 6: Cyan
-        '#795548', // 7: Brown
-        '#607D8B', // 8: Grey
-        '#E65100', // 9: Dark Orange
-    ];
+    // Rank-based color assignment:
+    // most appearing -> green, 2nd most -> blue, 2nd least -> yellow, least -> red, others -> neutral
+    const sortedByCount = counts
+        .map((count, digit) => ({ digit, count }))
+        .sort((a, b) => b.count - a.count);
+
+    const digitColorMap: Record<number, string> = {};
+    const n = sortedByCount.length; // always 10
+    sortedByCount.forEach(({ digit }, rank) => {
+        if (rank === 0) {
+            digitColorMap[digit] = '#4CAF50'; // most appearing - green
+        } else if (rank === 1) {
+            digitColorMap[digit] = '#2196F3'; // 2nd most - blue
+        } else if (rank === n - 2) {
+            digitColorMap[digit] = '#FFEB3B'; // 2nd least - yellow
+        } else if (rank === n - 1) {
+            digitColorMap[digit] = '#F44336'; // least - red
+        } else {
+            digitColorMap[digit] = '#555770'; // neutral for all others
+        }
+    });
+
+    const getDigitColor = (digit: number) => digitColorMap[digit] ?? '#555770';
 
     return (
         <div className='dcircles'>
@@ -215,7 +225,7 @@ const Dcircles = observer(() => {
                         className='dcircles__big-circle'
                         style={{
                             borderColor:
-                                currentLastDigit !== null ? circleColors[currentLastDigit] : 'var(--border-normal)',
+                                currentLastDigit !== null ? getDigitColor(currentLastDigit) : 'var(--border-normal)',
                         }}
                     >
                         {currentLastDigit !== null ? currentLastDigit : '-'}
@@ -228,7 +238,7 @@ const Dcircles = observer(() => {
                         <div key={index} className='dcircles__stat-item'>
                             <div
                                 className='dcircles__small-circle'
-                                style={{ borderColor: circleColors[index] }}
+                                style={{ borderColor: getDigitColor(index) }}
                             >
                                 <span className='dcircles__digit'>{index}</span>
                                 <span className='dcircles__percentage'>{percentage}%</span>

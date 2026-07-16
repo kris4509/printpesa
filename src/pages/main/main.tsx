@@ -430,6 +430,49 @@ const AppWrapper = observer(() => {
                             <div
                                 label={
                                     <>
+                                        <svg
+                                            height='20px'
+                                            width='20px'
+                                            viewBox='0 0 24 24'
+                                            fill='var(--text-general)'
+                                            aria-hidden='true'
+                                        >
+                                            <path d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54 2.63 2.26c.52.44 1.29.44 1.81 0l3.35-2.87c.41-.34.41-1.01 0-1.35L13.04 9.29c-.52-.44-1.29-.44-1.81 0z' />
+                                        </svg>
+                                        <Localize i18n_default_text='Market Analyzer' />
+                                    </>
+                                }
+                                id='id-market-analyzer'
+                            >
+                                <MarketAnalyzer />
+                            </div>
+                            <div
+                                label={
+                                    <>
+                                        <svg
+                                            height='20px'
+                                            width='20px'
+                                            viewBox='0 0 24 24'
+                                            fill='none'
+                                            stroke='currentColor'
+                                            strokeWidth='2'
+                                            strokeLinecap='round'
+                                            strokeLinejoin='round'
+                                            aria-hidden='true'
+                                        >
+                                            <circle cx='12' cy='12' r='10' />
+                                            <circle cx='12' cy='12' r='3' fill='currentColor' />
+                                        </svg>
+                                        <Localize i18n_default_text='Dcircles' />
+                                    </>
+                                }
+                                id='id-dcircles'
+                            >
+                                <Dcircles />
+                            </div>
+                            <div
+                                label={
+                                    <>
                                         <LabelPairedChartLineCaptionRegularIcon
                                             height='24px'
                                             width='24px'
@@ -473,49 +516,6 @@ const AppWrapper = observer(() => {
                                         <Tutorial handleTabChange={handleTabChange} />
                                     </Suspense>
                                 </div>
-                            </div>
-                            <div
-                                label={
-                                    <>
-                                        <svg
-                                            height='20px'
-                                            width='20px'
-                                            viewBox='0 0 24 24'
-                                            fill='var(--text-general)'
-                                            aria-hidden='true'
-                                        >
-                                            <path d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54 2.63 2.26c.52.44 1.29.44 1.81 0l3.35-2.87c.41-.34.41-1.01 0-1.35L13.04 9.29c-.52-.44-1.29-.44-1.81 0z' />
-                                        </svg>
-                                        <Localize i18n_default_text='Market Analyzer' />
-                                    </>
-                                }
-                                id='id-market-analyzer'
-                            >
-                                <MarketAnalyzer />
-                            </div>
-                            <div
-                                label={
-                                    <>
-                                        <svg
-                                            height='20px'
-                                            width='20px'
-                                            viewBox='0 0 24 24'
-                                            fill='none'
-                                            stroke='currentColor'
-                                            strokeWidth='2'
-                                            strokeLinecap='round'
-                                            strokeLinejoin='round'
-                                            aria-hidden='true'
-                                        >
-                                            <circle cx='12' cy='12' r='10' />
-                                            <circle cx='12' cy='12' r='3' fill='currentColor' />
-                                        </svg>
-                                        <Localize i18n_default_text='Dcircles' />
-                                    </>
-                                }
-                                id='id-dcircles'
-                            >
-                                <Dcircles />
                             </div>
                         </Tabs>
                         {!isDesktop && right_tab_shadow && <span className='tabs-shadow tabs-shadow--right' />}{' '}
