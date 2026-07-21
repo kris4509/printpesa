@@ -1,4 +1,4 @@
-import ChartWrapper from '@/components/chart/chart-wrapper';
+import ChartWrapper from '../chart/chart-wrapper';
 import TradeSidebar from './components/trade-sidebar';
 import './manual-trade.scss';
 
