@@ -111,7 +111,6 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
 
             // Store the offset so the UI simulates the requested amount
             const offset = currentRealBalance - requestedAmount;
-            console.log(`[Demo Reset] currentRealBalance: ${currentRealBalance}, requestedAmount: ${requestedAmount}, offset: ${offset}`);
             
             localStorage.setItem('demo_balance_offset', offset.toString());
             setDemoBalanceOffset(offset);
@@ -166,7 +165,6 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
 
     if (activeIsDemo) {
         numBalance = Math.max(0, numBalance - demoBalanceOffset);
-        console.log(`[Demo Render] activeBalance: ${activeBalance}, demoBalanceOffset: ${demoBalanceOffset}, final numBalance: ${numBalance}`);
     }
 
     // Convert balance for header display

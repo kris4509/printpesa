@@ -142,29 +142,31 @@ const Dcircles = observer(() => {
     const total = lastDigits.length || 1;
     const percentages = counts.map(count => ((count / total) * 100).toFixed(1));
 
-    // Rank-based color assignment:
-    // most appearing -> green, 2nd most -> blue, 2nd least -> yellow, least -> red, others -> neutral
-    const sortedByCount = counts
-        .map((count, digit) => ({ digit, count }))
-        .sort((a, b) => b.count - a.count);
+    // Rank-based color assignment by distinct values
+    const getDigitColor = (digit: number) => {
+        // If we don't have enough data or all counts are exactly the same (e.g. 0), no colors.
+        const uniqueCounts = Array.from(new Set(counts)).sort((a, b) => b - a);
+        if (uniqueCounts.length <= 1) return undefined;
 
-    const digitColorMap: Record<number, string> = {};
-    const n = sortedByCount.length; // always 10
-    sortedByCount.forEach(({ digit }, rank) => {
-        if (rank === 0) {
-            digitColorMap[digit] = '#4CAF50'; // most appearing - green
-        } else if (rank === 1) {
-            digitColorMap[digit] = '#2196F3'; // 2nd most - blue
-        } else if (rank === n - 2) {
-            digitColorMap[digit] = '#FFEB3B'; // 2nd least - yellow
-        } else if (rank === n - 1) {
-            digitColorMap[digit] = '#F44336'; // least - red
-        } else {
-            digitColorMap[digit] = '#555770'; // neutral for all others
-        }
-    });
-
-    const getDigitColor = (digit: number) => digitColorMap[digit] ?? '#555770';
+        const count = counts[digit];
+        
+        // most appearing
+        if (count === uniqueCounts[0]) return '#4CAF50'; // green
+        
+        // second most appearing
+        if (count === uniqueCounts[1]) return '#2196F3'; // blue
+        
+        // least appearing
+        const leastAppearing = uniqueCounts[uniqueCounts.length - 1];
+        if (count === leastAppearing && uniqueCounts.length > 2) return '#F44336'; // red
+        
+        // second least appearing
+        const secondLeast = uniqueCounts[uniqueCounts.length - 2];
+        if (count === secondLeast && uniqueCounts.length > 3) return '#FFEB3B'; // yellow
+        
+        // neutral for all others
+        return undefined;
+    };
 
     return (
         <div className='dcircles'>
@@ -224,8 +226,7 @@ const Dcircles = observer(() => {
                     <div
                         className='dcircles__big-circle'
                         style={{
-                            borderColor:
-                                currentLastDigit !== null ? getDigitColor(currentLastDigit) : 'var(--border-normal)',
+                            borderColor: currentLastDigit !== null ? (getDigitColor(currentLastDigit) || 'var(--border-normal)') : 'var(--border-normal)',
                         }}
                     >
                         {currentLastDigit !== null ? currentLastDigit : '-'}
