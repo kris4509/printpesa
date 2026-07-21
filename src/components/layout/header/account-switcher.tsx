@@ -85,33 +85,30 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
         setIsResetting(true);
         setResetSuccess(false);
         try {
-            const api = await generateDerivApiInstance();
-            const ws = api.connection as WebSocket;
-            const amount = parseFloat(resetAmount) || 10000;
+            const requestedAmount = parseFloat(resetAmount) || 10000;
+            
+            // Parse current actual backend balance
+            let currentRealBalance = 0;
+            if (activeAccount?.balance != null) {
+                currentRealBalance = typeof activeAccount.balance === 'string'
+                    ? parseFloat(activeAccount.balance.replace(/,/g, ''))
+                    : Number(activeAccount.balance);
+            }
+            
+            try {
+                const response = await api_base.api?.send({ topup_virtual: 1 });
+                if (response && response.error) {
+                    console.warn('Deriv API topup_virtual returned error:', response.error.message);
+                } else if (response) {
+                    currentRealBalance = 10000; // API successfully topped up to 10k
+                }
+            } catch (err: any) {
+                console.warn('Deriv API topup_virtual threw error:', err?.message || err);
+            }
 
-            await new Promise<void>((resolve, reject) => {
-                const handler = (event: MessageEvent) => {
-                    const data = JSON.parse(event.data);
-                    if (data.msg_type === 'topup_virtual') {
-                        ws.removeEventListener('message', handler);
-                        if (data.error) {
-                            reject(new Error(data.error.message));
-                        } else {
-                            // Store the offset since Deriv API tops up to 10000
-                            // If user asked for 5000, we offset by 5000.
-                            const offset = Math.max(0, 10000 - amount);
-                            localStorage.setItem('demo_balance_offset', offset.toString());
-                            resolve();
-                        }
-                    }
-                };
-                ws.addEventListener('message', handler);
-                ws.send(JSON.stringify({ topup_virtual: 1 })); // API ignores amount, strictly tops up to 10k
-                setTimeout(() => {
-                    ws.removeEventListener('message', handler);
-                    reject(new Error('Timeout'));
-                }, 10000);
-            });
+            // Store the offset so the UI simulates the requested amount
+            const offset = Math.max(0, currentRealBalance - requestedAmount);
+            localStorage.setItem('demo_balance_offset', offset.toString());
 
             setResetSuccess(true);
             client?.checkAndRegenerateWebSocket();
@@ -121,7 +118,7 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
         } finally {
             setIsResetting(false);
         }
-    }, [isResetting, resetAmount, client]);
+    }, [isResetting, resetAmount, client, activeAccount]);
 
     // Build account lists split by real/demo
     const formattedAccounts = useMemo(() => {
@@ -130,7 +127,14 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
 
         return accountList.map(account => {
             const isVirtual = isDemoAccount(account.loginid);
-            let rawBalance = Number(account.balance ?? 0);
+            
+            let rawBalance = 0;
+            if (account.balance != null) {
+                rawBalance = typeof account.balance === 'string'
+                    ? parseFloat(account.balance.replace(/,/g, ''))
+                    : Number(account.balance);
+            }
+
             if (isVirtual) {
                 rawBalance = Math.max(0, rawBalance - demoBalanceOffset);
             }
