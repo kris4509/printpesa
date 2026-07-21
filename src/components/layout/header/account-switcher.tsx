@@ -110,7 +110,7 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
             }
 
             // Store the offset so the UI simulates the requested amount
-            const offset = Math.max(0, currentRealBalance - requestedAmount);
+            const offset = currentRealBalance - requestedAmount;
             localStorage.setItem('demo_balance_offset', offset.toString());
             setDemoBalanceOffset(offset);
 
