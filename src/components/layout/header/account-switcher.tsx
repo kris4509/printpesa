@@ -97,12 +97,16 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
                         if (data.error) {
                             reject(new Error(data.error.message));
                         } else {
+                            // Store the offset since Deriv API tops up to 10000
+                            // If user asked for 5000, we offset by 5000.
+                            const offset = Math.max(0, 10000 - amount);
+                            localStorage.setItem('demo_balance_offset', offset.toString());
                             resolve();
                         }
                     }
                 };
                 ws.addEventListener('message', handler);
-                ws.send(JSON.stringify({ topup_virtual: 1, amount }));
+                ws.send(JSON.stringify({ topup_virtual: 1 })); // API ignores amount, strictly tops up to 10k
                 setTimeout(() => {
                     ws.removeEventListener('message', handler);
                     reject(new Error('Timeout'));
@@ -122,14 +126,24 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
     // Build account lists split by real/demo
     const formattedAccounts = useMemo(() => {
         if (!accountList) return [];
-        return accountList.map(account => ({
-            loginid: account.loginid,
-            currency: account.currency,
-            balance: addComma(Number(account.balance ?? 0).toFixed(getDecimalPlaces(account.currency))),
-            rawBalance: Number(account.balance ?? 0),
-            isVirtual: isDemoAccount(account.loginid),
-            isActive: account.loginid === activeLoginid,
-        }));
+        const demoBalanceOffset = Number(localStorage.getItem('demo_balance_offset') || 0);
+
+        return accountList.map(account => {
+            const isVirtual = isDemoAccount(account.loginid);
+            let rawBalance = Number(account.balance ?? 0);
+            if (isVirtual) {
+                rawBalance = Math.max(0, rawBalance - demoBalanceOffset);
+            }
+
+            return {
+                loginid: account.loginid,
+                currency: account.currency,
+                balance: addComma(rawBalance.toFixed(getDecimalPlaces(account.currency))),
+                rawBalance,
+                isVirtual,
+                isActive: account.loginid === activeLoginid,
+            };
+        });
     }, [accountList, activeLoginid]);
 
     const realAccounts = formattedAccounts.filter(a => !a.isVirtual);
@@ -137,9 +151,14 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
     const activeIsDemo = activeLoginid ? isDemoAccount(activeLoginid) : false;
 
     const { currency: activeCurrency, balance: activeBalance } = activeAccount ?? { currency: 'USD', balance: '0' };
-    const numBalance = typeof activeBalance === 'string'
+    let numBalance = typeof activeBalance === 'string'
         ? parseFloat((activeBalance as string).replace(/,/g, ''))
         : Number(activeBalance ?? 0);
+
+    if (activeIsDemo) {
+        const demoBalanceOffset = Number(localStorage.getItem('demo_balance_offset') || 0);
+        numBalance = Math.max(0, numBalance - demoBalanceOffset);
+    }
 
     // Convert balance for header display
     const displayBalance = useMemo(() => {
