@@ -47,7 +47,7 @@ import Dcircles from '../dcircles';
 import RunStrategy from '../dashboard/run-strategy';
 import './main.scss';
 
-const ChartWrapper = lazy(() => import('../chart/chart-wrapper'));
+const ManualTrade = lazy(() => import('../manual-trade/manual-trade'));
 const Tutorial = lazy(() => import('../tutorials'));
 
 const AppWrapper = observer(() => {
@@ -81,7 +81,7 @@ const AppWrapper = observer(() => {
     const { clear } = summary_card;
     const { DASHBOARD, BOT_BUILDER } = DBOT_TABS;
     const init_render = React.useRef(true);
-    const hash = ['dashboard', 'bot_builder', 'best_bots', 'chart', 'tutorial', 'market_analyzer', 'dcircles'];
+    const hash = ['dashboard', 'bot_builder', 'best_bots', 'manual_trade', 'tutorial', 'market_analyzer', 'dcircles'];
     const { isDesktop } = useDevice();
     const location = useLocation();
     const navigate = useNavigate();
@@ -478,19 +478,19 @@ const AppWrapper = observer(() => {
                                             width='24px'
                                             fill='var(--text-general)'
                                         />
-                                        <Localize i18n_default_text='Charts' />
+                                        <Localize i18n_default_text='Manual Trade' />
                                     </>
                                 }
                                 id={
                                     is_chart_modal_visible || is_trading_view_modal_visible
-                                        ? 'id-charts--disabled'
-                                        : 'id-charts'
+                                        ? 'id-manual-trade--disabled'
+                                        : 'id-manual-trade'
                                 }
                             >
                                 <Suspense
-                                    fallback={<ChunkLoader message={localize('Please wait, loading chart...')} />}
+                                    fallback={<ChunkLoader message={localize('Please wait, loading trade...')} />}
                                 >
-                                    <ChartWrapper show_digits_stats={false} />
+                                    <ManualTrade />
                                 </Suspense>
                             </div>
                             <div

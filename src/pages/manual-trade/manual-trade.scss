@@ -1,0 +1,59 @@
+@use 'components/shared/styles/mixins' as *;
+
+.manual-trade {
+    display: flex;
+    width: 100%;
+    height: var(--tab-content-height);
+    background-color: var(--general-main-1);
+    overflow: hidden;
+
+    @include mobile-or-tablet-screen {
+        height: var(--tab-content-height-mobile);
+        flex-direction: column;
+    }
+
+    &__chart-container {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+        border-right: 1px solid var(--border-normal);
+
+        @include mobile-or-tablet-screen {
+            border-right: none;
+            border-bottom: 1px solid var(--border-normal);
+            flex: 0 0 50%; /* Take half screen on mobile */
+        }
+    }
+
+    &__sidebar {
+        width: 320px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--general-section-1);
+        overflow-y: auto;
+        
+        @include mobile-or-tablet-screen {
+            width: 100%;
+            flex: 1;
+        }
+    }
+
+    &__sidebar-header {
+        padding: 1.6rem;
+        border-bottom: 1px solid var(--border-normal);
+        
+        h3 {
+            margin: 0;
+            color: var(--text-prominent);
+            font-size: 1.6rem;
+            font-weight: bold;
+        }
+    }
+
+    &__sidebar-content {
+        padding: 1.6rem;
+        flex: 1;
+        color: var(--text-general);
+    }
+}
