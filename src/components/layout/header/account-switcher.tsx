@@ -22,6 +22,9 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
     const [isResetting, setIsResetting] = useState(false);
     const [resetSuccess, setResetSuccess] = useState(false);
     const [showCurrencyMenu, setShowCurrencyMenu] = useState(false);
+    const [demoBalanceOffset, setDemoBalanceOffset] = useState<number>(() => 
+        Number(localStorage.getItem('demo_balance_offset') || 0)
+    );
 
     const wrapperRef = useRef<HTMLDivElement>(null);
     const currencyMenuRef = useRef<HTMLDivElement>(null);
@@ -109,6 +112,7 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
             // Store the offset so the UI simulates the requested amount
             const offset = Math.max(0, currentRealBalance - requestedAmount);
             localStorage.setItem('demo_balance_offset', offset.toString());
+            setDemoBalanceOffset(offset);
 
             setResetSuccess(true);
             client?.checkAndRegenerateWebSocket();
@@ -123,7 +127,6 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
     // Build account lists split by real/demo
     const formattedAccounts = useMemo(() => {
         if (!accountList) return [];
-        const demoBalanceOffset = Number(localStorage.getItem('demo_balance_offset') || 0);
 
         return accountList.map(account => {
             const isVirtual = isDemoAccount(account.loginid);
@@ -148,7 +151,7 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
                 isActive: account.loginid === activeLoginid,
             };
         });
-    }, [accountList, activeLoginid]);
+    }, [accountList, activeLoginid, demoBalanceOffset]);
 
     const realAccounts = formattedAccounts.filter(a => !a.isVirtual);
     const demoAccounts = formattedAccounts.filter(a => a.isVirtual);
@@ -160,7 +163,6 @@ const AccountSwitcher = observer(({ activeAccount }: TAccountSwitcher) => {
         : Number(activeBalance ?? 0);
 
     if (activeIsDemo) {
-        const demoBalanceOffset = Number(localStorage.getItem('demo_balance_offset') || 0);
         numBalance = Math.max(0, numBalance - demoBalanceOffset);
     }
 
