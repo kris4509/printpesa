@@ -1,5 +1,12 @@
 @use 'components/shared/styles/mixins' as *;
 
+// ── Variables ─────────────────────────────────────────────────────────────────
+$up-color:    #4caf50;
+$down-color:  #ef5350;
+$hot-color:   #ff9800;
+$radius:      6px;
+
+// ── Root ─────────────────────────────────────────────────────────────────────
 .trade-sidebar {
     display: flex;
     flex-direction: column;
@@ -8,146 +15,273 @@
     background-color: var(--general-section-1);
     color: var(--text-general);
     font-family: 'IBM Plex Sans', 'Inter', sans-serif;
+    overflow-y: auto;
+    overflow-x: hidden;
 
-    &__header {
-        padding: 1.6rem;
+    // ── Contract type tabs ────────────────────────────────────────────────────
+    &__tabs {
+        display: flex;
+        overflow-x: auto;
         border-bottom: 1px solid var(--border-normal);
-        
-        h3 {
-            margin: 0;
-            color: var(--text-prominent);
-            font-size: 1.6rem;
-            font-weight: bold;
-        }
+        scrollbar-width: none;
+        &::-webkit-scrollbar { display: none; }
     }
 
-    &__content {
-        padding: 1.6rem;
-        flex: 1;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 2.4rem;
-    }
-
-    &__section {
-        display: flex;
-        flex-direction: column;
-        gap: 0.8rem;
-
-        label {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--text-less-prominent);
-        }
-    }
-
-    &__select, &__input {
-        background: var(--general-main-2, #101010);
-        border: 1px solid var(--border-normal);
-        border-radius: 4px;
-        color: var(--text-prominent);
-        padding: 0.8rem 1.2rem;
-        font-size: 1.4rem;
-        outline: none;
-        width: 100%;
-
-        &:focus {
-            border-color: var(--brand-secondary, #85acb0);
-        }
-    }
-
-    &__input-group {
-        display: flex;
-        gap: 0.8rem;
-    }
-
-    &__select--small {
-        flex: 0 0 100px;
-    }
-
-    &__digit-selector {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.8rem;
-    }
-
-    &__digit-btn {
-        flex: 1 0 calc(20% - 0.8rem);
-        background: var(--general-main-2, #101010);
-        border: 1px solid var(--border-normal);
-        border-radius: 4px;
-        color: var(--text-prominent);
-        padding: 0.8rem 0;
-        font-size: 1.4rem;
-        font-weight: bold;
+    &__tab {
+        flex-shrink: 0;
+        padding: 1.2rem 1.6rem;
+        background: transparent;
+        border: none;
+        border-bottom: 3px solid transparent;
+        color: var(--text-less-prominent);
+        font-size: 1.3rem;
+        font-weight: 500;
         cursor: pointer;
-        transition: all 0.2s ease;
+        white-space: nowrap;
+        transition: color 0.2s, border-color 0.2s;
 
-        &:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
+        &:hover { color: var(--text-prominent); }
 
         &--active {
-            background: var(--brand-secondary, #85acb0);
-            color: #000;
-            border-color: var(--brand-secondary, #85acb0);
+            color: var(--text-prominent);
+            border-bottom-color: var(--brand-red-coral, #ff444f);
+            font-weight: 700;
         }
     }
 
-    &__footer {
-        padding: 1.6rem;
-        border-top: 1px solid var(--border-normal);
-        background: var(--general-section-1);
+    // ── Up / Down toggle ──────────────────────────────────────────────────────
+    &__toggle {
+        display: flex;
+        margin: 1.6rem 1.6rem 0;
+        border: 1px solid var(--border-normal);
+        border-radius: $radius;
+        overflow: hidden;
     }
 
-    &__buy-container {
+    &__toggle-btn {
+        flex: 1;
+        padding: 0.8rem 1.2rem;
+        background: transparent;
+        border: none;
+        color: var(--text-less-prominent);
+        font-size: 1.4rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s;
+
+        &--up#{&}--active  { background: rgba($up-color, 0.15); color: $up-color; }
+        &--down#{&}--active { background: rgba($down-color, 0.15); color: $down-color; }
+    }
+
+    // ── Generic section ───────────────────────────────────────────────────────
+    &__section {
+        padding: 1.2rem 1.6rem 0;
+    }
+
+    &__section-label {
+        display: block;
+        font-size: 1.1rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--text-less-prominent);
+        margin-bottom: 0.8rem;
+    }
+
+    // ── Display field (click to edit) ─────────────────────────────────────────
+    &__display-field {
         display: flex;
-        gap: 1.2rem;
+        flex-direction: column;
+        gap: 0.4rem;
+        cursor: pointer;
+        padding: 1rem 1.2rem;
+        border-radius: $radius;
+        transition: background 0.15s;
+
+        &:hover { background: rgba(255,255,255,0.04); }
+    }
+
+    &__display-value {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-prominent);
+    }
+
+    .ts-edit-icon {
+        font-size: 1.1rem;
+        opacity: 0.5;
+        margin-left: 0.4rem;
+    }
+
+    // ── Editable block ────────────────────────────────────────────────────────
+    &__editable-block {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    &__edit-row {
+        display: flex;
+        gap: 0.8rem;
+        align-items: center;
+    }
+
+    &__input {
+        flex: 1;
+        min-width: 0;
+        background: var(--general-main-2, #0e0e10);
+        border: 1px solid var(--border-normal);
+        border-radius: $radius;
+        color: var(--text-prominent);
+        padding: 0.8rem 1rem;
+        font-size: 1.4rem;
+        outline: none;
+
+        &:focus { border-color: var(--brand-secondary, #85acb0); }
+    }
+
+    &__select {
+        background: var(--general-main-2, #0e0e10);
+        border: 1px solid var(--border-normal);
+        border-radius: $radius;
+        color: var(--text-prominent);
+        padding: 0.8rem 1rem;
+        font-size: 1.3rem;
+        outline: none;
+        cursor: pointer;
+
+        &:focus { border-color: var(--brand-secondary, #85acb0); }
+    }
+
+    &__currency {
+        font-size: 1.3rem;
+        color: var(--text-less-prominent);
+        white-space: nowrap;
+    }
+
+    &__ok-btn {
+        padding: 0.8rem 1.6rem;
+        border: none;
+        border-radius: $radius;
+        background: var(--brand-secondary, #85acb0);
+        color: #000;
+        font-weight: 700;
+        font-size: 1.3rem;
+        cursor: pointer;
+        transition: opacity 0.15s;
+        white-space: nowrap;
+
+        &:hover { opacity: 0.85; }
+    }
+
+    // ── Error / Success ───────────────────────────────────────────────────────
+    &__error {
+        margin: 0.8rem 1.6rem;
+        padding: 1rem 1.2rem;
+        background: rgba($down-color, 0.12);
+        border: 1px solid rgba($down-color, 0.3);
+        border-radius: $radius;
+        color: lighten($down-color, 15%);
+        font-size: 1.2rem;
+        line-height: 1.5;
+    }
+
+    &__success {
+        margin: 0.8rem 1.6rem;
+        padding: 1rem 1.2rem;
+        background: rgba($up-color, 0.12);
+        border: 1px solid rgba($up-color, 0.3);
+        border-radius: $radius;
+        color: lighten($up-color, 10%);
+        font-size: 1.2rem;
+    }
+
+    // ── Buy button footer ─────────────────────────────────────────────────────
+    &__buy-footer {
+        padding: 1.6rem;
+        margin-top: auto;
+        flex-shrink: 0;
     }
 
     &__buy-btn {
-        flex: 1;
+        width: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 1.2rem;
-        border-radius: 4px;
+        padding: 1.4rem 2rem;
+        border-radius: $radius;
         border: none;
         cursor: pointer;
         color: #fff;
-        transition: transform 0.1s ease, opacity 0.2s ease;
+        font-family: inherit;
+        transition: transform 0.1s ease, opacity 0.2s ease, filter 0.15s ease;
+        gap: 0.2rem;
 
-        &:hover {
-            opacity: 0.9;
-        }
-        &:active {
-            transform: scale(0.98);
-        }
+        &:hover:not(:disabled) { filter: brightness(1.08); }
+        &:active:not(:disabled) { transform: scale(0.98); }
+        &:disabled { opacity: 0.45; cursor: not-allowed; }
 
-        &--up {
-            background-color: #4CAF50; // Green for UP/OVER
-        }
-        &--down {
-            background-color: #F44336; // Red for DOWN/UNDER
-        }
+        &--up   { background: linear-gradient(135deg, #2e7d32, #4caf50); }
+        &--down { background: linear-gradient(135deg, #b71c1c, #ef5350); }
     }
 
     &__buy-label {
         font-size: 1.6rem;
-        font-weight: bold;
-        margin-bottom: 0.4rem;
+        font-weight: 700;
     }
 
     &__buy-payout {
         font-size: 1.2rem;
-        opacity: 0.9;
+        opacity: 0.88;
+        font-weight: 500;
+    }
+}
+
+// ── Digit Grid ────────────────────────────────────────────────────────────────
+.ts-digit-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.6rem;
+
+    &__btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.8rem 0.4rem;
+        background: var(--general-main-2, #0e0e10);
+        border: 1px solid var(--border-normal);
+        border-radius: $radius;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        color: var(--text-prominent);
+
+        &:hover { background: rgba(255,255,255,0.06); }
+
+        &--active {
+            background: var(--general-section-2, #1a1a1d);
+            border-color: var(--brand-secondary, #85acb0);
+            outline: 2px solid var(--brand-secondary, #85acb0);
+            outline-offset: -2px;
+        }
+
+        &--hot .ts-digit-grid__pct {
+            color: $hot-color;
+            font-weight: 700;
+        }
     }
 
-    &__positions-container {
-        flex: 1;
-        overflow: hidden;
-        border-top: 1px solid var(--border-normal);
+    &__num {
+        font-size: 1.6rem;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    &__pct {
+        font-size: 1.0rem;
+        color: var(--text-less-prominent);
+        line-height: 1;
+        transition: color 0.15s;
     }
 }
