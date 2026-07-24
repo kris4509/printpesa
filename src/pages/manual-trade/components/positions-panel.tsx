@@ -26,6 +26,7 @@ const STATUS_LABELS: Record<string, string> = {
 const PositionsPanel = () => {
     const [positions, setPositions] = useState<Position[]>([]);
     const [activeTab, setActiveTab] = useState<'open' | 'closed'>('open');
+    const [isExpanded, setIsExpanded] = useState(false);
 
     useEffect(() => {
         if (!api_base.api) return;
@@ -53,6 +54,7 @@ const PositionsPanel = () => {
                     purchase_time: buy.purchase_time ?? Date.now() / 1000,
                 };
                 setPositions(prev => [newPos, ...prev].slice(0, 50));
+                setIsExpanded(true);
 
 
                 // Subscribe to this contract's updates
@@ -94,54 +96,64 @@ const PositionsPanel = () => {
     const shown  = activeTab === 'open' ? open : closed;
 
     return (
-        <div className='positions-panel'>
+        <div className={`positions-panel${isExpanded ? '' : ' positions-panel--collapsed'}`}>
             <div className='positions-panel__tabs'>
                 <button
                     className={`positions-panel__tab${activeTab === 'open' ? ' positions-panel__tab--active' : ''}`}
-                    onClick={() => setActiveTab('open')}
+                    onClick={() => { setActiveTab('open'); setIsExpanded(true); }}
                     type='button'
                 >
                     Open <span className='positions-panel__badge'>{open.length}</span>
                 </button>
                 <button
                     className={`positions-panel__tab${activeTab === 'closed' ? ' positions-panel__tab--active' : ''}`}
-                    onClick={() => setActiveTab('closed')}
+                    onClick={() => { setActiveTab('closed'); setIsExpanded(true); }}
                     type='button'
                 >
                     Closed <span className='positions-panel__badge'>{closed.length}</span>
                 </button>
+                <button
+                    className='positions-panel__collapse-btn'
+                    onClick={() => setIsExpanded(v => !v)}
+                    type='button'
+                    aria-label={isExpanded ? 'Collapse positions' : 'Expand positions'}
+                >
+                    <span className={`positions-panel__chevron${isExpanded ? ' positions-panel__chevron--up' : ''}`}>‹</span>
+                </button>
             </div>
 
-            <div className='positions-panel__list'>
-                {shown.length === 0 ? (
-                    <div className='positions-panel__empty'>
-                        <svg width='40' height='40' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.2' opacity={0.3}>
-                            <rect x='2' y='3' width='20' height='14' rx='2' />
-                            <path d='M8 21h8M12 17v4' />
-                        </svg>
-                        <p>No {activeTab === 'open' ? 'open' : 'closed'} contracts</p>
-                    </div>
-                ) : (
-                    shown.map(pos => (
-                        <div key={pos.contract_id} className={`positions-panel__item positions-panel__item--${pos.status}`}>
-                            <div className='positions-panel__item-top'>
-                                <span className='positions-panel__item-id'>#{pos.contract_id}</span>
-                                <span className={`positions-panel__item-status positions-panel__item-status--${pos.status}`}>
-                                    {STATUS_LABELS[pos.status]}
-                                </span>
-                            </div>
-                            <div className='positions-panel__item-desc'>{pos.display_name}</div>
-                            {pos.barrier && <div className='positions-panel__item-meta'>Digit: {pos.barrier}</div>}
-                            <div className='positions-panel__item-bottom'>
-                                <span className='positions-panel__item-stake'>Stake: {pos.buy_price.toFixed(2)}</span>
-                                <span className={`positions-panel__item-profit${pos.profit >= 0 ? ' positions-panel__item-profit--pos' : ' positions-panel__item-profit--neg'}`}>
-                                    {pos.profit >= 0 ? '+' : ''}{pos.profit.toFixed(2)} ({pos.profit_percentage.toFixed(1)}%)
-                                </span>
-                            </div>
+            {isExpanded && (
+                <div className='positions-panel__list'>
+                    {shown.length === 0 ? (
+                        <div className='positions-panel__empty'>
+                            <svg width='40' height='40' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.2' opacity={0.3}>
+                                <rect x='2' y='3' width='20' height='14' rx='2' />
+                                <path d='M8 21h8M12 17v4' />
+                            </svg>
+                            <p>No {activeTab === 'open' ? 'open' : 'closed'} contracts</p>
                         </div>
-                    ))
-                )}
-            </div>
+                    ) : (
+                        shown.map(pos => (
+                            <div key={pos.contract_id} className={`positions-panel__item positions-panel__item--${pos.status}`}>
+                                <div className='positions-panel__item-top'>
+                                    <span className='positions-panel__item-id'>#{pos.contract_id}</span>
+                                    <span className={`positions-panel__item-status positions-panel__item-status--${pos.status}`}>
+                                        {STATUS_LABELS[pos.status]}
+                                    </span>
+                                </div>
+                                <div className='positions-panel__item-desc'>{pos.display_name}</div>
+                                {pos.barrier && <div className='positions-panel__item-meta'>Digit: {pos.barrier}</div>}
+                                <div className='positions-panel__item-bottom'>
+                                    <span className='positions-panel__item-stake'>Stake: {pos.buy_price.toFixed(2)}</span>
+                                    <span className={`positions-panel__item-profit${pos.profit >= 0 ? ' positions-panel__item-profit--pos' : ' positions-panel__item-profit--neg'}`}>
+                                        {pos.profit >= 0 ? '+' : ''}{pos.profit.toFixed(2)} ({pos.profit_percentage.toFixed(1)}%)
+                                    </span>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+            )}
         </div>
     );
 };

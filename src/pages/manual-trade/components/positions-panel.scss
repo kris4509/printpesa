@@ -12,13 +12,45 @@ $radius:     6px;
     max-height: 260px;
     flex-shrink: 0;
 
+    &--collapsed {
+        max-height: none; // content is just the tabs row now, no need to reserve space
+    }
+
     @include mobile-or-tablet-screen {
         max-height: 200px;
     }
 
     &__tabs {
         display: flex;
+        align-items: center;
         border-bottom: 1px solid var(--border-normal);
+    }
+
+    &__collapse-btn {
+        flex-shrink: 0;
+        width: 3.6rem;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        border-inline-start: 1px solid var(--border-normal);
+        color: var(--text-general);
+        opacity: 0.6;
+        cursor: pointer;
+
+        &:hover { opacity: 1; }
+    }
+
+    &__chevron {
+        display: inline-block;
+        font-size: 1.6rem;
+        line-height: 1;
+        transform: rotate(-90deg);
+        transition: transform 0.2s ease;
+
+        &--up { transform: rotate(90deg); }
     }
 
     &__tab {
