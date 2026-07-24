@@ -3,7 +3,8 @@
 // ── Variables ─────────────────────────────────────────────────────────────────
 $up-color:    #4caf50;
 $down-color:  #ef5350;
-$hot-color:   #ff9800;
+$hot-color:   #4caf50;
+$cold-color:  #ef5350;
 $radius:      6px;
 
 // ── Root ─────────────────────────────────────────────────────────────────────
@@ -18,9 +19,11 @@ $radius:      6px;
     overflow-y: auto;
     overflow-x: hidden;
 
-    // ── Contract type tabs ────────────────────────────────────────────────────
+    // ── Contract type pills ───────────────────────────────────────────────────
     &__tabs {
         display: flex;
+        gap: 0.6rem;
+        padding: 1.2rem 1.6rem;
         overflow-x: auto;
         border-bottom: 1px solid var(--border-normal);
         scrollbar-width: none;
@@ -29,24 +32,45 @@ $radius:      6px;
 
     &__tab {
         flex-shrink: 0;
-        padding: 1.2rem 1.6rem;
-        background: transparent;
-        border: none;
-        border-bottom: 3px solid transparent;
+        padding: 0.8rem 1.4rem;
+        background: var(--general-main-2, #0e0e10);
+        border: 1px solid var(--border-normal);
+        border-radius: 999px;
         color: var(--text-less-prominent);
         font-size: 1.3rem;
         font-weight: 500;
         cursor: pointer;
         white-space: nowrap;
-        transition: color 0.2s, border-color 0.2s;
+        transition: color 0.2s, border-color 0.2s, background 0.2s;
 
-        &:hover { color: var(--text-prominent); }
+        &:hover { color: var(--text-prominent); border-color: var(--text-less-prominent); }
 
         &--active {
-            color: var(--text-prominent);
-            border-bottom-color: var(--brand-red-coral, #ff444f);
+            color: #fff;
+            background: var(--brand-red-coral, #ff444f);
+            border-color: var(--brand-red-coral, #ff444f);
             font-weight: 700;
         }
+    }
+
+    // ── How to trade link ─────────────────────────────────────────────────────
+    &__help-link {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        margin: 1.2rem 1.6rem 0;
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: var(--text-less-prominent);
+        text-decoration: none;
+        width: fit-content;
+
+        &:hover { color: var(--text-prominent); }
+    }
+
+    &__help-arrow {
+        font-size: 1.4rem;
+        line-height: 1;
     }
 
     // ── Up / Down toggle ──────────────────────────────────────────────────────
@@ -60,7 +84,7 @@ $radius:      6px;
 
     &__toggle-btn {
         flex: 1;
-        padding: 0.8rem 1.2rem;
+        padding: 1rem 1.2rem;
         background: transparent;
         border: none;
         color: var(--text-less-prominent);
@@ -95,6 +119,7 @@ $radius:      6px;
         gap: 0.4rem;
         cursor: pointer;
         padding: 1rem 1.2rem;
+        border: 1px solid var(--border-normal);
         border-radius: $radius;
         transition: background 0.15s;
 
@@ -117,13 +142,18 @@ $radius:      6px;
     &__editable-block {
         display: flex;
         flex-direction: column;
-        gap: 0.8rem;
+        gap: 0.6rem;
     }
 
     &__edit-row {
         display: flex;
         gap: 0.8rem;
         align-items: center;
+    }
+
+    &__hint {
+        font-size: 1.1rem;
+        color: var(--text-less-prominent);
     }
 
     &__input {
@@ -242,17 +272,18 @@ $radius:      6px;
 .ts-digit-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 0.6rem;
+    gap: 0.8rem;
 
     &__btn {
+        aspect-ratio: 1 / 1;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 0.3rem;
-        padding: 0.8rem 0.4rem;
+        justify-content: center;
+        gap: 0.2rem;
         background: var(--general-main-2, #0e0e10);
-        border: 1px solid var(--border-normal);
-        border-radius: $radius;
+        border: 2px solid var(--border-normal);
+        border-radius: 50%;
         cursor: pointer;
         transition: all 0.15s ease;
         color: var(--text-prominent);
@@ -260,28 +291,71 @@ $radius:      6px;
         &:hover { background: rgba(255,255,255,0.06); }
 
         &--active {
-            background: var(--general-section-2, #1a1a1d);
-            border-color: var(--brand-secondary, #85acb0);
-            outline: 2px solid var(--brand-secondary, #85acb0);
-            outline-offset: -2px;
+            border-color: #fff;
+            box-shadow: 0 0 0 1px #fff;
         }
 
-        &--hot .ts-digit-grid__pct {
-            color: $hot-color;
-            font-weight: 700;
+        &--hot {
+            border-color: $hot-color;
+            .ts-digit-grid__pct { color: $hot-color; font-weight: 700; }
+        }
+
+        &--cold {
+            border-color: $cold-color;
+            .ts-digit-grid__pct { color: $cold-color; font-weight: 700; }
         }
     }
 
     &__num {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
         font-weight: 700;
         line-height: 1;
     }
 
     &__pct {
-        font-size: 1.0rem;
+        font-size: 0.95rem;
         color: var(--text-less-prominent);
         line-height: 1;
         transition: color 0.15s;
     }
+}
+
+// ── Toggle switch (Allow equals) ────────────────────────────────────────────
+.ts-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 1.2rem;
+
+    &__label {
+        font-size: 1.3rem;
+        color: var(--text-prominent);
+    }
+}
+
+.ts-switch {
+    position: relative;
+    width: 3.8rem;
+    height: 2.2rem;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: var(--border-normal);
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &--on { background: var(--brand-secondary, #85acb0); }
+
+    &__knob {
+        position: absolute;
+        top: 0.2rem;
+        left: 0.2rem;
+        width: 1.8rem;
+        height: 1.8rem;
+        border-radius: 50%;
+        background: #fff;
+        transition: transform 0.2s ease;
+    }
+
+    &--on &__knob { transform: translateX(1.6rem); }
 }

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import './trade-sidebar.scss';
 import { useStore } from '@/hooks/useStore';
 import { useProposal } from '@/hooks/api/trade/useProposal';
@@ -7,37 +7,59 @@ import { useBuyContract } from '@/hooks/api/trade/useBuyContract';
 // ─── Types ────────────────────────────────────────────────────────────────────
 type ContractSide = 'up' | 'down';
 
+interface DurationUnitOption {
+    value: string;
+    label: string;
+    min: number;
+    max: number;
+}
+
 interface ContractCategory {
     label: string;
     value: string;
     upLabel: string;
     downLabel: string;
     hasDigit: boolean;
+    hasEquals: boolean;
+    durationUnits: DurationUnitOption[];
     defaultDurationUnit: string;
+    defaultDuration: number;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const CONTRACT_CATEGORIES: ContractCategory[] = [
-    { label: 'Even/Odd',        value: 'even_odd',        upLabel: 'Even',    downLabel: 'Odd',    hasDigit: false, defaultDurationUnit: 't' },
-    { label: 'Over/Under',      value: 'over_under',      upLabel: 'Over',    downLabel: 'Under',  hasDigit: true,  defaultDurationUnit: 't' },
-    { label: 'Matches/Differs', value: 'matches_differs', upLabel: 'Matches', downLabel: 'Differs',hasDigit: true,  defaultDurationUnit: 't' },
-    { label: 'Rise/Fall',       value: 'rise_fall',       upLabel: 'Rise',    downLabel: 'Fall',   hasDigit: false, defaultDurationUnit: 't' },
+// Digit contracts (DIGITEVEN/ODD/OVER/UNDER/MATCH/DIFF) only ever accept
+// tick-based duration on the Deriv API — sending seconds/minutes/hours/days
+// for these contract types is what triggers "Input validation failed" errors.
+const TICK_ONLY_UNITS: DurationUnitOption[] = [{ value: 't', label: 'Ticks', min: 1, max: 10 }];
+
+const RISE_FALL_UNITS: DurationUnitOption[] = [
+    { value: 't', label: 'Ticks', min: 1, max: 10 },
+    { value: 's', label: 'Seconds', min: 15, max: 3600 },
+    { value: 'm', label: 'Minutes', min: 1, max: 1440 },
+    { value: 'h', label: 'Hours', min: 1, max: 24 },
+    { value: 'd', label: 'Days', min: 1, max: 365 },
 ];
 
-const CONTRACT_TYPE_MAP: Record<string, { up: string; down: string }> = {
-    rise_fall:        { up: 'CALL',       down: 'PUT'       },
-    over_under:       { up: 'DIGITOVER',  down: 'DIGITUNDER'},
-    matches_differs:  { up: 'DIGITMATCH', down: 'DIGITDIFF' },
-    even_odd:         { up: 'DIGITEVEN',  down: 'DIGITODD'  },
+const CONTRACT_CATEGORIES: ContractCategory[] = [
+    { label: 'Even/Odd', value: 'even_odd', upLabel: 'Even', downLabel: 'Odd', hasDigit: false, hasEquals: false, durationUnits: TICK_ONLY_UNITS, defaultDurationUnit: 't', defaultDuration: 5 },
+    { label: 'Over/Under', value: 'over_under', upLabel: 'Over', downLabel: 'Under', hasDigit: true, hasEquals: false, durationUnits: TICK_ONLY_UNITS, defaultDurationUnit: 't', defaultDuration: 5 },
+    { label: 'Matches/Differs', value: 'matches_differs', upLabel: 'Matches', downLabel: 'Differs', hasDigit: true, hasEquals: false, durationUnits: TICK_ONLY_UNITS, defaultDurationUnit: 't', defaultDuration: 5 },
+    { label: 'Rise/Fall', value: 'rise_fall', upLabel: 'Rise', downLabel: 'Fall', hasDigit: false, hasEquals: true, durationUnits: RISE_FALL_UNITS, defaultDurationUnit: 'm', defaultDuration: 5 },
+];
+
+const HELP_URL_MAP: Record<string, string> = {
+    even_odd: 'https://deriv.com/trade-types/ups-and-downs/even-odd/',
+    over_under: 'https://deriv.com/trade-types/ups-and-downs/over-under/',
+    matches_differs: 'https://deriv.com/trade-types/ups-and-downs/matches-differs/',
+    rise_fall: 'https://deriv.com/trade-types/ups-and-downs/rise-fall/',
 };
 
-const DURATION_UNITS = [
-    { value: 't', label: 'Ticks' },
-    { value: 's', label: 'Seconds' },
-    { value: 'm', label: 'Minutes' },
-    { value: 'h', label: 'Hours' },
-    { value: 'd', label: 'Days' },
-];
+const CONTRACT_TYPE_MAP: Record<string, { up: string; down: string; upEquals?: string; downEquals?: string }> = {
+    rise_fall: { up: 'CALL', down: 'PUT', upEquals: 'CALLE', downEquals: 'PUTE' },
+    over_under: { up: 'DIGITOVER', down: 'DIGITUNDER' },
+    matches_differs: { up: 'DIGITMATCH', down: 'DIGITDIFF' },
+    even_odd: { up: 'DIGITEVEN', down: 'DIGITODD' },
+};
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 const DigitGrid = ({
@@ -49,17 +71,25 @@ const DigitGrid = ({
     onChange: (d: number) => void;
     digitFrequencies: number[];
 }) => {
-    const maxFreq = Math.max(...digitFrequencies, 1);
+    const total = digitFrequencies.reduce((a, b) => a + b, 0) || 1;
+    const maxFreq = Math.max(...digitFrequencies, 0);
+    const minFreq = Math.min(...digitFrequencies.filter((_, i) => digitFrequencies[i] !== undefined), maxFreq);
     return (
         <div className='ts-digit-grid'>
             {Array.from({ length: 10 }, (_, i) => {
                 const freq = digitFrequencies[i] ?? 0;
-                const pct = ((freq / (digitFrequencies.reduce((a, b) => a + b, 0) || 1)) * 100).toFixed(1);
-                const isHot = freq === maxFreq;
+                const pct = ((freq / total) * 100).toFixed(1);
+                const isHot = freq === maxFreq && maxFreq > 0;
+                const isCold = freq === minFreq && maxFreq > 0 && minFreq !== maxFreq;
                 return (
                     <button
                         key={i}
-                        className={`ts-digit-grid__btn${selected === i ? ' ts-digit-grid__btn--active' : ''}${isHot ? ' ts-digit-grid__btn--hot' : ''}`}
+                        className={[
+                            'ts-digit-grid__btn',
+                            selected === i && 'ts-digit-grid__btn--active',
+                            isHot && 'ts-digit-grid__btn--hot',
+                            isCold && 'ts-digit-grid__btn--cold',
+                        ].filter(Boolean).join(' ')}
                         onClick={() => onChange(i)}
                         type='button'
                     >
@@ -72,57 +102,20 @@ const DigitGrid = ({
     );
 };
 
-const EditableField = ({
-    label,
-    value,
-    onSave,
-    suffix,
-    children,
-}: {
-    label: string;
-    value: string;
-    onSave?: (v: string) => void;
-    suffix?: string;
-    children?: React.ReactNode;
-}) => {
-    const [editing, setEditing] = useState(false);
-    const [draft, setDraft] = useState(value);
-
-    const handleSave = () => {
-        setEditing(false);
-        onSave?.(draft);
-    };
-
-    if (editing) {
-        return (
-            <div className='ts-field ts-field--editing'>
-                <span className='ts-field__label'>{label}</span>
-                <div className='ts-field__edit-row'>
-                    {children ? (
-                        <>{children}</>
-                    ) : (
-                        <input
-                            className='ts-field__input'
-                            autoFocus
-                            type='number'
-                            value={draft}
-                            onChange={e => setDraft(e.target.value)}
-                            onKeyDown={e => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') setEditing(false); }}
-                        />
-                    )}
-                    <button className='ts-field__save-btn' onClick={handleSave}>OK</button>
-                </div>
-            </div>
-        );
-    }
-
-    return (
-        <div className='ts-field' onClick={() => { setDraft(value); setEditing(true); }} role='button' tabIndex={0} onKeyDown={e => { if (e.key === 'Enter') setEditing(true); }}>
-            <span className='ts-field__label'>{label}</span>
-            <span className='ts-field__value'>{value}{suffix ? ` ${suffix}` : ''} <span className='ts-field__edit-icon'>✏</span></span>
-        </div>
-    );
-};
+const ToggleSwitch = ({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) => (
+    <div className='ts-toggle-row'>
+        <span className='ts-toggle-row__label'>{label}</span>
+        <button
+            type='button'
+            className={`ts-switch${checked ? ' ts-switch--on' : ''}`}
+            role='switch'
+            aria-checked={checked}
+            onClick={() => onChange(!checked)}
+        >
+            <span className='ts-switch__knob' />
+        </button>
+    </div>
+);
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 const TradeSidebar = ({ digitFrequencies = [] }: { digitFrequencies?: number[] }) => {
@@ -130,21 +123,49 @@ const TradeSidebar = ({ digitFrequencies = [] }: { digitFrequencies?: number[] }
     const { symbol } = chart_store;
     const currency = client.currency || 'USD';
 
-    const [categoryValue, setCategoryValue]     = useState('over_under');
-    const [side, setSide]                       = useState<ContractSide>('up');
-    const [lastDigit, setLastDigit]             = useState(5);
-    const [duration, setDuration]               = useState(5);
-    const [durationUnit, setDurationUnit]       = useState('t');
-    const [stake, setStake]                     = useState(10);
-    const [editDuration, setEditDuration]       = useState(false);
-    const [editStake, setEditStake]             = useState(false);
-    const [draftDuration, setDraftDuration]     = useState('5');
-    const [draftDurationUnit, setDraftDurationUnit] = useState('t');
-    const [draftStake, setDraftStake]           = useState('10');
+    const DEFAULT_CATEGORY = CONTRACT_CATEGORIES.find(c => c.value === 'over_under') ?? CONTRACT_CATEGORIES[0];
 
-    const category     = CONTRACT_CATEGORIES.find(c => c.value === categoryValue) ?? CONTRACT_CATEGORIES[0];
+    const [categoryValue, setCategoryValue] = useState(DEFAULT_CATEGORY.value);
+    const [side, setSide] = useState<ContractSide>('up');
+    const [lastDigit, setLastDigit] = useState(5);
+    const [duration, setDuration] = useState(DEFAULT_CATEGORY.defaultDuration);
+    const [durationUnit, setDurationUnit] = useState(DEFAULT_CATEGORY.defaultDurationUnit);
+    const [allowEquals, setAllowEquals] = useState(false);
+    const [stake, setStake] = useState(10);
+    const [editDuration, setEditDuration] = useState(false);
+    const [editStake, setEditStake] = useState(false);
+    const [draftDuration, setDraftDuration] = useState(String(DEFAULT_CATEGORY.defaultDuration));
+    const [draftDurationUnit, setDraftDurationUnit] = useState(DEFAULT_CATEGORY.defaultDurationUnit);
+    const [draftStake, setDraftStake] = useState('10');
+
+    const category = CONTRACT_CATEGORIES.find(c => c.value === categoryValue) ?? CONTRACT_CATEGORIES[0];
     const contractTypes = CONTRACT_TYPE_MAP[categoryValue];
-    const contractType  = side === 'up' ? contractTypes.up : contractTypes.down;
+    const useEquals = category.hasEquals && allowEquals;
+    const contractType = side === 'up'
+        ? (useEquals && contractTypes.upEquals ? contractTypes.upEquals : contractTypes.up)
+        : (useEquals && contractTypes.downEquals ? contractTypes.downEquals : contractTypes.down);
+
+    const activeUnit = category.durationUnits.find(u => u.value === durationUnit) ?? category.durationUnits[0];
+
+    // Keep duration/unit valid whenever the category changes (this is the main
+    // fix for the "Properties not allowed" bug — digit contracts must never be
+    // sent with a non-tick duration_unit left over from another category).
+    const handleCategoryChange = (val: string) => {
+        const cat = CONTRACT_CATEGORIES.find(c => c.value === val);
+        if (!cat) return;
+        setCategoryValue(val);
+        setSide('up');
+        setAllowEquals(false);
+        setDurationUnit(cat.defaultDurationUnit);
+        setDuration(cat.defaultDuration);
+    };
+
+    // Clamp duration if it falls outside the active unit's allowed range
+    useEffect(() => {
+        if (duration < activeUnit.min) setDuration(activeUnit.min);
+        if (duration > activeUnit.max) setDuration(activeUnit.max);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeUnit.value]);
 
     const proposalConfig = useMemo(() => {
         if (!symbol) return null;
@@ -168,21 +189,13 @@ const TradeSidebar = ({ digitFrequencies = [] }: { digitFrequencies?: number[] }
         buy(proposal.id, proposal.ask_price);
     }, [proposal, isBuying, buy]);
 
-    const handleCategoryChange = (val: string) => {
-        setCategoryValue(val);
-        setSide('up');
-        const cat = CONTRACT_CATEGORIES.find(c => c.value === val);
-        if (cat) setDurationUnit(cat.defaultDurationUnit);
-    };
-
-    const durationLabel = DURATION_UNITS.find(u => u.value === durationUnit)?.label ?? 'Ticks';
     const payoutAmount = proposal?.payout ? Number(proposal.payout).toFixed(2) : null;
     const hasError = !!proposalError || !!buyError;
 
     return (
         <div className='trade-sidebar'>
 
-            {/* ── Contract type tabs ── */}
+            {/* ── Contract type pills ── */}
             <div className='trade-sidebar__tabs'>
                 {CONTRACT_CATEGORIES.map(cat => (
                     <button
@@ -195,6 +208,16 @@ const TradeSidebar = ({ digitFrequencies = [] }: { digitFrequencies?: number[] }
                     </button>
                 ))}
             </div>
+
+            {/* ── How to trade link ── */}
+            <a
+                className='trade-sidebar__help-link'
+                href={HELP_URL_MAP[categoryValue]}
+                target='_blank'
+                rel='noopener noreferrer'
+            >
+                How to trade {category.label}? <span className='trade-sidebar__help-arrow'>›</span>
+            </a>
 
             {/* ── Up / Down toggle ── */}
             <div className='trade-sidebar__toggle'>
@@ -235,7 +258,8 @@ const TradeSidebar = ({ digitFrequencies = [] }: { digitFrequencies?: number[] }
                             <input
                                 autoFocus
                                 type='number'
-                                min={1}
+                                min={activeUnit.min}
+                                max={activeUnit.max}
                                 className='trade-sidebar__input'
                                 value={draftDuration}
                                 onChange={e => setDraftDuration(e.target.value)}
@@ -243,23 +267,37 @@ const TradeSidebar = ({ digitFrequencies = [] }: { digitFrequencies?: number[] }
                             <select
                                 className='trade-sidebar__select'
                                 value={draftDurationUnit}
-                                onChange={e => setDraftDurationUnit(e.target.value)}
+                                onChange={e => {
+                                    const nextUnit = category.durationUnits.find(u => u.value === e.target.value) ?? category.durationUnits[0];
+                                    setDraftDurationUnit(nextUnit.value);
+                                    // Re-clamp the draft value to the newly chosen unit's range
+                                    const n = Number(draftDuration) || nextUnit.min;
+                                    setDraftDuration(String(Math.min(Math.max(n, nextUnit.min), nextUnit.max)));
+                                }}
                             >
-                                {DURATION_UNITS.map(u => (
+                                {category.durationUnits.map(u => (
                                     <option key={u.value} value={u.value}>{u.label}</option>
                                 ))}
                             </select>
-                            <button className='trade-sidebar__ok-btn' onClick={() => {
-                                setDuration(Number(draftDuration) || 5);
-                                setDurationUnit(draftDurationUnit);
-                                setEditDuration(false);
-                            }}>OK</button>
+                            <button
+                                className='trade-sidebar__ok-btn'
+                                onClick={() => {
+                                    const unit = category.durationUnits.find(u => u.value === draftDurationUnit) ?? category.durationUnits[0];
+                                    const n = Number(draftDuration) || unit.min;
+                                    setDuration(Math.min(Math.max(n, unit.min), unit.max));
+                                    setDurationUnit(unit.value);
+                                    setEditDuration(false);
+                                }}
+                            >
+                                OK
+                            </button>
                         </div>
+                        <span className='trade-sidebar__hint'>{activeUnit.min}–{activeUnit.max} {activeUnit.label.toLowerCase()}</span>
                     </div>
                 ) : (
                     <div className='trade-sidebar__display-field' onClick={() => { setDraftDuration(String(duration)); setDraftDurationUnit(durationUnit); setEditDuration(true); }} role='button' tabIndex={0} onKeyDown={e => { if (e.key === 'Enter') setEditDuration(true); }}>
                         <span className='trade-sidebar__section-label'>Duration</span>
-                        <span className='trade-sidebar__display-value'>{duration} {durationLabel} <span className='ts-edit-icon'>✏</span></span>
+                        <span className='trade-sidebar__display-value'>{duration} {activeUnit.label} <span className='ts-edit-icon'>✏</span></span>
                     </div>
                 )}
             </div>
@@ -293,6 +331,13 @@ const TradeSidebar = ({ digitFrequencies = [] }: { digitFrequencies?: number[] }
                     </div>
                 )}
             </div>
+
+            {/* ── Allow equals (Rise/Fall only) ── */}
+            {category.hasEquals && (
+                <div className='trade-sidebar__section'>
+                    <ToggleSwitch checked={allowEquals} onChange={setAllowEquals} label='Allow equals' />
+                </div>
+            )}
 
             {/* ── Error ── */}
             {hasError && (
