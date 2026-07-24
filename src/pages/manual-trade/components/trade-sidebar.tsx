@@ -61,6 +61,27 @@ const CONTRACT_TYPE_MAP: Record<string, { up: string; down: string; upEquals?: s
     even_odd: { up: 'DIGITEVEN', down: 'DIGITODD' },
 };
 
+// Same rank-based color assignment used on the Dcircles page, so digit
+// coloring is consistent (and correlates with live data the same way)
+// across the whole app rather than each page inventing its own scheme.
+const getDigitColor = (digit: number, counts: number[]): string | undefined => {
+    const uniqueCounts = Array.from(new Set(counts)).sort((a, b) => b - a);
+    if (uniqueCounts.length <= 1) return undefined;
+
+    const count = counts[digit];
+
+    if (count === uniqueCounts[0]) return '#4caf50'; // most appearing
+    if (count === uniqueCounts[1]) return '#2196f3'; // second most appearing
+
+    const leastAppearing = uniqueCounts[uniqueCounts.length - 1];
+    if (count === leastAppearing && uniqueCounts.length > 2) return '#f44336'; // least appearing
+
+    const secondLeast = uniqueCounts[uniqueCounts.length - 2];
+    if (count === secondLeast && uniqueCounts.length > 3) return '#ffeb3b'; // second least appearing
+
+    return undefined;
+};
+
 // ─── Sub-components ───────────────────────────────────────────────────────────
 const DigitGrid = ({
     selected,
@@ -72,29 +93,22 @@ const DigitGrid = ({
     digitFrequencies: number[];
 }) => {
     const total = digitFrequencies.reduce((a, b) => a + b, 0) || 1;
-    const maxFreq = Math.max(...digitFrequencies, 0);
-    const minFreq = Math.min(...digitFrequencies.filter((_, i) => digitFrequencies[i] !== undefined), maxFreq);
     return (
         <div className='ts-digit-grid'>
             {Array.from({ length: 10 }, (_, i) => {
                 const freq = digitFrequencies[i] ?? 0;
                 const pct = ((freq / total) * 100).toFixed(1);
-                const isHot = freq === maxFreq && maxFreq > 0;
-                const isCold = freq === minFreq && maxFreq > 0 && minFreq !== maxFreq;
+                const color = getDigitColor(i, digitFrequencies);
                 return (
                     <button
                         key={i}
-                        className={[
-                            'ts-digit-grid__btn',
-                            selected === i && 'ts-digit-grid__btn--active',
-                            isHot && 'ts-digit-grid__btn--hot',
-                            isCold && 'ts-digit-grid__btn--cold',
-                        ].filter(Boolean).join(' ')}
+                        className={`ts-digit-grid__btn${selected === i ? ' ts-digit-grid__btn--active' : ''}`}
+                        style={color ? { borderColor: color } : undefined}
                         onClick={() => onChange(i)}
                         type='button'
                     >
                         <span className='ts-digit-grid__num'>{i}</span>
-                        <span className='ts-digit-grid__pct'>{pct}%</span>
+                        <span className='ts-digit-grid__pct' style={color ? { color } : undefined}>{pct}%</span>
                     </button>
                 );
             })}

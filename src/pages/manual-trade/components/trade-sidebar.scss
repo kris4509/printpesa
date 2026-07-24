@@ -3,8 +3,6 @@
 // ── Variables ─────────────────────────────────────────────────────────────────
 $up-color:    #4caf50;
 $down-color:  #ef5350;
-$hot-color:   #4caf50;
-$cold-color:  #ef5350;
 $radius:      6px;
 
 // ── Root ─────────────────────────────────────────────────────────────────────
@@ -309,18 +307,7 @@ $radius:      6px;
         &:hover { background: rgba(255,255,255,0.06); }
 
         &--active {
-            border-color: #fff;
-            box-shadow: 0 0 0 1px #fff;
-        }
-
-        &--hot {
-            border-color: $hot-color;
-            .ts-digit-grid__pct { color: $hot-color; font-weight: 700; }
-        }
-
-        &--cold {
-            border-color: $cold-color;
-            .ts-digit-grid__pct { color: $cold-color; font-weight: 700; }
+            box-shadow: 0 0 0 2px #fff;
         }
     }
 
