@@ -11,7 +11,8 @@ $radius:      6px;
 .trade-sidebar {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    flex: 1 1 0;
+    min-height: 0;
     width: 100%;
     background-color: var(--general-section-1);
     color: var(--text-general);
@@ -76,25 +77,37 @@ $radius:      6px;
     // ── Up / Down toggle ──────────────────────────────────────────────────────
     &__toggle {
         display: flex;
+        gap: 0.3rem;
         margin: 1.6rem 1.6rem 0;
-        border: 1px solid var(--border-normal);
-        border-radius: $radius;
-        overflow: hidden;
+        padding: 0.4rem;
+        min-height: 4.4rem;
+        background: var(--general-main-2, #eceef0);
+        border-radius: 999px;
+        box-sizing: border-box;
     }
 
     &__toggle-btn {
         flex: 1;
-        padding: 1rem 1.2rem;
+        min-height: 3.6rem;
+        padding: 0.8rem 1.2rem;
         background: transparent;
         border: none;
-        color: var(--text-less-prominent);
+        border-radius: 999px;
+        color: var(--text-general, #333);
+        opacity: 0.55;
         font-size: 1.4rem;
         font-weight: 600;
         cursor: pointer;
-        transition: background 0.15s, color 0.15s;
+        transition: background 0.15s, color 0.15s, opacity 0.15s, box-shadow 0.15s;
 
-        &--up#{&}--active  { background: rgba($up-color, 0.15); color: $up-color; }
-        &--down#{&}--active { background: rgba($down-color, 0.15); color: $down-color; }
+        &--active {
+            opacity: 1;
+            background: var(--general-section-1, #fff);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+        }
+
+        &--up#{&}--active  { color: $up-color; }
+        &--down#{&}--active { color: $down-color; }
     }
 
     // ── Generic section ───────────────────────────────────────────────────────
@@ -231,6 +244,11 @@ $radius:      6px;
         padding: 1.6rem;
         margin-top: auto;
         flex-shrink: 0;
+        position: sticky;
+        bottom: 0;
+        background: var(--general-section-1);
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+        z-index: 2;
     }
 
     &__buy-btn {
