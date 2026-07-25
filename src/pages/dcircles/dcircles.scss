@@ -20,10 +20,16 @@
         flex-shrink: 0;
         background: var(--general-main-1, #0e0e0e);
         padding: 2.4rem 4rem;
+        // The global Run bar (.main__run-strategy-wrapper) now also renders
+        // on this tab (previously Bot Builder/Chart only) and is absolutely
+        // positioned at top:1.6rem over .main — same clearance amount used
+        // on Manual Trade's right panel for the same reason.
+        padding-top: calc(2.4rem + 6.6rem);
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
         @include mobile-or-tablet-screen {
             padding: 1.6rem 2rem;
+            padding-top: calc(1.6rem + 5.2rem);
         }
 
         h1 {
