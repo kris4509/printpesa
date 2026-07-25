@@ -125,7 +125,7 @@ $radius:     6px;
         gap: 0.4rem;
         transition: border-color 0.2s;
 
-        &--open  { border-left: 3px solid #2196f3; }
+        &--open  { border-left: 3px solid var(--brand-primary); }
         &--won   { border-left: 3px solid $up-color; }
         &--lost  { border-left: 3px solid $down-color; }
     }
