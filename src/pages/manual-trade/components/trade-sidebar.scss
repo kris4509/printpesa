@@ -46,8 +46,8 @@ $radius:      6px;
 
         &--active {
             color: #fff;
-            background: var(--brand-red-coral, #ff444f);
-            border-color: var(--brand-red-coral, #ff444f);
+            background: var(--brand-primary);
+            border-color: var(--brand-primary);
             font-weight: 700;
         }
     }
@@ -178,7 +178,7 @@ $radius:      6px;
         font-size: 1.4rem;
         outline: none;
 
-        &:focus { border-color: var(--brand-secondary, #85acb0); }
+        &:focus { border-color: var(--brand-primary); }
     }
 
     &__select {
@@ -191,7 +191,7 @@ $radius:      6px;
         outline: none;
         cursor: pointer;
 
-        &:focus { border-color: var(--brand-secondary, #85acb0); }
+        &:focus { border-color: var(--brand-primary); }
     }
 
     &__currency {
@@ -204,7 +204,7 @@ $radius:      6px;
         padding: 0.8rem 1.6rem;
         border: none;
         border-radius: $radius;
-        background: var(--brand-secondary, #85acb0);
+        background: var(--brand-primary);
         color: #000;
         font-weight: 700;
         font-size: 1.3rem;
@@ -349,7 +349,7 @@ $radius:      6px;
     cursor: pointer;
     transition: background 0.2s ease;
 
-    &--on { background: var(--brand-secondary, #85acb0); }
+    &--on { background: var(--brand-primary); }
 
     &__knob {
         position: absolute;
