@@ -40,7 +40,11 @@ const diagnoseProposalError = async (config: ProposalConfig, baseMessage: string
             }, 5000);
         });
 
-        api_base.api.send({ contracts_for: config.symbol, currency: config.currency, req_id: diagReqId }).catch(() => {});
+        // NOTE: per developers.deriv.com's Comparison docs, the new API
+        // removed contracts_for's currency parameter entirely — sending it
+        // would risk the exact same "Properties not allowed" rejection this
+        // diagnostic exists to help debug.
+        api_base.api.send({ contracts_for: config.symbol, req_id: diagReqId }).catch(() => {});
         const data = await responsePromise;
 
         if (!data || data.error) {
@@ -117,7 +121,14 @@ export const useProposal = (config: ProposalConfig | null) => {
             setIsLoading(false);
         });
 
-        // Send the proposal request with subscribe: 1
+        // Send the proposal request with subscribe: 1.
+        // NOTE: this app is configured (brand.config.json ->
+        // platform.derivws.url) to hit Deriv's newer versioned API
+        // (api.derivws.com/trading/v1), which renamed proposal's `symbol`
+        // field to `underlying_symbol` — sending the old field name here
+        // is the actual, confirmed cause of "Properties not allowed: symbol"
+        // (verified against developers.deriv.com's Proposal Comparison docs
+        // and a real captured request/response pair).
         const request = {
             proposal: 1,
             subscribe: 1,
@@ -127,7 +138,7 @@ export const useProposal = (config: ProposalConfig | null) => {
             currency: config.currency,
             duration: config.duration,
             duration_unit: config.duration_unit,
-            symbol: config.symbol,
+            underlying_symbol: config.symbol,
             req_id: ownReqId,
             ...(config.barrier !== undefined && { barrier: config.barrier })
         };
