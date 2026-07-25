@@ -35,10 +35,16 @@
         flex-direction: column;
         background-color: var(--general-section-1);
         overflow: hidden; // children scroll internally
+        // The global Run bar (.main__run-strategy-wrapper) is absolutely
+        // positioned at top:1.6rem over the whole .main container and would
+        // otherwise sit on top of the category tabs / Up-Down toggle here —
+        // same clearance amount Bot Builder's own container already uses.
+        padding-top: 6.6rem;
 
         @include mobile-or-tablet-screen {
             width: 100%;
             flex: 1 1 auto;
+            padding-top: 5.2rem;
         }
     }
 }

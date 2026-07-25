@@ -10,7 +10,7 @@ const getLastDigit = (price: number, pipSize: number): number => {
  * Fetches last-digit frequencies for a given symbol.
  * Returns an array of 10 numbers (count per digit 0-9).
  */
-export const useDigitFrequencies = (symbol: string | undefined, tickCount = 100) => {
+export const useDigitFrequencies = (symbol: string | undefined, tickCount = 1000) => {
     const [frequencies, setFrequencies] = useState<number[]>(Array(10).fill(0));
     const [total, setTotal] = useState(0);
     const subscriptionIdRef = useRef<string | null>(null);

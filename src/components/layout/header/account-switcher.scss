@@ -965,7 +965,7 @@
             color: var(--text-prominent, #fff);
 
             &::after {
-                background: #2196f3;
+                background: var(--brand-primary);
             }
         }
 
@@ -1119,7 +1119,7 @@
         outline: none;
 
         &:focus {
-            border-color: #2196f3;
+            border-color: var(--brand-primary);
         }
 
         &::-webkit-inner-spin-button,
@@ -1136,7 +1136,7 @@
 
     &__reset-btn {
         padding: 0.8rem 1.2rem;
-        background: #2196f3;
+        background: var(--brand-primary);
         color: #fff;
         border: none;
         border-radius: 8px;
@@ -1147,13 +1147,13 @@
         line-height: 1.3;
         white-space: nowrap;
         min-width: 9rem;
-        transition: background 0.2s, opacity 0.2s;
+        transition: filter 0.2s, opacity 0.2s;
         display: flex;
         align-items: center;
         justify-content: center;
 
         &:hover:not(:disabled) {
-            background: #1976d2;
+            filter: brightness(0.85);
         }
 
         &:disabled {

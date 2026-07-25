@@ -38,11 +38,11 @@
     /* Brand colors - dynamically generated from brand.config.json */
     --brand-white: #ffffff;
     --brand-dark-grey: #0f172a;
-    --brand-red-coral: #3B82F6; /* legacy compatibility */
+    --brand-red-coral: #007399; /* legacy compatibility */
     --brand-orange: #8b5cf6; /* legacy compatibility */
 
     /* Dynamic brand colors (set by brand configuration) */
-    --brand-primary: #3B82F6;
+    --brand-primary: #007399;
     --brand-secondary: #64748b;
     --brand-tertiary: #8b5cf6;
     --brand-success: #10b981;
@@ -56,6 +56,13 @@
     --brand-font-secondary: Georgia, 'Times New Roman', Times, serif;
     --brand-font-monospace: 'Courier New', Courier, monospace;
     /* [/AI] */
+
+    /* Manually maintained — NOT touched by scripts/generate-brand-css.js.
+       Vivid accent sampled directly from the printpesa logo mark
+       (public/logo.png): highlights, badges, active-state rings, chart
+       glow. It fails WCAG AA as a button background with white text
+       (1.97:1) — use --brand-primary for that instead. */
+    --brand-accent: #{constants.$color-brand-blue};
 
     // App Cards gradient background
     --app-card-virtual: #{constants.$gradient-virtual};

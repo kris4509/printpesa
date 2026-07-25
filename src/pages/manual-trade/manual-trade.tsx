@@ -9,7 +9,7 @@ import './manual-trade.scss';
 const ManualTrade = observer(() => {
     const { chart_store } = useStore();
     const { symbol } = chart_store;
-    const { frequencies } = useDigitFrequencies(symbol, 100);
+    const { frequencies } = useDigitFrequencies(symbol, 1000);
 
     return (
         <div className='manual-trade'>

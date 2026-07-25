@@ -27,6 +27,13 @@ $color-blue-5: #dfeaff;
 $color-blue-6: #92b8ff;
 $color-blue-7: #182130;
 $color-blue-8: #e6f5ff;
+// Sampled directly from the printpesa logo mark (public/logo.png). The
+// vivid value is the logo's true accent — used for highlights, badges,
+// icons, active-state rings. It fails WCAG AA as a button background with
+// white text (1.97:1), so -deep is a darker shade of the same hue for
+// buttons/links/anything needing readable white-on-color text (5.37:1).
+$color-brand-blue: #00c8fa;
+$color-brand-blue-deep: #007399;
 $color-brown: #664407;
 $color-green: #85acb0;
 $color-green-1: #4bb4b3;
