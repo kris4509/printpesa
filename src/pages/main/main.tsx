@@ -40,13 +40,17 @@ import { Localize, localize } from '@deriv-com/translations';
 import { useDevice } from '@deriv-com/ui';
 import RunPanel from '../../components/run-panel';
 import ChartModal from '../chart/chart-modal';
-import Dashboard from '../dashboard';
-import BestBots from '../best-bots';
-import MarketAnalyzer from '../market-analyzer';
-import Dcircles from '../dcircles';
 import RunStrategy from '../dashboard/run-strategy';
 import './main.scss';
 
+// Only what's needed to render the shell + whichever tab loads first goes in
+// the eager bundle. Every tab page is lazy so visiting the site doesn't pay
+// for Dashboard + Best Bots + Market Analyzer + Dcircles + Manual Trade +
+// Tutorials all up front — this was previously only done for the last two.
+const Dashboard = lazy(() => import('../dashboard'));
+const BestBots = lazy(() => import('../best-bots'));
+const MarketAnalyzer = lazy(() => import('../market-analyzer'));
+const Dcircles = lazy(() => import('../dcircles'));
 const ManualTrade = lazy(() => import('../manual-trade/manual-trade'));
 const Tutorial = lazy(() => import('../tutorials'));
 
@@ -393,7 +397,9 @@ const AppWrapper = observer(() => {
                                 }
                                 id='id-dbot-dashboard'
                             >
-                                <Dashboard handleTabChange={handleTabChange} />
+                                <Suspense fallback={<ChunkLoader message={localize('Please wait, loading dashboard...')} />}>
+                                    <Dashboard handleTabChange={handleTabChange} />
+                                </Suspense>
                             </div>
                             <div
                                 label={
@@ -425,7 +431,9 @@ const AppWrapper = observer(() => {
                                 }
                                 id='id-best-bots'
                             >
-                                <BestBots />
+                                <Suspense fallback={<ChunkLoader message={localize('Please wait, loading best bots...')} />}>
+                                    <BestBots />
+                                </Suspense>
                             </div>
                             <div
                                 label={
@@ -444,7 +452,9 @@ const AppWrapper = observer(() => {
                                 }
                                 id='id-market-analyzer'
                             >
-                                <MarketAnalyzer />
+                                <Suspense fallback={<ChunkLoader message={localize('Please wait, loading market analyzer...')} />}>
+                                    <MarketAnalyzer />
+                                </Suspense>
                             </div>
                             <div
                                 label={
@@ -468,7 +478,9 @@ const AppWrapper = observer(() => {
                                 }
                                 id='id-dcircles'
                             >
-                                <Dcircles />
+                                <Suspense fallback={<ChunkLoader message={localize('Please wait, loading dcircles...')} />}>
+                                    <Dcircles />
+                                </Suspense>
                             </div>
                             <div
                                 label={
