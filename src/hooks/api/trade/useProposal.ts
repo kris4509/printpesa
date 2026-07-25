@@ -19,6 +19,56 @@ type ProposalConfig = {
 // in the app that didn't set its own req_id.
 let reqIdCounter = 900_000_000;
 
+// When a proposal is rejected with no useful detail (Deriv's error.details
+// is often just {}), ask Deriv directly what it actually allows right now
+// for this exact symbol + contract type via contracts_for — live, current
+// constraints (barrier range, min/max duration) beat guessing from static
+// docs, which can be stale or incomplete for a given market.
+const diagnoseProposalError = async (config: ProposalConfig, baseMessage: string): Promise<string> => {
+    try {
+        const diagReqId = reqIdCounter++;
+        const responsePromise = new Promise<any>(resolve => {
+            const sub = api_base.api.onMessage().subscribe(({ data }: any) => {
+                if (data.msg_type === 'contracts_for' && data.echo_req?.req_id === diagReqId) {
+                    sub.unsubscribe();
+                    resolve(data);
+                }
+            });
+            setTimeout(() => {
+                sub.unsubscribe();
+                resolve(null);
+            }, 5000);
+        });
+
+        api_base.api.send({ contracts_for: config.symbol, currency: config.currency, req_id: diagReqId }).catch(() => {});
+        const data = await responsePromise;
+
+        if (!data || data.error) {
+            return baseMessage;
+        }
+
+        const available = data.contracts_for?.available || [];
+        const match = available.find((c: any) => c.contract_type === config.contract_type);
+
+        if (!match) {
+            return `${baseMessage} (${config.symbol} does not currently offer ${config.contract_type} contracts, per contracts_for)`;
+        }
+
+        const parts: string[] = [];
+        if (match.min_contract_duration && match.max_contract_duration) {
+            parts.push(`duration ${match.min_contract_duration}\u2013${match.max_contract_duration}`);
+        }
+        if (match.barriers) {
+            parts.push(`${match.barriers} barrier(s) expected`);
+        }
+        return parts.length
+            ? `${baseMessage} \u2014 ${config.symbol}/${config.contract_type} currently allows: ${parts.join(', ')}`
+            : baseMessage;
+    } catch {
+        return baseMessage;
+    }
+};
+
 export const useProposal = (config: ProposalConfig | null) => {
     const [proposal, setProposal] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
@@ -51,6 +101,10 @@ export const useProposal = (config: ProposalConfig | null) => {
                 setError(data.error.message);
                 setProposal(null);
                 setIsLoading(false);
+                // Enrich asynchronously — don't block showing the base error.
+                diagnoseProposalError(config, data.error.message).then(enriched => {
+                    if (active) setError(enriched);
+                });
                 return;
             }
 
