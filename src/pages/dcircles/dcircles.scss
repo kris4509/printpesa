@@ -1,214 +1,666 @@
 @use 'components/shared/styles/mixins' as *;
 
-.dcircles {
+.dcircles-dashboard {
     box-sizing: border-box;
     width: 100%;
     height: var(--tab-content-height);
-    overflow: hidden;
-    background: var(--general-main-1, #0e0e0e);
-    padding: 0;
-    font-family: 'IBM Plex Sans', 'Inter', sans-serif;
-    display: flex;
-    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: linear-gradient(135deg, rgba(240, 244, 248, 0.95) 0%, rgba(224, 231, 240, 0.98) 100%);
+    color: #2b3a4a;
+    font-family: 'IBM Plex Sans', 'Inter', -apple-system, sans-serif;
+    padding: 2.4rem 3.2rem 4rem;
+
+    // Dark mode adaptive styling
+    :global(body.theme--dark) & {
+        background: linear-gradient(135deg, #0b0f19 0%, #111827 100%);
+        color: #e2e8f0;
+    }
 
     @include mobile-or-tablet-screen {
         height: var(--tab-content-height-mobile);
+        padding: 1.6rem 1.6rem 3.2rem;
     }
 
-    // ── Header (Fixed) ─────────────────────────────────────────────────
-    &__header {
-        flex-shrink: 0;
-        background: var(--general-main-1, #0e0e0e);
-        padding: 2.4rem 4rem;
-        // The global Run bar (.main__run-strategy-wrapper) now also renders
-        // on this tab (previously Bot Builder/Chart only) and is absolutely
-        // positioned at top:1.6rem over .main — same clearance amount used
-        // on Manual Trade's right panel for the same reason.
-        padding-top: calc(2.4rem + 6.6rem);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-
-        @include mobile-or-tablet-screen {
-            padding: 1.6rem 2rem;
-            padding-top: calc(1.6rem + 5.2rem);
-        }
-
-        h1 {
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: var(--text-prominent, #ffffff);
-            margin: 0 0 0.8rem;
-            letter-spacing: -0.5px;
-        }
-
-        p {
-            font-size: 1.4rem;
-            color: var(--text-less-prominent, #b0b0b0);
-            margin: 0;
-        }
-    }
-
-    // ── Scrollable Content ─────────────────────────────────────────────
-    &__scroll-container {
-        flex: 1;
-        overflow-y: auto;
-        overflow-x: hidden;
-        padding: 3.2rem 4rem;
+    // ── 1. Top Price & Selector Bar ──────────────────────────────────────────
+    &__top-bar {
         display: flex;
-        flex-direction: column;
-        gap: 3.2rem;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 1.6rem;
+        padding: 2rem 2.8rem;
+        margin-bottom: 2.4rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+
+        :global(body.theme--dark) & {
+            background: rgba(17, 24, 39, 0.75);
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        }
 
         @include mobile-or-tablet-screen {
-            padding: 2rem 2rem;
-            gap: 2.4rem;
-        }
-
-        &::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        &::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 3px;
-
-            &:hover {
-                background: rgba(255, 255, 255, 0.25);
-            }
-        }
-    }
-
-    // ── Controls (Dropdowns) ──────────────────────────────────────────
-    &__controls {
-        display: flex;
-        gap: 2.4rem;
-        flex-wrap: wrap;
-
-        @include mobile-or-tablet-screen {
+            flex-direction: column;
+            align-items: stretch;
             gap: 1.6rem;
+            padding: 1.6rem;
         }
     }
 
-    &__control-group {
+    &__price-box {
         display: flex;
         flex-direction: column;
-        gap: 0.8rem;
+    }
+
+    &__price-val {
+        font-size: 3.2rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        color: #1e293b;
+
+        :global(body.theme--dark) & {
+            color: #f8fafc;
+        }
+
+        @include mobile-or-tablet-screen {
+            font-size: 2.6rem;
+        }
+    }
+
+    &__price-label {
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: #64748b;
+        margin-top: 0.2rem;
+
+        :global(body.theme--dark) & {
+            color: #94a3b8;
+        }
+    }
+
+    &__selectors {
+        display: flex;
+        gap: 1.6rem;
+
+        @include mobile-or-tablet-screen {
+            width: 100%;
+        }
+    }
+
+    &__selector-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+
+        @include mobile-or-tablet-screen {
+            flex: 1;
+        }
 
         label {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--text-less-prominent, #b0b0b0);
+            font-size: 1.0rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #64748b;
+
+            :global(body.theme--dark) & {
+                color: #94a3b8;
+            }
         }
 
         select {
-            background: var(--general-section-1, #1a1a2e);
-            color: var(--text-prominent, #ffffff);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 0.6rem;
-            padding: 1rem 1.6rem;
-            font-size: 1.4rem;
-            min-width: 20rem;
-            cursor: pointer;
+            background: rgba(255, 255, 255, 0.9);
+            color: #1e293b;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.4rem;
+            font-size: 1.3rem;
+            font-weight: 600;
             outline: none;
-            transition: border-color 0.15s ease;
+            cursor: pointer;
+            transition: all 0.2s ease;
 
-            &:focus {
-                border-color: #7b2ff7;
+            :global(body.theme--dark) & {
+                background: rgba(30, 41, 59, 0.9);
+                color: #f8fafc;
+                border-color: rgba(255, 255, 255, 0.12);
             }
 
-            @include mobile-or-tablet-screen {
-                min-width: 100%;
-                width: 100%;
+            &:focus, &:hover {
+                border-color: #3b82f6;
             }
         }
     }
 
-    // ── Display Section (Big Circle) ──────────────────────────────────
-    &__display-section {
+    // ── 2. Grid Layout (Main Panel + Side Panel) ──────────────────────────────
+    &__grid-layout {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 2.4rem;
+
+        @media (max-width: 1024px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    &__main-col {
+        display: flex;
+        flex-direction: column;
+        gap: 2.4rem;
+    }
+
+    &__side-col {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+// ── 3. Glassmorphic Card Container ────────────────────────────────────────────
+.dc-card {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 1.8rem;
+    padding: 2.4rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    :global(body.theme--dark) & {
+        background: rgba(17, 24, 39, 0.75);
+        border-color: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+
+        &--between {
+            justify-content: space-between;
+        }
+    }
+
+    &__title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+        color: #475569;
+        margin: 0;
+
+        :global(body.theme--dark) & {
+            color: #94a3b8;
+        }
+    }
+}
+
+// ── 4. Digit Distribution Component (Image 1 Style) ─────────────────────────
+.dc-digit-row {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 1.2rem;
+    padding-bottom: 0.8rem;
+
+    @media (max-width: 768px) {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1rem;
+    }
+}
+
+.dc-digit-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+
+    &__circle {
+        width: 100%;
+        aspect-ratio: 1;
+        max-width: 6.8rem;
+        max-height: 6.8rem;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.85);
+        border: 3px solid rgba(203, 213, 225, 0.6);
+        box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.8), 0 4px 12px rgba(0, 0, 0, 0.05);
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 1.6rem;
+        justify-content: center;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+        :global(body.theme--dark) & {
+            background: rgba(30, 41, 59, 0.85);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
     }
 
-    &__label-title {
-        font-size: 1.4rem;
+    &__num {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #1e293b;
+        line-height: 1;
+
+        :global(body.theme--dark) & {
+            color: #f8fafc;
+        }
+    }
+
+    &__pct {
+        font-size: 1.0rem;
         font-weight: 600;
-        color: var(--text-less-prominent, #b0b0b0);
-        text-transform: uppercase;
-        letter-spacing: 1px;
+        color: #64748b;
+        margin-top: 0.3rem;
+
+        :global(body.theme--dark) & {
+            color: #94a3b8;
+        }
+    }
+
+    // Rank border colors
+    &--highest &__circle {
+        border-color: #00e676;
+        box-shadow: 0 0 16px rgba(0, 230, 118, 0.3);
+    }
+
+    &--second &__circle {
+        border-color: #2196f3;
+        box-shadow: 0 0 14px rgba(33, 150, 243, 0.3);
+    }
+
+    &--lowest &__circle {
+        border-color: #ff5252;
+        box-shadow: 0 0 14px rgba(255, 82, 82, 0.3);
+    }
+
+    &--second_low &__circle {
+        border-color: #ffd600;
+        box-shadow: 0 0 14px rgba(255, 214, 0, 0.3);
+    }
+
+    &--active &__circle {
+        transform: translateY(-4px) scale(1.08);
+    }
+
+    &__pointer {
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-bottom: 8px solid #ef4444;
+        margin-top: 0.6rem;
+        animation: dc-pointer-bounce 0.6s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+    }
+}
+
+@keyframes dc-pointer-bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-4px); }
+}
+
+// ── 5. Summary Ranking Cards ──────────────────────────────────────────────────
+.dc-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.2rem;
+
+    @include mobile-or-tablet-screen {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.dc-summary-card {
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 1rem;
+    padding: 1.2rem 1.6rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+
+    :global(body.theme--dark) & {
+        background: rgba(30, 41, 59, 0.5);
+        border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    &__label {
+        font-size: 1.0rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        color: #64748b;
+
+        :global(body.theme--dark) & {
+            color: #94a3b8;
+        }
+    }
+
+    &__val {
+        font-size: 1.5rem;
+        font-weight: 800;
+    }
+
+    &--highest &__val { color: #00c853; }
+    &--second &__val { color: #1e88e5; }
+    &--lowest &__val { color: #ff1744; }
+    &--second-low &__val { color: #f57f17; }
+}
+
+// ── 6. Toggle Pill Component ──────────────────────────────────────────────────
+.dc-toggle-pill {
+    display: flex;
+    background: rgba(203, 213, 225, 0.4);
+    border-radius: 999px;
+    padding: 0.3rem;
+
+    :global(body.theme--dark) & {
+        background: rgba(30, 41, 59, 0.8);
+    }
+
+    &__btn {
+        border: none;
+        background: transparent;
+        border-radius: 999px;
+        padding: 0.6rem 1.4rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #64748b;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        :global(body.theme--dark) & {
+            color: #94a3b8;
+        }
+
+        &--active {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+        }
+    }
+}
+
+// ── 7. Pattern Bars ────────────────────────────────────────────────────────────
+.dc-pattern-bars {
+    display: flex;
+    height: 4.8rem;
+    border-radius: 1.2rem;
+    overflow: hidden;
+    gap: 0.4rem;
+}
+
+.dc-bar-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: flex 0.4s ease;
+
+    &__val {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #ffffff;
+        line-height: 1;
+    }
+
+    &__lbl {
+        font-size: 1.0rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        color: rgba(255, 255, 255, 0.85);
+        margin-top: 0.2rem;
+    }
+
+    &--primary, &--rise {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    &--secondary, &--fall {
+        background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+    }
+}
+
+// ── 8. Pattern Stream & Digits Stream ─────────────────────────────────────────
+.dc-pattern-stream {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    &__label {
+        font-size: 1.0rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        color: #64748b;
+
+        :global(body.theme--dark) & {
+            color: #94a3b8;
+        }
+    }
+
+    &__grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+    }
+}
+
+.dc-pattern-bubble {
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+
+    &--even, &--over {
+        background: #10b981;
+    }
+
+    &--odd, &--under {
+        background: #f43f5e;
+    }
+}
+
+.dc-digits-stream {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    max-height: 12rem;
+    overflow-y: auto;
+    padding-right: 0.4rem;
+
+    &::-webkit-scrollbar {
+        width: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.4);
+        border-radius: 2px;
+    }
+}
+
+.dc-digit-stream-bubble {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #ffffff;
+
+    &--rise {
+        background: #10b981;
+    }
+
+    &--fall {
+        background: #f43f5e;
+    }
+}
+
+// ── 9. Side Panel Live Focus Card (Image 5 Style) ────────────────────────────
+.dc-side-card {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 1.8rem;
+    padding: 2.8rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+
+    :global(body.theme--dark) & {
+        background: rgba(17, 24, 39, 0.75);
+        border-color: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    &__label {
+        font-size: 1.2rem;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        color: #64748b;
+
+        :global(body.theme--dark) & {
+            color: #94a3b8;
+        }
     }
 
     &__big-circle {
-        width: 12rem;
-        height: 12rem;
+        position: relative;
+        width: 11rem;
+        height: 11rem;
         border-radius: 50%;
-        border: 4px solid var(--border-normal, rgba(255, 255, 255, 0.15));
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(241, 245, 249, 0.9) 100%);
+        border: 4px solid #3b82f6;
         display: flex;
         align-items: center;
         justify-content: center;
+        box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25);
+
+        :global(body.theme--dark) & {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border-color: #3b82f6;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+        }
+    }
+
+    &__big-num {
         font-size: 4.8rem;
-        font-weight: 800;
-        color: var(--text-prominent, #ffffff);
-        background: rgba(255, 255, 255, 0.02);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        transition: border-color 0.25s ease;
-    }
+        font-weight: 900;
+        color: #1e293b;
 
-    // ── Stats Grid (0-9 Circles) ──────────────────────────────────────
-    &__stats-grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 2rem;
-        width: 100%;
-        max-width: 800px;
-        margin: 0 auto;
-
-        @include mobile-or-tablet-screen {
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.6rem;
-        }
-
-        @media (max-width: 360px) {
-            grid-template-columns: repeat(2, 1fr);
+        :global(body.theme--dark) & {
+            color: #f8fafc;
         }
     }
 
-    &__stat-item {
-        display: flex;
-        justify-content: center;
-    }
-
-    &__small-circle {
-        width: 9rem;
-        height: 9rem;
+    &__pulse-ring {
+        position: absolute;
+        inset: -8px;
         border-radius: 50%;
-        border: 3px solid rgba(255, 255, 255, 0.15);
+        border: 2px solid rgba(59, 130, 246, 0.4);
+        animation: dc-pulse 2s infinite;
+    }
+
+    &__price-sub {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #334155;
+
+        :global(body.theme--dark) & {
+            color: #cbd5e1;
+        }
+    }
+
+    &__strength {
+        width: 100%;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255, 255, 255, 0.02);
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-        transition: transform 0.2s ease;
+        gap: 0.8rem;
+    }
 
-        &:hover {
-            transform: scale(1.05);
+    &__strength-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #64748b;
+
+        :global(body.theme--dark) & {
+            color: #94a3b8;
         }
     }
 
-    &__digit {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: var(--text-prominent, #ffffff);
-        line-height: 1.2;
+    &__strength-val {
+        color: #10b981;
     }
 
-    &__percentage {
-        font-size: 1.1rem;
-        color: var(--text-less-prominent, #b0b0b0);
-        margin-top: 0.2rem;
+    &__progress-track {
+        width: 100%;
+        height: 0.8rem;
+        background: rgba(203, 213, 225, 0.4);
+        border-radius: 999px;
+        overflow: hidden;
+
+        :global(body.theme--dark) & {
+            background: rgba(30, 41, 59, 0.8);
+        }
     }
+
+    &__progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+        border-radius: 999px;
+        transition: width 0.3s ease;
+    }
+
+    &__stats-box {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: 1rem;
+        padding: 1.4rem;
+
+        :global(body.theme--dark) & {
+            background: rgba(30, 41, 59, 0.5);
+        }
+    }
+
+    &__stat-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.2rem;
+        color: #64748b;
+
+        :global(body.theme--dark) & {
+            color: #94a3b8;
+        }
+
+        strong {
+            color: #1e293b;
+            :global(body.theme--dark) & {
+                color: #f8fafc;
+            }
+        }
+    }
+}
+
+@keyframes dc-pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.15); opacity: 0; }
 }
