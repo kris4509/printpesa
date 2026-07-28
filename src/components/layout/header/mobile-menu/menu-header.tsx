@@ -1,27 +1,21 @@
-// Updated to show a plain "Settings" title (matching other templates' drawer style)
 import { ComponentProps } from 'react';
 import { LabelPairedGlobeSmRegularIcon } from '@deriv/quill-icons';
 import { useTranslations } from '@deriv-com/translations';
-import { Text, useDevice } from '@deriv-com/ui';
+import { Text } from '@deriv-com/ui';
 
 type TMenuHeader = {
     hideLanguageSetting: boolean;
-    // Using ComponentProps<'button'>['onClick'] for better type safety and consistency
-    // with button onClick event handlers
     openLanguageSetting: ComponentProps<'button'>['onClick'];
 };
 
 const MenuHeader = ({ hideLanguageSetting, openLanguageSetting }: TMenuHeader) => {
     const { currentLang, localize } = useTranslations();
-    const { isDesktop } = useDevice();
 
     return (
         <div className='mobile-menu__header'>
-            {/* [AI] Show a plain "Settings" title instead of the logo + app name mark */}
-            <Text size={isDesktop ? 'sm' : 'md'} weight='bold'>
-                {localize('Settings')}
+            <Text size='md' weight='bold' className='mobile-menu__header-title'>
+                {localize('Menu')}
             </Text>
-            {/* [/AI] */}
 
             {!hideLanguageSetting && (
                 <button
@@ -32,7 +26,7 @@ const MenuHeader = ({ hideLanguageSetting, openLanguageSetting }: TMenuHeader) =
                     aria-haspopup='menu'
                 >
                     <LabelPairedGlobeSmRegularIcon />
-                    <Text className='ml-[0.4rem]' size={isDesktop ? 'xs' : 'sm'} weight='bold'>
+                    <Text className='ml-[0.4rem]' size='sm' weight='bold'>
                         {currentLang}
                     </Text>
                 </button>

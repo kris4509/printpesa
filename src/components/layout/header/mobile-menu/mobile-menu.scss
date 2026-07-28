@@ -1,24 +1,41 @@
+@use 'components/shared/styles/mixins' as *;
+
 .mobile-menu {
     height: 100%;
+    display: flex;
+    align-items: center;
 
     &__toggle {
-        padding-inline-start: 1rem;
-        padding-inline-end: 1rem;
+        padding-inline-start: 0.8rem;
+        padding-inline-end: 0.8rem;
         border-radius: 0.8rem;
         display: flex;
         align-items: center;
         justify-content: center;
         height: 100%;
         cursor: pointer;
+        background: transparent;
+        border: none;
+        outline: none;
 
         &:hover {
             background: color-mix(in srgb, var(--general-section-1) 50%, transparent);
         }
-    }
 
-    &__footer {
-        justify-content: center;
-        height: 4rem;
+        button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+
+            svg > path,
+            svg > g > path {
+                fill: var(--text-prominent, #ffffff) !important;
+            }
+        }
     }
 
     &__header {
@@ -29,10 +46,19 @@
         align-items: center;
         width: 100%;
 
+        &-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-prominent);
+        }
+
         &__language {
             display: flex;
             align-items: center;
             gap: 0.4rem;
+            background: transparent;
+            border: none;
+            cursor: pointer;
 
             svg > g > path,
             svg > path {
@@ -41,77 +67,9 @@
         }
     }
 
-    &__content {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-
-        &__platform {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-bottom: 1px solid var(--general-section-1);
-            min-height: 7rem;
-            cursor: pointer;
-        }
-
-        .deriv-context-menu {
-            box-shadow: none !important;
-        }
-
-        &__items {
-            position: relative;
-            height: 100%;
-            padding-top: 1rem;
-
-            &--padding {
-                padding-inline-start: 4.8rem;
-                padding-inline-end: 1.6rem;
-            }
-
-            &--bottom-border {
-                border-bottom: 1px solid var(--general-section-1);
-            }
-
-            &__item {
-                height: 5.6rem;
-                cursor: pointer;
-                width: 100%;
-
-                .deriv-toggle-switch {
-                    margin-left: auto;
-                    margin-right: 1.6rem;
-                    min-width: 4.4rem;
-
-                    input:checked + .deriv-toggle-switch__slider:before {
-                        transform: translate(1.8rem);
-                    }
-                }
-
-                &--active {
-                    .deriv-text {
-                        color: var(--text-prominent);
-                        font-weight: bold;
-                    }
-                }
-            }
-
-            &--right-margin {
-                margin-inline-end: 1.6rem;
-            }
-
-            &--chevron {
-                position: absolute;
-                right: 1.5rem;
-            }
-
-            &__icons {
-                g > path,
-                path {
-                    fill: var(--text-prominent);
-                }
-            }
-        }
+    &__footer {
+        justify-content: center;
+        height: 4rem;
     }
 
     &__language-drawer {
@@ -123,7 +81,6 @@
         }
 
         .languages-modal__body-button {
-            // No flag icons are shown, so the button hugs the language title.
             height: auto;
             width: 133px;
             display: flex;
@@ -131,7 +88,6 @@
             justify-content: center;
             padding: 8px 12px;
 
-            // Flag SVG icons are intentionally not shown - only language names are displayed
             svg {
                 display: none;
             }
@@ -160,7 +116,7 @@
     }
 
     .deriv-drawer__container {
-        background: var(--general-main-1);
+        background: var(--general-main-1, #0e0e10);
     }
 
     &__toggle,
@@ -170,5 +126,177 @@
         svg > path {
             fill: var(--text-prominent);
         }
+    }
+}
+
+// ── Drawer Menu Content Styling (Image 3 Style) ──────────────────────────────
+.drawer-menu-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1.6rem;
+    overflow-y: auto;
+    color: var(--text-general);
+    font-family: 'IBM Plex Sans', 'Inter', sans-serif;
+
+    &__hub-card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.2rem 1.6rem;
+        background: var(--general-section-1, rgba(255, 255, 255, 0.05));
+        border: 1px solid var(--border-normal, rgba(255, 255, 255, 0.1));
+        border-radius: 1.2rem;
+        margin-bottom: 1.6rem;
+        cursor: pointer;
+        transition: background 0.15s ease;
+
+        &:hover {
+            background: var(--general-section-2, rgba(255, 255, 255, 0.08));
+        }
+    }
+
+    &__hub-icon {
+        color: var(--brand-secondary, #3b82f6);
+        display: flex;
+        align-items: center;
+    }
+
+    &__hub-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--text-prominent);
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__hub-arrow {
+        font-size: 1.0rem;
+        color: var(--text-less-prominent);
+    }
+
+    &__section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    &__divider {
+        height: 1px;
+        background: var(--border-normal, rgba(255, 255, 255, 0.08));
+        margin: 1.6rem 0;
+    }
+
+    &__auth-section {
+        margin-top: auto;
+        padding-top: 1.6rem;
+    }
+
+    &__auth-btns {
+        display: flex;
+        gap: 1rem;
+    }
+}
+
+.drawer-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 1.4rem;
+    width: 100%;
+    padding: 1.2rem 1.4rem;
+    border-radius: 0.8rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-general);
+    font-size: 1.4rem;
+    font-weight: 500;
+    text-align: left;
+    transition: all 0.15s ease;
+
+    &:hover {
+        background: var(--general-section-1, rgba(255, 255, 255, 0.05));
+        color: var(--text-prominent);
+    }
+
+    &--active {
+        background: var(--general-section-2, rgba(59, 130, 246, 0.1));
+        color: var(--brand-secondary, #3b82f6);
+        font-weight: 700;
+
+        .drawer-menu-item__icon {
+            color: var(--brand-secondary, #3b82f6);
+        }
+    }
+
+    &--whatsapp {
+        color: #25D366;
+        &:hover {
+            background: rgba(37, 211, 102, 0.1);
+        }
+    }
+
+    &--logout {
+        color: #ef4444;
+        &:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-less-prominent);
+        width: 2rem;
+
+        &--wa {
+            color: #25D366;
+        }
+    }
+
+    &__label {
+        flex: 1;
+    }
+}
+
+.drawer-menu-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.4rem;
+
+    &__left {
+        display: flex;
+        align-items: center;
+        gap: 1.4rem;
+    }
+}
+
+.drawer-btn {
+    flex: 1;
+    padding: 1.2rem;
+    border-radius: 0.8rem;
+    border: none;
+    font-size: 1.4rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+
+    &:hover {
+        opacity: 0.9;
+    }
+
+    &--primary {
+        background: var(--brand-secondary, #3b82f6);
+        color: #ffffff;
+    }
+
+    &--secondary {
+        background: var(--general-section-1, rgba(255, 255, 255, 0.1));
+        color: var(--text-prominent);
+        border: 1px solid var(--border-normal, rgba(255, 255, 255, 0.15));
     }
 }
