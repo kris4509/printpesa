@@ -13,6 +13,7 @@ import SaveModal from '../dashboard/bot-list/save-modal';
 import BotBuilderTourHandler from '../tutorials/dbot-tours/bot-builder-tour';
 import QuickStrategy1 from './quick-strategy';
 import WorkspaceWrapper from './workspace-wrapper';
+import MiniDcirclesPanel from './mini-dcircles-panel';
 
 const BotBuilder = observer(() => {
     const { dashboard, app, run_panel, toolbar, quick_strategy, blockly_store } = useStore();
@@ -128,6 +129,8 @@ const BotBuilder = observer(() => {
             <LoadModal />
             <SaveModal />
             {is_open && <QuickStrategy1 />}
+            {/* Mini Dcircles floating panel — visible when Bot Builder is active */}
+            {active_tab === 1 && <MiniDcirclesPanel />}
         </>
     );
 });

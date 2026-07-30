@@ -34,9 +34,16 @@ interface TickData {
     direction?: 'rise' | 'fall';
 }
 
+const STORAGE_KEY_MARKET = 'dcircles_market';
+const STORAGE_KEY_TICKS = 'dcircles_ticks';
+
 const Dcircles = observer(() => {
-    const [selectedMarket, setSelectedMarket] = useState('R_100');
-    const [selectedTicks, setSelectedTicks] = useState(1000);
+    const [selectedMarket, setSelectedMarket] = useState<string>(
+        () => localStorage.getItem(STORAGE_KEY_MARKET) || 'R_100'
+    );
+    const [selectedTicks, setSelectedTicks] = useState<number>(
+        () => Number(localStorage.getItem(STORAGE_KEY_TICKS)) || 1000
+    );
     const [patternType, setPatternType] = useState<'even_odd' | 'over_under'>('even_odd');
     
     const [ticks, setTicks] = useState<TickData[]>([]);
@@ -46,6 +53,15 @@ const Dcircles = observer(() => {
 
     const subscriptionIdRef = useRef<string | null>(null);
     const wsRef = useRef<WebSocket | null>(null);
+
+    // Persist market & ticks selections to localStorage
+    useEffect(() => {
+        localStorage.setItem(STORAGE_KEY_MARKET, selectedMarket);
+    }, [selectedMarket]);
+
+    useEffect(() => {
+        localStorage.setItem(STORAGE_KEY_TICKS, String(selectedTicks));
+    }, [selectedTicks]);
 
     useEffect(() => {
         let active = true;
