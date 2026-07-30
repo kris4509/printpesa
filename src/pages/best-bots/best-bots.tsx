@@ -95,6 +95,48 @@ const BOT_CATALOGUE = [
         isPremium: false,
         xmlFile: 'under 9 bot.xml',
     },
+    {
+        id: 13,
+        name: 'Over 2 Pro Bot 💰',
+        description: 'Waits until two consecutive ticks end in 2 or lower, then buys a Digit Over 2 contract.',
+        isPremium: true,
+        xmlFile: 'Over 2 Pro Bot 💰.xml',
+    },
+    {
+        id: 14,
+        name: 'Over HitnRun V2🤖',
+        description: 'Tracks specific digit outcomes (like 5, 6, 0, or 4) to toggle logic states and place Digit Over trades.',
+        isPremium: true,
+        xmlFile: 'Over HitnRun V2🤖.xml',
+    },
+    {
+        id: 15,
+        name: 'Under HitnRun V2🤖',
+        description: 'Watches tick sequences and executes a Digit Under 8 trade whenever specific digits (like 1, 7, 4, or 9) appear.',
+        isPremium: true,
+        xmlFile: 'Under HitnRun V2🤖.xml',
+    },
+    {
+        id: 16,
+        name: 'Osam HnR🤖',
+        description: 'Automatically places a Digit Even trade on every single tick on any favourable volatility Index using 2x Martingale recovery.',
+        isPremium: true,
+        xmlFile: 'Osam HnR🤖.xml',
+    },
+    {
+        id: 17,
+        name: 'Over Destroyer V2💀',
+        description: 'Starts with Digit Over 1 trades on the favourable volatility, then dynamically shifts target barriers (Over 3 or Under 6) if consecutive losses occur.',
+        isPremium: true,
+        xmlFile: 'Over Destroyer V2💀.xml',
+    },
+    {
+        id: 18,
+        name: 'Under Destroyer V2💀',
+        description: 'Trades 1-tick Digit Under/Over contracts on favourable markets, switching predictions from Under 8 to Under 6 and Over 4 as losses occur.',
+        isPremium: true,
+        xmlFile: 'Under Destroyer V2💀.xml',
+    },
 ];
 
 
