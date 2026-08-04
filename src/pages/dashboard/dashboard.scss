@@ -107,6 +107,7 @@
     }
 }
 
+// ── Dashboard Master Styling ───────────────────────────────────────────────────
 .tab {
     &__dashboard {
         display: flex;
@@ -126,55 +127,64 @@
             margin-bottom: 2.8rem;
 
             &--listed {
-                margin-bottom: 1.6rem;
+                margin-bottom: 1.8rem;
             }
 
             .title {
                 text-align: center;
-                font-size: 2.8rem !important;
+                font-size: 3.2rem !important;
                 font-weight: 800 !important;
-                letter-spacing: -0.5px;
-                margin-bottom: 0.8rem;
-                background: linear-gradient(135deg, var(--text-prominent, #0f172a), rgba(99, 179, 237, 0.9));
+                letter-spacing: -0.6px;
+                margin-bottom: 1rem;
+                background: linear-gradient(135deg, #ffffff 30%, #63b3ed 100%);
                 -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
                 background-clip: text;
+                text-shadow: 0 4px 20px rgba(99, 179, 237, 0.25);
             }
 
             .subtitle {
                 text-align: center;
                 margin-top: 0.8rem;
                 margin-bottom: 1rem;
-                font-size: 1.3rem !important;
-                color: var(--text-less-prominent, #64748b) !important;
-                max-width: 580px;
+                font-size: 1.4rem !important;
+                color: rgba(226, 232, 240, 0.82) !important;
+                max-width: 620px;
                 margin-left: auto;
                 margin-right: auto;
-                line-height: 1.6 !important;
+                line-height: 1.65 !important;
+                letter-spacing: 0.2px;
             }
         }
 
         &__content {
             display: flex;
-            align-items: center;
-            justify-content: center;
+            align-items: flex-start;
+            justify-content: flex-start;
             min-height: var(--tab-content-height);
             flex-grow: 1;
-            background: linear-gradient(135deg, var(--general-main-1, #f8fafc) 0%, rgba(226, 232, 240, 0.5) 100%);
-            overflow: hidden;
+            background: linear-gradient(145deg, #0b132b 0%, #1c2541 50%, #0b132b 100%);
+            overflow-y: auto;
+            overflow-x: hidden;
             position: relative;
-            padding: 3rem 2rem;
+            padding: 3.6rem 3.2rem;
+            box-sizing: border-box;
 
-            // ── Floating Decorative 3D Orbs (Image 1 style) ──────────────────
+            @include mobile-or-tablet-screen {
+                padding: 2rem 1.6rem;
+            }
+
+            // Ambient background glow orbs (Image 1 inspirated)
             &::before {
                 content: '';
                 position: absolute;
-                top: 8%;
-                left: 6%;
-                width: 180px;
-                height: 180px;
+                top: 5%;
+                left: 8%;
+                width: 300px;
+                height: 300px;
                 border-radius: 50%;
-                background: radial-gradient(circle, rgba(244, 114, 182, 0.45) 0%, rgba(244, 114, 182, 0) 70%);
-                filter: blur(35px);
+                background: radial-gradient(circle, rgba(147, 51, 234, 0.28) 0%, rgba(147, 51, 234, 0) 70%);
+                filter: blur(60px);
                 pointer-events: none;
                 z-index: 0;
             }
@@ -183,57 +193,85 @@
                 content: '';
                 position: absolute;
                 bottom: 10%;
-                right: 12%;
-                width: 220px;
-                height: 220px;
+                left: 45%;
+                width: 350px;
+                height: 350px;
                 border-radius: 50%;
-                background: radial-gradient(circle, rgba(96, 165, 250, 0.45) 0%, rgba(96, 165, 250, 0) 70%);
-                filter: blur(40px);
+                background: radial-gradient(circle, rgba(14, 165, 233, 0.25) 0%, rgba(14, 165, 233, 0) 70%);
+                filter: blur(70px);
                 pointer-events: none;
                 z-index: 0;
             }
 
+            // Quick panel hero card
             .quick-panel {
                 position: relative;
                 z-index: 1;
                 width: 100%;
-                max-width: 820px;
-                background: var(--general-section-1, rgba(255, 255, 255, 0.95));
-                backdrop-filter: blur(24px);
-                -webkit-backdrop-filter: blur(24px);
-                border: 1px solid rgba(255, 255, 255, 0.8);
-                border-radius: 3.2rem;
-                padding: 4rem 3.6rem 3.2rem;
-                box-shadow: 0 24px 64px rgba(15, 23, 42, 0.08), 0 4px 16px rgba(0, 0, 0, 0.02), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-                transition: transform 0.25s ease, box-shadow 0.25s ease;
+                max-width: 860px;
+                background: rgba(15, 23, 42, 0.75);
+                backdrop-filter: blur(28px);
+                -webkit-backdrop-filter: blur(28px);
+                border: 1px solid rgba(99, 179, 237, 0.22);
+                border-radius: 2.8rem;
+                padding: 3.6rem 3.6rem 3rem;
+                box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                box-sizing: border-box;
+
+                @include mobile-or-tablet-screen {
+                    padding: 2.4rem 1.8rem;
+                    border-radius: 2rem;
+                }
 
                 &:hover {
-                    box-shadow: 0 32px 80px rgba(15, 23, 42, 0.12), 0 6px 20px rgba(0, 0, 0, 0.03);
+                    border-color: rgba(99, 179, 237, 0.4);
+                    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55), 0 0 30px rgba(99, 179, 237, 0.15);
+                }
+            }
+
+            .preview-panel {
+                flex: 1;
+                margin-left: 2.4rem;
+                z-index: 1;
+                max-width: 480px;
+
+                @include mobile-or-tablet-screen {
+                    margin-left: 0;
+                    margin-top: 2rem;
+                    max-width: 100%;
                 }
             }
         }
 
-        // Auth status pill banner below cards
+        // Auth status pill banner
         &__auth-banner {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 2.8rem auto 0;
-            padding: 0.9rem 2.4rem;
-            max-width: 480px;
-            background: linear-gradient(135deg, rgba(254, 243, 199, 0.85) 0%, rgba(253, 230, 138, 0.7) 100%);
-            border: 1px solid rgba(245, 158, 11, 0.25);
+            margin: 2.4rem auto 0;
+            padding: 1rem 2.4rem;
+            max-width: 500px;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.22) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.4);
             border-radius: 50px;
-            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.1);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.15);
             text-align: center;
 
             span {
-                font-size: 1.25rem;
-                color: #92400e;
-                line-height: 1.4;
+                font-size: 1.3rem;
+                color: #fef08a;
+                line-height: 1.45;
+                letter-spacing: 0.2px;
+
+                strong {
+                    color: #fbbf24;
+                    font-weight: 700;
+                }
             }
         }
 
+        // Action Tiles Container
         &__table {
             width: 100%;
 
@@ -241,9 +279,13 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 2.8rem;
-                padding: 1rem 0;
+                gap: 3.2rem;
+                padding: 1.2rem 0;
                 flex-wrap: wrap;
+
+                @include mobile-or-tablet-screen {
+                    gap: 1.6rem;
+                }
             }
 
             &__block {
@@ -252,154 +294,103 @@
                 align-items: center;
                 gap: 1.2rem;
                 cursor: pointer;
-                transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+                transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 
                 &:hover {
-                    transform: translateY(-6px);
+                    transform: translateY(-8px);
 
                     .tab__dashboard__table__images {
                         transform: scale(1.08);
-                        box-shadow: 0 16px 36px rgba(99, 179, 237, 0.25), 0 4px 12px rgba(0, 0, 0, 0.06);
-                        border-color: rgba(99, 179, 237, 0.6);
+                        background: linear-gradient(135deg, rgba(59, 130, 246, 0.35) 0%, rgba(147, 51, 234, 0.35) 100%);
+                        border-color: rgba(99, 179, 237, 0.8);
+                        box-shadow: 0 16px 40px rgba(59, 130, 246, 0.4), 0 0 20px rgba(99, 179, 237, 0.3);
                     }
+
+                    .dc-text {
+                        color: #ffffff !important;
+                    }
+                }
+
+                .dc-text {
+                    color: rgba(226, 232, 240, 0.9) !important;
+                    font-weight: 600 !important;
+                    font-size: 1.3rem !important;
+                    letter-spacing: 0.3px;
+                    transition: color 0.2s ease;
                 }
             }
 
+            // 3D Neon Glass Pods
             &__images {
-                width: 7.6rem;
-                height: 7.6rem;
+                width: 8.4rem;
+                height: 8.4rem;
                 border-radius: 50%;
-                background: linear-gradient(135deg, rgba(239, 246, 255, 0.9) 0%, rgba(219, 234, 254, 0.6) 100%);
-                border: 2px solid rgba(255, 255, 255, 0.9);
+                background: linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+                border: 2px solid rgba(99, 179, 237, 0.35);
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                box-shadow: 0 10px 24px rgba(148, 163, 184, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.8);
-                transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+                box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.1);
+                transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
                 padding: 0;
 
+                @include mobile-or-tablet-screen {
+                    width: 6.8rem;
+                    height: 6.8rem;
+                }
+
                 svg {
-                    width: 3.8rem;
-                    height: 3.8rem;
+                    width: 4.2rem;
+                    height: 4.2rem;
+
+                    @include mobile-or-tablet-screen {
+                        width: 3.4rem;
+                        height: 3.4rem;
+                    }
                 }
             }
         }
     }
 }
 
-.user-guide {
-    position: absolute;
-    inset-inline-end: 2.4rem;
-    top: 1.8rem;
-    z-index: 1;
-
-    @include mobile-or-tablet-screen {
-        inset-inline-end: 1.6rem;
-    }
-
-    &__button {
-        @include flex-center;
-
-        padding: 0.8rem 1.4rem;
-        border: none;
-        outline: none;
-        border-radius: 2.4rem;
-        background-color: var(--general-section-1);
-
-        @include mobile-or-tablet-screen {
-            height: 3.2rem;
-            width: 3.2rem;
-            line-height: 3.6rem;
-            text-align: center;
-            padding: 0;
-        }
-
-        &:hover {
-            cursor: pointer;
-        }
-    }
-
-    &__icon {
-        height: 24px;
-        width: 24px;
-
-        @include mobile-or-tablet-screen {
-            height: 16px;
-            width: 16px;
-        }
-    }
-
-    &__label {
-        margin-inline-start: 0.4rem;
-    }
-}
-
-.dashboard-page {
-    box-sizing: border-box;
-    width: 100%;
-    height: auto;
-    min-height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background: var(--general-main-1, #0e0e0e);
-    font-family: 'IBM Plex Sans', 'Inter', sans-serif;
-
-    &__container {
-        padding: 2rem 3rem;
-        max-width: 1400px;
-        margin: 0 auto;
-    }
+// ── Bot List Styling inside Dashboard ("Your bots") ───────────────────────────
+.dashboard-bot-list {
+    margin-top: 2.8rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
 
     &__title {
-        font-size: 2.8rem;
+        font-size: 1.6rem;
         font-weight: 700;
-        color: var(--text-prominent, #ffffff);
-        margin: 0 0 2.4rem;
-        letter-spacing: -0.5px;
+        color: #fff;
+        margin-bottom: 1.4rem;
+        letter-spacing: 0.3px;
     }
 
-    &__content {
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-    }
-
-    &__section {
+    &__table {
         width: 100%;
-    }
+        border-collapse: collapse;
 
-    &__empty {
-        text-align: center;
-        padding: 4rem 2rem;
-        color: var(--text-less-prominent, #b0b0b0);
-        font-size: 1.2rem;
-    }
-
-    // Scrollbar styling
-    &::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    &::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.15);
-        border-radius: 3px;
-
-        &:hover {
-            background: rgba(255, 255, 255, 0.25);
-        }
-    }
-
-    @media (max-width: 768px) {
-        &__container {
-            padding: 1.5rem 1rem;
+        th {
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(148, 163, 184, 0.8);
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
 
-        &__title {
-            font-size: 2rem;
+        td {
+            padding: 1.2rem 1rem;
+            font-size: 1.3rem;
+            color: rgba(226, 232, 240, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
         }
     }
 }
