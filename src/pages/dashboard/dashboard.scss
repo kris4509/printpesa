@@ -111,6 +111,7 @@
     &__dashboard {
         display: flex;
         width: 100%;
+        position: relative;
 
         &--tour-active {
             width: calc(100% - 36rem);
@@ -121,291 +122,165 @@
         }
 
         &__header {
+            text-align: center;
+            margin-bottom: 2.8rem;
+
             &--listed {
-                margin-bottom: 0.8rem;
-            }
-
-            @include mobile-screen {
-                height: auto;
-                margin-top: 0;
-            }
-
-            @include tablet-screen {
-                padding: 0.8rem;
+                margin-bottom: 1.6rem;
             }
 
             .title {
                 text-align: center;
-                height: 7.2rem;
-
-                @include mobile-or-tablet-screen {
-                    height: auto;
-                }
+                font-size: 2.8rem !important;
+                font-weight: 800 !important;
+                letter-spacing: -0.5px;
+                margin-bottom: 0.8rem;
+                background: linear-gradient(135deg, var(--text-prominent, #0f172a), rgba(99, 179, 237, 0.9));
+                -webkit-background-clip: text;
+                background-clip: text;
             }
 
             .subtitle {
                 text-align: center;
-                margin-top: 1.6rem;
+                margin-top: 0.8rem;
                 margin-bottom: 1rem;
-
-                &__has-list {
-                    text-align: center;
-                    margin-top: 0;
-
-                    @include mobile-or-tablet-screen {
-                        text-align: start;
-                        width: 85%;
-                    }
-
-                    @include tablet-screen {
-                        display: flex;
-                        justify-content: center;
-                        padding: 0.8rem 0;
-                    }
-                }
+                font-size: 1.3rem !important;
+                color: var(--text-less-prominent, #64748b) !important;
+                max-width: 580px;
+                margin-left: auto;
+                margin-right: auto;
+                line-height: 1.6 !important;
             }
         }
 
         &__content {
             display: flex;
-            align-items: flex-start;
-            height: var(--tab-content-height);
+            align-items: center;
+            justify-content: center;
+            min-height: var(--tab-content-height);
             flex-grow: 1;
-            background: var(--general-main-1);
+            background: linear-gradient(135deg, var(--general-main-1, #f8fafc) 0%, rgba(226, 232, 240, 0.5) 100%);
             overflow: hidden;
             position: relative;
+            padding: 3rem 2rem;
 
-            @include mobile-or-tablet-screen {
-                display: unset;
+            // ── Floating Decorative 3D Orbs (Image 1 style) ──────────────────
+            &::before {
+                content: '';
+                position: absolute;
+                top: 8%;
+                left: 6%;
+                width: 180px;
+                height: 180px;
+                border-radius: 50%;
+                background: radial-gradient(circle, rgba(244, 114, 182, 0.45) 0%, rgba(244, 114, 182, 0) 70%);
+                filter: blur(35px);
+                pointer-events: none;
+                z-index: 0;
             }
 
-            @include desktop-screen {
-                padding: 80px 216px 0;
-            }
-
-            @include mobile-or-tablet-screen {
-                height: calc(100vh - 19rem);
-                align-items: flex-start;
-                padding: 1.6rem;
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: 10%;
+                right: 12%;
+                width: 220px;
+                height: 220px;
+                border-radius: 50%;
+                background: radial-gradient(circle, rgba(96, 165, 250, 0.45) 0%, rgba(96, 165, 250, 0) 70%);
+                filter: blur(40px);
+                pointer-events: none;
+                z-index: 0;
             }
 
             .quick-panel {
-                flex: 1 1 44%;
-            }
+                position: relative;
+                z-index: 1;
+                width: 100%;
+                max-width: 820px;
+                background: var(--general-section-1, rgba(255, 255, 255, 0.95));
+                backdrop-filter: blur(24px);
+                -webkit-backdrop-filter: blur(24px);
+                border: 1px solid rgba(255, 255, 255, 0.8);
+                border-radius: 3.2rem;
+                padding: 4rem 3.6rem 3.2rem;
+                box-shadow: 0 24px 64px rgba(15, 23, 42, 0.08), 0 4px 16px rgba(0, 0, 0, 0.02), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+                transition: transform 0.25s ease, box-shadow 0.25s ease;
 
-            .preview-panel {
-                display: none;
-                flex: 1 1 56%;
-
-                &--active {
-                    display: block;
-
-                    @include mobile-or-tablet-screen {
-                        display: none;
-                    }
+                &:hover {
+                    box-shadow: 0 32px 80px rgba(15, 23, 42, 0.12), 0 6px 20px rgba(0, 0, 0, 0.03);
                 }
             }
         }
 
-        &__mobile-container {
-            @include flex-center;
+        // Auth status pill banner below cards
+        &__auth-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 2.8rem auto 0;
+            padding: 0.9rem 2.4rem;
+            max-width: 480px;
+            background: linear-gradient(135deg, rgba(254, 243, 199, 0.85) 0%, rgba(253, 230, 138, 0.7) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            border-radius: 50px;
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.1);
+            text-align: center;
 
-            margin: 1.4rem 0;
-            column-gap: 1rem;
-            height: 3.2rem;
-
-            &--minimized {
-                height: 3.6rem;
-            }
-        }
-
-        &__preview {
-            height: calc(100% + 2rem);
-
-            @include mobile-or-tablet-screen {
-                display: none;
-            }
-
-            @include tablet-screen {
-                display: none;
-            }
-
-            &__retrigger {
-                button {
-                    background: var(--general-section-1);
-                    border-radius: 2.4rem;
-                    outline: none;
-                    border: none;
-                    height: 4rem;
-                    padding: 1rem;
-
-                    @include flex-center;
-
-                    cursor: pointer;
-
-                    @include mobile-or-tablet-screen {
-                        width: 3.2rem;
-                        height: 3.2rem;
-                        padding: 0.8rem;
-                    }
-                }
-
-                &__text {
-                    margin-left: 0.4rem;
-                    color: var(--text-general);
-                }
-
-                &__icon {
-                    width: var(--icon-width);
-                    height: var(--icon-height);
-                }
-            }
-        }
-
-        &__home {
-            &__retrigger {
-                position: absolute;
-                top: 0;
-                inset-inline-end: 0;
-                padding: 2rem;
-
-                button {
-                    background: var(--general-section-1);
-                    border-radius: 2.4rem;
-                    outline: none;
-                    border: none;
-                    height: 4rem;
-                    padding: 1rem;
-
-                    @include flex-center;
-
-                    cursor: pointer;
-                }
-
-                &__text {
-                    margin-left: 0.4rem;
-                    color: var(--text-general);
-                }
-
-                &__icon {
-                    width: var(--icon-width);
-                    height: var(--icon-height);
-                }
-            }
-        }
-
-        &__description {
-            @include desktop-screen {
-                text-align: center;
-                margin-bottom: 4rem;
-            }
-        }
-
-        &__info-panel {
-            position: relative;
-            background-color: var(--general-main-1);
-            padding: 2.4rem;
-            margin-inline-start: 1.6rem;
-            display: none;
-            height: calc(100vh - 16.7rem);
-            overflow-y: auto;
-
-            &--active {
-                display: block;
-                width: 30%;
+            span {
+                font-size: 1.25rem;
+                color: #92400e;
+                line-height: 1.4;
             }
         }
 
         &__table {
-            &--minimized {
-                width: 100%;
-            }
+            width: 100%;
 
             &__tiles {
-                @include flex-center(center, flex-start);
-
-                word-wrap: break-word;
-                font-size: 1.3rem;
-                text-align: center;
-                padding: 2.2rem;
-
-                @include mobile-screen {
-                    flex-wrap: wrap;
-                }
-
-                @include tablet-screen {
-                    padding: 2.4rem 0 0;
-                }
-
-                &--minimized {
-                    align-items: flex-start;
-
-                    @include mobile-or-tablet-screen {
-                        display: flex;
-                        flex-flow: unset;
-                        padding: 2.4rem 0 1.6rem;
-                    }
-
-                    @include mobile-screen {
-                        justify-content: space-around;
-                    }
-                }
-            }
-
-            &__disabled-card {
-                pointer-events: none;
-                cursor: not-allowed;
-                opacity: 0.6;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 2.8rem;
+                padding: 1rem 0;
+                flex-wrap: wrap;
             }
 
             &__block {
-                @include flex-center;
-
+                display: flex;
                 flex-direction: column;
-                padding-inline-end: 4rem;
-
-                @include mobile-or-tablet-screen {
-                    padding: 1rem;
-                }
+                align-items: center;
+                gap: 1.2rem;
+                cursor: pointer;
+                transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 
                 &:hover {
-                    cursor: pointer;
-                }
+                    transform: translateY(-6px);
 
-                span {
-                    width: 9.1rem;
-                    word-wrap: break-word;
-                    text-align: center;
-
-                    @include mobile-or-tablet-screen {
-                        height: auto;
-                    }
-                }
-
-                &--minimized {
-                    @include mobile-screen {
-                        width: 6.4rem;
-                    }
-
-                    & .dc-text {
-                        width: 8rem;
-                        text-align: center;
+                    .tab__dashboard__table__images {
+                        transform: scale(1.08);
+                        box-shadow: 0 16px 36px rgba(99, 179, 237, 0.25), 0 4px 12px rgba(0, 0, 0, 0.06);
+                        border-color: rgba(99, 179, 237, 0.6);
                     }
                 }
             }
 
             &__images {
-                background-color: var(--general-section-1);
-                margin-bottom: 0.8rem;
-                border-radius: 0.8rem;
-                padding: 1.6rem;
+                width: 7.6rem;
+                height: 7.6rem;
+                border-radius: 50%;
+                background: linear-gradient(135deg, rgba(239, 246, 255, 0.9) 0%, rgba(219, 234, 254, 0.6) 100%);
+                border: 2px solid rgba(255, 255, 255, 0.9);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 10px 24px rgba(148, 163, 184, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.8);
+                transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+                padding: 0;
 
-                &--minimized {
-                    @include mobile-or-tablet-screen {
-                        width: 6.4rem;
-                        height: 6.4rem;
-                        padding: 0.8rem;
-                    }
+                svg {
+                    width: 3.8rem;
+                    height: 3.8rem;
                 }
             }
         }

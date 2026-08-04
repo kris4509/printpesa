@@ -36,7 +36,7 @@ type TCardArray = {
 };
 
 const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => {
-    const { dashboard, load_modal, quick_strategy, google_drive } = useStore();
+    const { dashboard, load_modal, quick_strategy, google_drive, client } = useStore();
     const { toggleLoadModal, setActiveTabIndex } = load_modal;
     const { is_google_drive_configured } = google_drive;
     const { isDesktop } = useDevice();
@@ -177,6 +177,13 @@ const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => 
                         </MobileFullPageModal>
                     )}
                 </div>
+                {!client.is_logged_in && (
+                    <div className='tab__dashboard__auth-banner'>
+                        <span>
+                            <strong>{localize('Not logged in.')}</strong> {localize('Log in to start trading and access all features.')}
+                        </span>
+                    </div>
+                )}
                 <DashboardBotList />
             </div>
         ),

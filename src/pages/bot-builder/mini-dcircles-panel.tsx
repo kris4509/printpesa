@@ -49,6 +49,17 @@ const MiniDcirclesPanel: React.FC = () => {
     const [currentPrice, setCurrentPrice] = useState<string>('---');
     const [pipSize, setPipSize] = useState<number>(2);
 
+    // Dragging state
+    const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const dragStartRef = useRef<{ mouseX: number; mouseY: number; posX: number; posY: number }>({
+        mouseX: 0,
+        mouseY: 0,
+        posX: 0,
+        posY: 0,
+    });
+    const panelRef = useRef<HTMLDivElement | null>(null);
+
     const subscriptionIdRef = useRef<string | null>(null);
 
     // Sync market selection changes back to localStorage
@@ -59,6 +70,63 @@ const MiniDcirclesPanel: React.FC = () => {
     useEffect(() => {
         localStorage.setItem(STORAGE_KEY_TICKS, String(selectedTicks));
     }, [selectedTicks]);
+
+    // Handle Dragging
+    const handleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
+        // Only trigger drag if clicking the header or non-interactive elements
+        const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+        const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+
+        const currentPos = position || {
+            x: window.innerWidth - 340, // default position right side
+            y: 70,
+        };
+
+        dragStartRef.current = {
+            mouseX: clientX,
+            mouseY: clientY,
+            posX: currentPos.x,
+            posY: currentPos.y,
+        };
+        setIsDragging(true);
+    };
+
+    useEffect(() => {
+        if (!isDragging) return;
+
+        const handleMouseMove = (e: MouseEvent | TouchEvent) => {
+            const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+            const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+
+            const deltaX = clientX - dragStartRef.current.mouseX;
+            const deltaY = clientY - dragStartRef.current.mouseY;
+
+            let newX = dragStartRef.current.posX + deltaX;
+            let newY = dragStartRef.current.posY + deltaY;
+
+            // Boundaries
+            newX = Math.max(10, Math.min(window.innerWidth - 330, newX));
+            newY = Math.max(10, Math.min(window.innerHeight - 400, newY));
+
+            setPosition({ x: newX, y: newY });
+        };
+
+        const handleMouseUp = () => {
+            setIsDragging(false);
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseup', handleMouseUp);
+        window.addEventListener('touchmove', handleMouseMove);
+        window.addEventListener('touchend', handleMouseUp);
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+            window.removeEventListener('touchmove', handleMouseMove);
+            window.removeEventListener('touchend', handleMouseUp);
+        };
+    }, [isDragging]);
 
     // Connect and fetch digit data when panel is open
     useEffect(() => {
@@ -212,6 +280,17 @@ const MiniDcirclesPanel: React.FC = () => {
 
     const selectedMarketLabel = MARKETS.find(m => m.value === selectedMarket)?.label || selectedMarket;
 
+    const inlineStyle = position
+        ? {
+              left: `${position.x}px`,
+              top: `${position.y}px`,
+              right: 'auto',
+              bottom: 'auto',
+              borderRadius: '16px',
+              borderRight: '1px solid rgba(99, 179, 237, 0.2)',
+          }
+        : undefined;
+
     return (
         <>
             {/* Floating Toggle Button */}
@@ -225,17 +304,32 @@ const MiniDcirclesPanel: React.FC = () => {
                 📊
             </button>
 
-            {/* Slide-in Panel */}
-            <div className={`mini-dc-panel${isOpen ? ' mini-dc-panel--open' : ''}`} aria-hidden={!isOpen}>
-                {/* Panel Header */}
-                <div className='mini-dc-panel__header'>
+            {/* Draggable Slide-in / Floating Panel */}
+            <div
+                ref={panelRef}
+                className={`mini-dc-panel${isOpen ? ' mini-dc-panel--open' : ''}${
+                    isDragging ? ' mini-dc-panel--dragging' : ''
+                }`}
+                style={inlineStyle}
+                aria-hidden={!isOpen}
+            >
+                {/* Panel Header — Drag Handle */}
+                <div
+                    className='mini-dc-panel__header'
+                    onMouseDown={handleMouseDown}
+                    onTouchStart={handleMouseDown}
+                    title='Click and drag to move panel'
+                >
                     <div className='mini-dc-panel__header-info'>
-                        <span className='mini-dc-panel__title'>LIVE ANALYSIS</span>
+                        <span className='mini-dc-panel__title'>LIVE ANALYSIS (DRAGGABLE ⣿)</span>
                         <span className='mini-dc-panel__subtitle'>Digit Distribution</span>
                     </div>
                     <button
                         className='mini-dc-panel__close'
-                        onClick={() => setIsOpen(false)}
+                        onClick={e => {
+                            e.stopPropagation();
+                            setIsOpen(false);
+                        }}
                         aria-label='Close digit panel'
                     >
                         ✕

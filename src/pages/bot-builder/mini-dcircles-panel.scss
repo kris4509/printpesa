@@ -73,9 +73,21 @@
     justify-content: space-between;
     padding: 12px 14px 10px;
     border-bottom: 1px solid rgba(99, 179, 237, 0.15);
-    background: rgba(30, 64, 175, 0.12);
-    border-radius: 16px 0 0 0;
+    background: rgba(30, 64, 175, 0.25);
+    border-radius: 16px 16px 0 0;
     flex-shrink: 0;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+
+    &:active {
+        cursor: grabbing;
+    }
+}
+
+.mini-dc-panel--dragging {
+    transition: none !important;
+    user-select: none;
 }
 
 .mini-dc-panel__header-info {
