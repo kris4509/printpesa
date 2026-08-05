@@ -2,11 +2,12 @@
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { observer } from 'mobx-react-lite';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { api_base } from '@/external/bot-skeleton';
 import { useStore } from '@/hooks/useStore';
 import { useDevice } from '@deriv-com/ui';
 import { crypto_currencies_display_order, fiat_currencies_display_order } from '../shared';
+import { isPreviewMode, PREVIEW_BASE_PATH } from '@/utils/is-preview-mode';
 import Footer from './footer';
 import AppHeader from './header';
 import Body from './main-body';
@@ -14,9 +15,14 @@ import './layout.scss';
 
 const Layout = observer(() => {
     const { isDesktop } = useDevice();
+    const location = useLocation();
     const store = useStore();
     const is_quick_strategy_active = store?.quick_strategy?.is_open;
-    const isCallbackPage = window.location.pathname === '/callback';
+    const currentPath = isPreviewMode()
+        ? location.pathname.replace(PREVIEW_BASE_PATH, '')
+        : location.pathname;
+    const isCallbackPage = currentPath === '/callback';
+    const isLandingPage = currentPath === '' || currentPath === '/';
 
     const checkClientAccount = JSON.parse(localStorage.getItem('clientAccounts') ?? '{}');
     const getQueryParams = new URLSearchParams(window.location.search);
@@ -149,11 +155,11 @@ const Layout = observer(() => {
                 'quick-strategy-active': is_quick_strategy_active && !isDesktop,
             })}
         >
-            {!isCallbackPage && <AppHeader isAuthenticating={isAuthenticating || !isInitialAuthCheckComplete} />}
+            {!isCallbackPage && !isLandingPage && <AppHeader isAuthenticating={isAuthenticating || !isInitialAuthCheckComplete} />}
             <Body>
                 <Outlet />
             </Body>
-            {!isCallbackPage && isDesktop && <Footer />}
+            {!isCallbackPage && !isLandingPage && isDesktop && <Footer />}
         </div>
     );
 });
