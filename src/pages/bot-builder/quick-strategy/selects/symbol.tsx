@@ -41,6 +41,7 @@ const SymbolSelect: React.FC = () => {
     const [input_value, setInputValue] = useState({ text: '', value: '' });
     const [last_selected_symbol, setLastSelectedSymbol] = useState({ text: '', value: '' });
     const [syncHint, setSyncHint] = useState('');
+    const syncTimeoutRef = React.useRef<number | null>(null);
     const { setFieldValue, values } = useFormikContext<TFormData>();
     const is_strategy_accumulator = V2_QS_STRATEGIES.includes(selected_strategy);
 
@@ -78,7 +79,21 @@ const SymbolSelect: React.FC = () => {
         if (selected_symbol) {
             setInputValue({ text: selected_symbol.text, value: selected_symbol.value });
         }
-    }, [symbols, values.symbol, setInputValue]);
+
+        const marketCode = localStorage.getItem('dcircles_market');
+        if (marketCode && marketCode !== values.symbol) {
+            const selected_symbol_for_market = symbols.find(symbol => symbol.value === marketCode);
+            if (selected_symbol_for_market) {
+                setFieldValue('symbol', marketCode);
+                setValue('symbol', marketCode);
+                setSyncHint('Market synced from Dcircles');
+                if (syncTimeoutRef.current) {
+                    window.clearTimeout(syncTimeoutRef.current);
+                }
+                syncTimeoutRef.current = window.setTimeout(() => setSyncHint(''), 4000);
+            }
+        }
+    }, [symbols, values.symbol, setFieldValue, setValue]);
 
     useEffect(() => {
         const syncMarket = (market: string | null) => {
@@ -94,7 +109,10 @@ const SymbolSelect: React.FC = () => {
 
         const showSyncHint = () => {
             setSyncHint('Market synced from Dcircles');
-            window.setTimeout(() => setSyncHint(''), 4000);
+            if (syncTimeoutRef.current) {
+                window.clearTimeout(syncTimeoutRef.current);
+            }
+            syncTimeoutRef.current = window.setTimeout(() => setSyncHint(''), 4000);
         };
 
         const handleStorage = (event: StorageEvent) => {
@@ -117,6 +135,9 @@ const SymbolSelect: React.FC = () => {
         return () => {
             window.removeEventListener('storage', handleStorage);
             window.removeEventListener('dcircles_market_change', handleCustomEvent);
+            if (syncTimeoutRef.current) {
+                window.clearTimeout(syncTimeoutRef.current);
+            }
         };
     }, [symbols, values.symbol, setFieldValue, setValue]);
 
