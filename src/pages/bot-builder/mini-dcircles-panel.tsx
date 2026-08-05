@@ -329,8 +329,17 @@ const MiniDcirclesPanel: React.FC = () => {
                     <button
                         className='mini-dc-panel__close'
                         onMouseDown={e => e.stopPropagation()}
+                        onPointerDown={e => e.stopPropagation()}
                         onTouchStart={e => e.stopPropagation()}
                         onClick={e => {
+                            e.stopPropagation();
+                            setIsOpen(false);
+                        }}
+                        onPointerUp={e => {
+                            e.stopPropagation();
+                            setIsOpen(false);
+                        }}
+                        onTouchEnd={e => {
                             e.stopPropagation();
                             setIsOpen(false);
                         }}
