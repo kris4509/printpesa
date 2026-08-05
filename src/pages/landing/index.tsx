@@ -5,6 +5,7 @@ import { generateOAuthURL } from '@/components/shared';
 import { api_base } from '@/external/bot-skeleton';
 import { cleanupUrl, handleOAuthCallback } from '@/external/deriv-core';
 import { DerivWSAccountsService } from '@/services/derivws-accounts.service';
+import { isPreviewMode, PREVIEW_BASE_PATH } from '@/utils/is-preview-mode';
 import Button from '@/components/shared_ui/button';
 import './landing.scss';
 
@@ -17,6 +18,11 @@ const LandingPage = () => {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const isCallback = searchParams.has('code');
+
+    const getOAuthCallbackUri = () => {
+        const basePath = isPreviewMode() ? PREVIEW_BASE_PATH : '';
+        return `${window.location.origin}${basePath}/callback`;
+    };
 
     const handleLogin = useCallback(async () => {
         setErrorMessage('');
@@ -64,7 +70,7 @@ const LandingPage = () => {
             try {
                 const authInfo = await handleOAuthCallback(window.location.href, {
                     clientId: process.env.NEXT_PUBLIC_DERIV_APP_ID || '',
-                    redirectUri: window.location.origin,
+                    redirectUri: getOAuthCallbackUri(),
                     scopes: 'trade',
                 });
 
@@ -85,7 +91,7 @@ const LandingPage = () => {
                 navigate('/dashboard', { replace: true });
             } catch (error) {
                 console.error('OAuth callback error:', error);
-                cleanupUrl(window.location.origin);
+                cleanupUrl(getOAuthCallbackUri());
                 setErrorMessage(localize('Authentication failed. Please try again or use a different account.'));
                 setAuthStatus('error');
             }
