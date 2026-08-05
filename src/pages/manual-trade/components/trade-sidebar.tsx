@@ -146,6 +146,7 @@ const TradeSidebar = ({ digitFrequencies = [] }: { digitFrequencies?: number[] }
     const [durationUnit, setDurationUnit] = useState(DEFAULT_CATEGORY.defaultDurationUnit);
     const [allowEquals, setAllowEquals] = useState(false);
     const [stake, setStake] = useState(10);
+    const [isBulkTrade, setIsBulkTrade] = useState(false);
     const [editDuration, setEditDuration] = useState(false);
     const [editStake, setEditStake] = useState(false);
     const [draftDuration, setDraftDuration] = useState(String(DEFAULT_CATEGORY.defaultDuration));
@@ -154,6 +155,12 @@ const TradeSidebar = ({ digitFrequencies = [] }: { digitFrequencies?: number[] }
 
     const category = CONTRACT_CATEGORIES.find(c => c.value === categoryValue) ?? CONTRACT_CATEGORIES[0];
     const contractTypes = CONTRACT_TYPE_MAP[categoryValue];
+    const categoryIndex = CONTRACT_CATEGORIES.findIndex(c => c.value === categoryValue);
+
+    const moveCategory = (offset: number) => {
+        const nextIndex = (categoryIndex + offset + CONTRACT_CATEGORIES.length) % CONTRACT_CATEGORIES.length;
+        handleCategoryChange(CONTRACT_CATEGORIES[nextIndex].value);
+    };
     const useEquals = category.hasEquals && allowEquals;
     const contractType = side === 'up'
         ? (useEquals && contractTypes.upEquals ? contractTypes.upEquals : contractTypes.up)
@@ -209,21 +216,26 @@ const TradeSidebar = ({ digitFrequencies = [] }: { digitFrequencies?: number[] }
     return (
         <div className='trade-sidebar'>
 
-            {/* ── Contract type pills ── */}
-            <div className='trade-sidebar__tabs'>
-                {CONTRACT_CATEGORIES.map(cat => (
-                    <button
-                        key={cat.value}
-                        className={`trade-sidebar__tab${categoryValue === cat.value ? ' trade-sidebar__tab--active' : ''}`}
-                        onClick={() => handleCategoryChange(cat.value)}
-                        type='button'
-                    >
-                        {cat.label}
-                    </button>
-                ))}
+            <div className='trade-sidebar__header'>
+                <button
+                    type='button'
+                    className='trade-sidebar__nav-btn'
+                    onClick={() => moveCategory(-1)}
+                    aria-label='Previous trade type'
+                >
+                    ‹
+                </button>
+                <span className='trade-sidebar__current-category'>{category.label}</span>
+                <button
+                    type='button'
+                    className='trade-sidebar__nav-btn'
+                    onClick={() => moveCategory(1)}
+                    aria-label='Next trade type'
+                >
+                    ›
+                </button>
             </div>
 
-            {/* ── How to trade link ── */}
             <a
                 className='trade-sidebar__help-link'
                 href={HELP_URL_MAP[categoryValue]}
@@ -317,7 +329,7 @@ const TradeSidebar = ({ digitFrequencies = [] }: { digitFrequencies?: number[] }
             </div>
 
             {/* ── Stake ── */}
-            <div className='trade-sidebar__section'>
+            <div className='trade-sidebar__section trade-sidebar__card'>
                 {editStake ? (
                     <div className='trade-sidebar__editable-block'>
                         <span className='trade-sidebar__section-label'>Stake</span>
@@ -346,9 +358,13 @@ const TradeSidebar = ({ digitFrequencies = [] }: { digitFrequencies?: number[] }
                 )}
             </div>
 
+            <div className='trade-sidebar__section trade-sidebar__card'>
+                <ToggleSwitch checked={isBulkTrade} onChange={setIsBulkTrade} label='Bulk trades' />
+            </div>
+
             {/* ── Allow equals (Rise/Fall only) ── */}
             {category.hasEquals && (
-                <div className='trade-sidebar__section'>
+                <div className='trade-sidebar__section trade-sidebar__card'>
                     <ToggleSwitch checked={allowEquals} onChange={setAllowEquals} label='Allow equals' />
                 </div>
             )}
@@ -369,24 +385,44 @@ const TradeSidebar = ({ digitFrequencies = [] }: { digitFrequencies?: number[] }
 
             {/* ── Buy button ── */}
             <div className='trade-sidebar__buy-footer'>
-                <button
-                    className={`trade-sidebar__buy-btn trade-sidebar__buy-btn--${side}`}
-                    disabled={hasError || !proposal || isBuying || isLoading}
-                    onClick={handleBuy}
-                    type='button'
-                >
-                    <span className='trade-sidebar__buy-label'>
-                        {isBuying ? 'Placing trade…' : `Buy — ${side === 'up' ? category.upLabel : category.downLabel}`}
-                    </span>
-                    {payoutAmount && !isLoading && !isBuying && (
-                        <span className='trade-sidebar__buy-payout'>
-                            Payout {payoutAmount} {currency}
+                <div className='trade-sidebar__buy-buttons'>
+                    <button
+                        className={`trade-sidebar__buy-btn trade-sidebar__buy-btn--up`}
+                        disabled={hasError || !proposal || isBuying || isLoading}
+                        onClick={handleBuy}
+                        type='button'
+                    >
+                        <span className='trade-sidebar__buy-label'>
+                            {isBuying ? 'Placing trade…' : category.upLabel}
                         </span>
-                    )}
-                    {isLoading && (
-                        <span className='trade-sidebar__buy-payout'>Calculating…</span>
-                    )}
-                </button>
+                        {payoutAmount && !isLoading && !isBuying && (
+                            <span className='trade-sidebar__buy-payout'>
+                                Payout {payoutAmount} {currency}
+                            </span>
+                        )}
+                        {isLoading && (
+                            <span className='trade-sidebar__buy-payout'>Calculating…</span>
+                        )}
+                    </button>
+                    <button
+                        className={`trade-sidebar__buy-btn trade-sidebar__buy-btn--down`}
+                        disabled={hasError || !proposal || isBuying || isLoading}
+                        onClick={handleBuy}
+                        type='button'
+                    >
+                        <span className='trade-sidebar__buy-label'>
+                            {isBuying ? 'Placing trade…' : category.downLabel}
+                        </span>
+                        {payoutAmount && !isLoading && !isBuying && (
+                            <span className='trade-sidebar__buy-payout'>
+                                Payout {payoutAmount} {currency}
+                            </span>
+                        )}
+                        {isLoading && (
+                            <span className='trade-sidebar__buy-payout'>Calculating…</span>
+                        )}
+                    </button>
+                </div>
             </div>
         </div>
     );

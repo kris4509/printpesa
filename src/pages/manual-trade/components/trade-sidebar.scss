@@ -19,37 +19,65 @@ $radius:      6px;
     overflow-x: hidden;
 
     // ── Contract type pills ───────────────────────────────────────────────────
-    &__tabs {
+    &__header {
         display: flex;
+        align-items: center;
+        justify-content: space-between;
         gap: 0.6rem;
-        padding: 1.2rem 1.6rem;
-        overflow-x: auto;
+        padding: 1.2rem 1.6rem 0.8rem;
         border-bottom: 1px solid var(--border-normal);
-        scrollbar-width: none;
-        &::-webkit-scrollbar { display: none; }
     }
 
-    &__tab {
-        flex-shrink: 0;
-        padding: 0.8rem 1.4rem;
-        background: var(--general-main-2, #0e0e10);
+    &__nav-btn {
+        width: 3rem;
+        height: 3rem;
         border: 1px solid var(--border-normal);
         border-radius: 999px;
-        color: var(--text-less-prominent);
-        font-size: 1.3rem;
-        font-weight: 500;
+        background: var(--general-main-2, #0e0e10);
+        color: var(--text-prominent);
+        font-size: 1.6rem;
+        display: grid;
+        place-items: center;
         cursor: pointer;
-        white-space: nowrap;
-        transition: color 0.2s, border-color 0.2s, background 0.2s;
+        transition: border-color 0.2s, background 0.2s;
 
-        &:hover { color: var(--text-prominent); border-color: var(--text-less-prominent); }
+        &:hover { border-color: var(--text-prominent); }
+    }
 
-        &--active {
-            color: #fff;
-            background: var(--brand-primary);
-            border-color: var(--brand-primary);
-            font-weight: 700;
-        }
+    &__current-category {
+        flex: 1;
+        text-align: center;
+        font-size: 1.4rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        color: var(--text-prominent);
+    }
+
+    &__help-link {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        margin: 0 1.6rem 1.4rem;
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: var(--text-less-prominent);
+        text-decoration: none;
+        width: fit-content;
+
+        &:hover { color: var(--text-prominent); }
+    }
+
+    &__help-arrow {
+        font-size: 1.4rem;
+        line-height: 1;
+    }
+
+    &__card {
+        background: var(--general-main-2, #0f172a);
+        border: 1px solid var(--border-normal);
+        border-radius: 1rem;
+        margin: 0 1.6rem 1.2rem;
+        padding: 1.2rem 1.4rem;
     }
 
     // ── How to trade link ─────────────────────────────────────────────────────
@@ -245,8 +273,49 @@ $radius:      6px;
         position: sticky;
         bottom: 0;
         background: var(--general-section-1);
-        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
         z-index: 2;
+    }
+
+    &__buy-buttons {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    &__buy-btn {
+        min-height: 5.2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem 1.2rem;
+        border-radius: 1rem;
+        border: none;
+        cursor: pointer;
+        color: #fff;
+        font-family: inherit;
+        transition: transform 0.1s ease, opacity 0.2s ease, filter 0.15s ease;
+        gap: 0.2rem;
+
+        &:hover:not(:disabled) { filter: brightness(1.08); }
+        &:active:not(:disabled) { transform: scale(0.98); }
+        &:disabled { opacity: 0.45; cursor: not-allowed; }
+
+        &--up { background: linear-gradient(135deg, #2e7d32, #4caf50); }
+        &--down { background: linear-gradient(135deg, #b71c1c, #ef5350); }
+    }
+
+    &__buy-label {
+        font-size: 1.35rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    &__buy-payout {
+        font-size: 1rem;
+        opacity: 0.9;
+        font-weight: 500;
     }
 
     &__buy-btn {
