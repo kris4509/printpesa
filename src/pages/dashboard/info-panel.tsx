@@ -8,6 +8,7 @@ import { useStore } from '@/hooks/useStore';
 import { LegacyClose1pxIcon } from '@deriv/quill-icons/Legacy';
 import { useDevice } from '@deriv-com/ui';
 import { SIDEBAR_INTRO } from './constants';
+import ControlCenter from '@/components/dashboard/ControlCenter';
 
 const InfoPanel = observer(() => {
     const { isDesktop } = useDevice();
@@ -53,31 +54,7 @@ const InfoPanel = observer(() => {
                 <LegacyClose1pxIcon height='18px' width='18px' fill='var(--text-prominent)' />
             </div>
 
-            {SIDEBAR_INTRO().map(sidebar_item => {
-                const { label, content, link } = sidebar_item;
-                return (
-                    <div key={`${label}-${content}`}>
-                        <Text color='prominent' lineHeight='xxl' size={isDesktop ? 'm' : 's'} weight='bold' as='h1'>
-                            {label}
-                        </Text>
-                        {content.map(text => (
-                            <Text
-                                key={`info-panel-tour${text.data}`}
-                                className={classNames('db-info-panel__card', {
-                                    'db-info-panel__content': link,
-                                })}
-                                color='prominent'
-                                lineHeight='xl'
-                                as='p'
-                                onClick={() => switchTab(link, label, text.faq_id)}
-                                size={isDesktop ? 's' : 'xxs'}
-                            >
-                                {text.data}
-                            </Text>
-                        ))}
-                    </div>
-                );
-            })}
+            <ControlCenter />
         </div>
     );
 
