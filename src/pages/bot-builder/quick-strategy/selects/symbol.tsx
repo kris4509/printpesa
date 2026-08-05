@@ -40,6 +40,7 @@ const SymbolSelect: React.FC = () => {
     const [is_input_started, setIsInputStarted] = useState(false);
     const [input_value, setInputValue] = useState({ text: '', value: '' });
     const [last_selected_symbol, setLastSelectedSymbol] = useState({ text: '', value: '' });
+    const [syncHint, setSyncHint] = useState('');
     const { setFieldValue, values } = useFormikContext<TFormData>();
     const is_strategy_accumulator = V2_QS_STRATEGIES.includes(selected_strategy);
 
@@ -81,23 +82,32 @@ const SymbolSelect: React.FC = () => {
 
     useEffect(() => {
         const syncMarket = (market: string | null) => {
-            if (!market || market === values.symbol) return;
+            if (!market || market === values.symbol) return false;
             const selected_symbol = symbols.find(symbol => symbol.value === market);
             if (selected_symbol) {
                 setFieldValue('symbol', market);
                 setValue('symbol', market);
+                return true;
             }
+            return false;
+        };
+
+        const showSyncHint = () => {
+            setSyncHint('Market synced from Dcircles');
+            window.setTimeout(() => setSyncHint(''), 4000);
         };
 
         const handleStorage = (event: StorageEvent) => {
-            if (event.key === 'dcircles_market') {
-                syncMarket(event.newValue);
+            if (event.key === 'dcircles_market' && syncMarket(event.newValue)) {
+                showSyncHint();
             }
         };
 
         const handleCustomEvent = (event: Event) => {
             const customEvent = event as CustomEvent<string>;
-            syncMarket(customEvent.detail);
+            if (syncMarket(customEvent.detail)) {
+                showSyncHint();
+            }
         };
 
         syncMarket(localStorage.getItem('dcircles_market'));
@@ -164,6 +174,11 @@ const SymbolSelect: React.FC = () => {
                             onHideDropdownList={handleHideDropdownList}
                             leading_icon={<MarketIcon type={input_value.value} size='sm' />}
                         />
+                        {syncHint && (
+                            <div className='qs__form__field__sync-hint qs__form__field__sync-hint--badge'>
+                                {syncHint}
+                            </div>
+                        )}
                     </>
                 )}
             </Field>
