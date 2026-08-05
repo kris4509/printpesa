@@ -73,6 +73,8 @@
 
         @include mobile-or-tablet-screen {
             grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 0.55rem;
+            margin-bottom: 0.7rem;
         }
     }
 
@@ -93,6 +95,11 @@
         text-align: center;
         box-shadow: inset 0 1px 2px rgba(255,255,255,0.05), 0 6px 18px rgba(0,0,0,0.08);
         min-height: 0;
+
+        @include mobile-or-tablet-screen {
+            max-width: 4.25rem;
+            padding: 0.65rem;
+        }
     }
 
     &__digit-circle--highest { border-color: #00e676; box-shadow: 0 0 18px rgba(0, 230, 118, 0.25); }
@@ -104,25 +111,42 @@
         font-size: 1.45rem;
         font-weight: 700;
         line-height: 1;
+
+        @include mobile-or-tablet-screen {
+            font-size: 1.15rem;
+        }
     }
 
     &__digit-pct {
         font-size: 0.95rem;
         color: var(--text-less-prominent);
+
+        @include mobile-or-tablet-screen {
+            font-size: 0.82rem;
+        }
     }
 
     &__summary-grid {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 0.7rem;
+
+        @include mobile-or-tablet-screen {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.55rem;
+        }
     }
 
     &__summary-card {
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 1rem;
-        padding: 0.85rem 0.75rem;
+        padding: 0.75rem 0.65rem;
         text-align: center;
+
+        @include mobile-or-tablet-screen {
+            padding: 0.65rem 0.55rem;
+        }
     }
 
     &__summary-label {
