@@ -16,6 +16,7 @@ import './app-root.scss';
 const Layout = lazy(() => import('../components/layout'));
 const AppRoot = lazy(() => import('./app-root'));
 const LandingPage = lazy(() => import('../pages/landing'));
+const CallbackPage = lazy(() => import('../pages/callback'));
 const DashboardPage = lazy(() => import('../pages/dashboard'));
 
 /**
@@ -57,7 +58,7 @@ const router = createBrowserRouter(
         >
             {/* All child routes will be passed as children to Layout */}
             <Route index element={<LandingPage />} />
-            <Route path='callback' element={<LandingPage />} />
+            <Route path='callback' element={<CallbackPage />} />
             <Route path='dashboard' element={<DashboardPage />} />
             <Route path='app' element={<AppRoot />} />
             {/* App Builder embeds the template at /preview — render the same app shell */}
