@@ -13,36 +13,57 @@ const getLastDigit = (price: number, pipSize: number): number => {
 export const useDigitFrequencies = (symbol: string | undefined, tickCount = 1000) => {
     const [frequencies, setFrequencies] = useState<number[]>(Array(10).fill(0));
     const [total, setTotal] = useState(0);
-    const subscriptionIdRef = useRef<string | null>(null);
-    const wsRef = useRef<WebSocket | null>(null);
-    const activeRef = useRef(true);
 
     useEffect(() => {
         if (!symbol) return;
-        activeRef.current = true;
-        subscriptionIdRef.current = null;
+
+        let active = true;
+        let digits: number[] = [];
+        let pipSize = 2;
+        let subscriptionId: string | null = null;
+        let ws: WebSocket | null = null;
+
         setFrequencies(Array(10).fill(0));
         setTotal(0);
 
-        const digitsRef = { current: [] as number[] };
-        const pipSizeRef = { current: 2 };
-
-        const rebuildFrequencies = (digits: number[]) => {
+        const rebuildFrequencies = (digitsList: number[]) => {
             const counts = Array(10).fill(0);
-            digits.forEach(d => { if (d >= 0 && d <= 9) counts[d]++; });
+            digitsList.forEach(d => { if (d >= 0 && d <= 9) counts[d]++; });
             setFrequencies(counts);
-            setTotal(digits.length);
+            setTotal(digitsList.length);
+        };
+
+        const handleMessage = (event: MessageEvent) => {
+            if (!active) return;
+            const data = JSON.parse(event.data);
+
+            if (data.msg_type === 'history' && data.echo_req?.ticks_history === symbol) {
+                const history = data.history;
+                pipSize = data.pip_size ?? pipSize;
+                if (history?.prices) {
+                    digits = history.prices.map((p: number) => getLastDigit(p, pipSize));
+                    rebuildFrequencies(digits);
+                }
+            }
+
+            if (data.msg_type === 'tick' && data.tick?.symbol === symbol) {
+                pipSize = data.tick.pip_size ?? pipSize;
+                const digit = getLastDigit(data.tick.quote, pipSize);
+                if (data.subscription) subscriptionId = data.subscription.id;
+                digits = [...digits, digit].slice(-tickCount);
+                rebuildFrequencies(digits);
+            }
         };
 
         const connect = async () => {
             try {
                 const api = await generateDerivApiInstance();
-                if (!activeRef.current) return;
+                if (!active) return;
 
-                const ws = api.connection as WebSocket;
-                wsRef.current = ws;
+                ws = api.connection as WebSocket;
 
-                // Request history
+                ws.addEventListener('message', handleMessage);
+
                 ws.send(JSON.stringify({
                     ticks_history: symbol,
                     adjust_start_time: 1,
@@ -52,50 +73,22 @@ export const useDigitFrequencies = (symbol: string | undefined, tickCount = 1000
                     style: 'ticks',
                 }));
 
-                // Subscribe to live ticks
                 ws.send(JSON.stringify({ ticks: symbol, subscribe: 1 }));
-
-                const handleMessage = (event: MessageEvent) => {
-                    if (!activeRef.current) return;
-                    const data = JSON.parse(event.data);
-
-                    if (data.msg_type === 'history' && data.echo_req?.ticks_history === symbol) {
-                        const history = data.history;
-                        const pipSize = data.pip_size ?? pipSizeRef.current ?? 2;
-                        pipSizeRef.current = pipSize;
-                        if (history?.prices) {
-                            digitsRef.current = history.prices.map((p: number) => getLastDigit(p, pipSize));
-                            rebuildFrequencies(digitsRef.current);
-                        }
-                    }
-
-                    if (data.msg_type === 'tick' && data.tick?.symbol === symbol) {
-                        const pipSize = data.tick.pip_size ?? pipSizeRef.current ?? 2;
-                        pipSizeRef.current = pipSize;
-                        const digit = getLastDigit(data.tick.quote, pipSize);
-                        if (data.subscription) subscriptionIdRef.current = data.subscription.id;
-                        digitsRef.current = [...digitsRef.current, digit].slice(-tickCount);
-                        rebuildFrequencies(digitsRef.current);
-                    }
-                };
-
-                ws.addEventListener('message', handleMessage);
-
-                return () => {
-                    ws.removeEventListener('message', handleMessage);
-                    if (subscriptionIdRef.current && ws.readyState === WebSocket.OPEN) {
-                        ws.send(JSON.stringify({ forget: subscriptionIdRef.current }));
-                    }
-                };
             } catch {
                 // ignore connection errors silently
             }
         };
 
-        const cleanupPromise = connect();
+        connect();
+
         return () => {
-            activeRef.current = false;
-            cleanupPromise.then(cleanup => cleanup?.());
+            active = false;
+            if (ws) {
+                ws.removeEventListener('message', handleMessage);
+                if (subscriptionId && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({ forget: subscriptionId }));
+                }
+            }
         };
     }, [symbol, tickCount]);
 
