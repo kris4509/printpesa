@@ -216,7 +216,7 @@ const TradeSidebar = ({ digitFrequencies = [] }: { digitFrequencies?: number[] }
     return (
         <div className='trade-sidebar'>
 
-            <div className='trade-sidebar__header'>
+            <div className='trade-sidebar__header trade-sidebar__card'>
                 <button
                     type='button'
                     className='trade-sidebar__nav-btn'
@@ -245,27 +245,27 @@ const TradeSidebar = ({ digitFrequencies = [] }: { digitFrequencies?: number[] }
                 How to trade {category.label}? <span className='trade-sidebar__help-arrow'>›</span>
             </a>
 
-            {/* ── Up / Down toggle ── */}
-            <div className='trade-sidebar__toggle'>
-                <button
-                    className={`trade-sidebar__toggle-btn trade-sidebar__toggle-btn--up${side === 'up' ? ' trade-sidebar__toggle-btn--active' : ''}`}
-                    onClick={() => setSide('up')}
-                    type='button'
-                >
-                    {category.upLabel}
-                </button>
-                <button
-                    className={`trade-sidebar__toggle-btn trade-sidebar__toggle-btn--down${side === 'down' ? ' trade-sidebar__toggle-btn--active' : ''}`}
-                    onClick={() => setSide('down')}
-                    type='button'
-                >
-                    {category.downLabel}
-                </button>
+            <div className='trade-sidebar__section trade-sidebar__card trade-sidebar__toggle-card'>
+                <div className='trade-sidebar__toggle'>
+                    <button
+                        className={`trade-sidebar__toggle-btn trade-sidebar__toggle-btn--up${side === 'up' ? ' trade-sidebar__toggle-btn--active' : ''}`}
+                        onClick={() => setSide('up')}
+                        type='button'
+                    >
+                        {category.upLabel}
+                    </button>
+                    <button
+                        className={`trade-sidebar__toggle-btn trade-sidebar__toggle-btn--down${side === 'down' ? ' trade-sidebar__toggle-btn--active' : ''}`}
+                        onClick={() => setSide('down')}
+                        type='button'
+                    >
+                        {category.downLabel}
+                    </button>
+                </div>
             </div>
 
-            {/* ── Digit prediction ── */}
             {category.hasDigit && (
-                <div className='trade-sidebar__section'>
+                <div className='trade-sidebar__section trade-sidebar__card trade-sidebar__digit-card'>
                     <span className='trade-sidebar__section-label'>Last digit prediction</span>
                     <DigitGrid
                         selected={lastDigit}
@@ -276,7 +276,7 @@ const TradeSidebar = ({ digitFrequencies = [] }: { digitFrequencies?: number[] }
             )}
 
             {/* ── Duration ── */}
-            <div className='trade-sidebar__section'>
+            <div className='trade-sidebar__section trade-sidebar__card'>
                 {editDuration ? (
                     <div className='trade-sidebar__editable-block'>
                         <span className='trade-sidebar__section-label'>Duration</span>

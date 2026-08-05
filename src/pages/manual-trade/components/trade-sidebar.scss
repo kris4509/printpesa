@@ -74,18 +74,26 @@ $radius:      6px;
 
     &__card {
         background: var(--general-main-2, #0f172a);
-        border: 1px solid var(--border-normal);
+        border: 1px solid rgba(148, 163, 184, 0.16);
         border-radius: 1rem;
         margin: 0 1.6rem 1.2rem;
         padding: 1.2rem 1.4rem;
     }
 
-    // ── How to trade link ─────────────────────────────────────────────────────
+    &__toggle-card {
+        margin-top: 1rem;
+        padding: 1rem 1.2rem;
+    }
+
+    &__digit-card {
+        padding-bottom: 1rem;
+    }
+
     &__help-link {
         display: flex;
         align-items: center;
         gap: 0.3rem;
-        margin: 1.2rem 1.6rem 0;
+        margin: 0 1.6rem 1.2rem;
         font-size: 1.2rem;
         font-weight: 500;
         color: var(--text-less-prominent);
@@ -103,71 +111,75 @@ $radius:      6px;
     // ── Up / Down toggle ──────────────────────────────────────────────────────
     &__toggle {
         display: flex;
-        gap: 0.3rem;
-        margin: 1.6rem 1.6rem 0;
+        gap: 0.4rem;
+        margin: 0;
         padding: 0.4rem;
-        min-height: 4.4rem;
-        background: var(--general-main-2, #eceef0);
+        min-height: auto;
+        background: rgba(15, 23, 42, 0.9);
         border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.15);
         box-sizing: border-box;
     }
 
     &__toggle-btn {
         flex: 1;
         min-height: 3.6rem;
-        padding: 0.8rem 1.2rem;
+        padding: 0.85rem 1.1rem;
         background: transparent;
-        border: none;
+        border: 1px solid transparent;
         border-radius: 999px;
-        color: var(--text-general, #333);
-        opacity: 0.55;
-        font-size: 1.4rem;
+        color: var(--text-less-prominent);
+        opacity: 0.8;
+        font-size: 1.3rem;
         font-weight: 600;
         cursor: pointer;
-        transition: background 0.15s, color 0.15s, opacity 0.15s, box-shadow 0.15s;
+        transition: background 0.15s, color 0.15s, opacity 0.15s, border-color 0.15s;
 
         &--active {
             opacity: 1;
-            background: var(--general-section-1, #fff);
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.14);
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.05);
         }
 
-        &--up#{&}--active  { color: $up-color; }
-        &--down#{&}--active { color: $down-color; }
+        &--up#{&}--active  { color: #4caf50; }
+        &--down#{&}--active { color: #ef5350; }
     }
 
     // ── Generic section ───────────────────────────────────────────────────────
     &__section {
-        padding: 1.2rem 1.6rem 0;
+        padding: 1rem 0 0;
     }
 
     &__section-label {
         display: block;
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         font-weight: 600;
         letter-spacing: 0.04em;
         text-transform: uppercase;
         color: var(--text-less-prominent);
-        margin-bottom: 0.8rem;
+        margin-bottom: 0.9rem;
     }
 
     // ── Display field (click to edit) ─────────────────────────────────────────
     &__display-field {
         display: flex;
         flex-direction: column;
-        gap: 0.4rem;
+        gap: 0.35rem;
         cursor: pointer;
         padding: 1rem 1.2rem;
-        border: 1px solid var(--border-normal);
+        border: 1px solid rgba(148, 163, 184, 0.16);
+        background: rgba(15, 23, 42, 0.95);
         border-radius: $radius;
-        transition: background 0.15s;
+        transition: background 0.15s, border-color 0.15s;
 
-        &:hover { background: rgba(255,255,255,0.04); }
+        &:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.12); }
     }
 
     &__display-value {
-        font-size: 1.5rem;
-        font-weight: 600;
+        font-size: 1.4rem;
+        font-weight: 700;
         color: var(--text-prominent);
     }
 
@@ -273,7 +285,7 @@ $radius:      6px;
         position: sticky;
         bottom: 0;
         background: var(--general-section-1);
-        box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.12);
         z-index: 2;
     }
 
@@ -289,67 +301,33 @@ $radius:      6px;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 1rem 1.2rem;
+        padding: 1rem 1rem;
         border-radius: 1rem;
         border: none;
         cursor: pointer;
         color: #fff;
         font-family: inherit;
         transition: transform 0.1s ease, opacity 0.2s ease, filter 0.15s ease;
-        gap: 0.2rem;
+        gap: 0.3rem;
 
         &:hover:not(:disabled) { filter: brightness(1.08); }
         &:active:not(:disabled) { transform: scale(0.98); }
         &:disabled { opacity: 0.45; cursor: not-allowed; }
 
-        &--up { background: linear-gradient(135deg, #2e7d32, #4caf50); }
-        &--down { background: linear-gradient(135deg, #b71c1c, #ef5350); }
+        &--up { background: linear-gradient(135deg, #1f7a1f, #43a047); }
+        &--down { background: linear-gradient(135deg, #9d1e28, #ef5350); }
     }
 
     &__buy-label {
-        font-size: 1.35rem;
+        font-size: 1.3rem;
         font-weight: 700;
         text-transform: uppercase;
     }
 
     &__buy-payout {
         font-size: 1rem;
-        opacity: 0.9;
-        font-weight: 500;
-    }
-
-    &__buy-btn {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 1.4rem 2rem;
-        border-radius: $radius;
-        border: none;
-        cursor: pointer;
-        color: #fff;
-        font-family: inherit;
-        transition: transform 0.1s ease, opacity 0.2s ease, filter 0.15s ease;
-        gap: 0.2rem;
-
-        &:hover:not(:disabled) { filter: brightness(1.08); }
-        &:active:not(:disabled) { transform: scale(0.98); }
-        &:disabled { opacity: 0.45; cursor: not-allowed; }
-
-        &--up   { background: linear-gradient(135deg, #2e7d32, #4caf50); }
-        &--down { background: linear-gradient(135deg, #b71c1c, #ef5350); }
-    }
-
-    &__buy-label {
-        font-size: 1.6rem;
-        font-weight: 700;
-    }
-
-    &__buy-payout {
-        font-size: 1.2rem;
-        opacity: 0.88;
-        font-weight: 500;
+        opacity: 0.92;
+        font-weight: 600;
     }
 }
 
