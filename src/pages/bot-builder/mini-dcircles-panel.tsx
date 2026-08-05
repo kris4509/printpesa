@@ -297,8 +297,20 @@ const MiniDcirclesPanel: React.FC = () => {
         <>
             {/* Floating Toggle Button */}
             <button
+                type='button'
                 className={`mini-dc-toggle${isOpen ? ' mini-dc-toggle--active' : ''}`}
                 onClick={() => setIsOpen(prev => !prev)}
+                onMouseDown={e => e.stopPropagation()}
+                onPointerDown={e => e.stopPropagation()}
+                onPointerUp={e => {
+                    e.stopPropagation();
+                    setIsOpen(prev => !prev);
+                }}
+                onTouchStart={e => e.stopPropagation()}
+                onTouchEnd={e => {
+                    e.stopPropagation();
+                    setIsOpen(prev => !prev);
+                }}
                 title='Digit Distribution'
                 id='mini-dc-toggle-btn'
                 aria-label='Toggle Digit Distribution Panel'
