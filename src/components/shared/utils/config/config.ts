@@ -8,7 +8,6 @@ import {
 } from '@/external/deriv-core';
 import type { AuthConfig } from '@/external/deriv-core';
 import { DerivWSAccountsService } from '@/services/derivws-accounts.service';
-import { isPreviewMode, PREVIEW_BASE_PATH } from '@/utils/is-preview-mode';
 import brandConfig from '../../../../../brand.config.json';
 
 // =============================================================================
@@ -93,11 +92,6 @@ export const getDebugServiceWorker = () => {
     return false;
 };
 
-const getOAuthRedirectUri = (): string => {
-    const basePath = isPreviewMode() ? PREVIEW_BASE_PATH : '';
-    return `${window.location.origin}${basePath}/callback`;
-};
-
 /**
  * Generates the OAuth login or sign-up URL using vendored deriv-core
  *
@@ -111,7 +105,7 @@ export const generateOAuthURL = async (prompt?: string): Promise<string> => {
 
         const config: AuthConfig = {
             clientId,
-            redirectUri: getOAuthRedirectUri(),
+            redirectUri: window.location.origin,
             scopes: 'trade',
         };
 
