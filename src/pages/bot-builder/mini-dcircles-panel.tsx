@@ -62,13 +62,15 @@ const MiniDcirclesPanel: React.FC = () => {
 
     const subscriptionIdRef = useRef<string | null>(null);
 
-    // Sync market selection changes back to localStorage
+    // Sync market selection changes back to localStorage and notify other same-tab components
     useEffect(() => {
         localStorage.setItem(STORAGE_KEY_MARKET, selectedMarket);
+        window.dispatchEvent(new CustomEvent('dcircles_market_change', { detail: selectedMarket }));
     }, [selectedMarket]);
 
     useEffect(() => {
         localStorage.setItem(STORAGE_KEY_TICKS, String(selectedTicks));
+        window.dispatchEvent(new CustomEvent('dcircles_ticks_change', { detail: selectedTicks }));
     }, [selectedTicks]);
 
     // Handle Dragging

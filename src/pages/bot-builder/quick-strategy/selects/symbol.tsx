@@ -79,6 +79,37 @@ const SymbolSelect: React.FC = () => {
         }
     }, [symbols, values.symbol, setInputValue]);
 
+    useEffect(() => {
+        const syncMarket = (market: string | null) => {
+            if (!market || market === values.symbol) return;
+            const selected_symbol = symbols.find(symbol => symbol.value === market);
+            if (selected_symbol) {
+                setFieldValue('symbol', market);
+                setValue('symbol', market);
+            }
+        };
+
+        const handleStorage = (event: StorageEvent) => {
+            if (event.key === 'dcircles_market') {
+                syncMarket(event.newValue);
+            }
+        };
+
+        const handleCustomEvent = (event: Event) => {
+            const customEvent = event as CustomEvent<string>;
+            syncMarket(customEvent.detail);
+        };
+
+        syncMarket(localStorage.getItem('dcircles_market'));
+        window.addEventListener('storage', handleStorage);
+        window.addEventListener('dcircles_market_change', handleCustomEvent);
+
+        return () => {
+            window.removeEventListener('storage', handleStorage);
+            window.removeEventListener('dcircles_market_change', handleCustomEvent);
+        };
+    }, [symbols, values.symbol, setFieldValue, setValue]);
+
     const handleFocus = () => {
         if (isDesktop && !is_input_started) {
             setIsInputStarted(true);

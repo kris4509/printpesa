@@ -54,13 +54,15 @@ const Dcircles = observer(() => {
     const subscriptionIdRef = useRef<string | null>(null);
     const wsRef = useRef<WebSocket | null>(null);
 
-    // Persist market & ticks selections to localStorage
+    // Persist market & ticks selections to localStorage and notify other same-tab components
     useEffect(() => {
         localStorage.setItem(STORAGE_KEY_MARKET, selectedMarket);
+        window.dispatchEvent(new CustomEvent('dcircles_market_change', { detail: selectedMarket }));
     }, [selectedMarket]);
 
     useEffect(() => {
         localStorage.setItem(STORAGE_KEY_TICKS, String(selectedTicks));
+        window.dispatchEvent(new CustomEvent('dcircles_ticks_change', { detail: selectedTicks }));
     }, [selectedTicks]);
 
     useEffect(() => {
