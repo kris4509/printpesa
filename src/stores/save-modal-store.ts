@@ -12,6 +12,7 @@ import {
     saveWorkspaceToRecent,
 } from '@/external/bot-skeleton';
 import { localize } from '@deriv-com/translations';
+import { botNotification } from '@/components/bot-notification/bot-notification';
 import { TStrategy } from 'Types';
 import RootStore from './root-store';
 
@@ -150,6 +151,18 @@ export default class SaveModalStore implements ISaveModalStore {
         }
         xml.setAttribute('is_dbot', 'true');
         xml.setAttribute('collection', save_as_collection ? 'true' : 'false');
+
+        // Defensive guard: block local saves when site disables them.
+        try {
+            const allow_local_save = (process.env.NEXT_PUBLIC_ALLOW_LOCAL_SAVE || '').toLowerCase() === 'true';
+            if (is_local && !allow_local_save) {
+                botNotification(localize('Saving strategies to your device has been disabled by this site.'));
+                this.setButtonStatus(button_status.NORMAL);
+                return;
+            }
+        } catch (e) {
+            // ignore and proceed to allow save if env can't be read
+        }
 
         if (is_local) {
             save(bot_name, save_as_collection, xml);

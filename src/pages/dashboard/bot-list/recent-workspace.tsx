@@ -13,7 +13,7 @@ import {
     LabelPairedPageCircleArrowRightSmRegularIcon,
     LabelPairedTrashSmRegularIcon,
 } from '@deriv/quill-icons/LabelPaired';
-import { LegacyMenuDots1pxIcon, LegacySave1pxIcon } from '@deriv/quill-icons/Legacy';
+import { LegacyMenuDots1pxIcon } from '@deriv/quill-icons/Legacy';
 import { Localize } from '@deriv-com/translations';
 import { useDevice } from '@deriv-com/ui';
 /* [AI] - Analytics event tracking removed - see migrate-docs/MONITORING_PACKAGES.md for re-implementation guide */
@@ -26,19 +26,6 @@ export const CONTEXT_MENU = [
         type: STRATEGY.OPEN,
         icon: <LabelPairedPageCircleArrowRightSmRegularIcon fill='var(--text-general)' />,
         label: <Localize i18n_default_text='Open' />,
-    },
-    {
-        type: STRATEGY.SAVE,
-        icon: (
-            <LegacySave1pxIcon
-                fill='var(--text-general)'
-                className='icon-general-fill-path'
-                iconSize='xs'
-                path=''
-                opacity={0.8}
-            />
-        ),
-        label: <Localize i18n_default_text='Save' />,
     },
     {
         type: STRATEGY.DELETE,
@@ -119,9 +106,7 @@ const RecentWorkspace = observer(({ workspace, index }: TRecentWorkspace) => {
                 await handleOpen();
                 break;
 
-            case STRATEGY.SAVE:
-                handleSave();
-                break;
+            // STRATEGY.SAVE removed: local saves disabled via UI and defensive guard
 
             case STRATEGY.DELETE:
                 onToggleDeleteDialog(true);

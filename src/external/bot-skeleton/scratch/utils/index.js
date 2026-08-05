@@ -134,6 +134,18 @@ export const cleanUpOnLoad = (blocks_to_clean, drop_event, workspace) => {
 export const save = (filename = '@deriv/bot', collection = false, xmlDom) => {
     xmlDom.setAttribute('is_dbot', 'true');
     xmlDom.setAttribute('collection', collection ? 'true' : 'false');
+    
+    // Defensive guard: prevent saving to local device when disabled by site config.
+    // Use NEXT_PUBLIC_ALLOW_LOCAL_SAVE env var; allow only when set to 'true'.
+    try {
+        const allow_local_save = (process.env.NEXT_PUBLIC_ALLOW_LOCAL_SAVE || '').toLowerCase() === 'true';
+        if (!allow_local_save) {
+            botNotification(localize('Saving strategies to your device has been disabled by this site.'));
+            return;
+        }
+    } catch (e) {
+        // If anything goes wrong reading env, fall back to allowing save to avoid breaking functionality.
+    }
 
     const data = window.Blockly.Xml.domToPrettyText(xmlDom);
     saveAs({ data, type: 'text/xml;charset=utf-8', filename: `${filename}.xml` });
