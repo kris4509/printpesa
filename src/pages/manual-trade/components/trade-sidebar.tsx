@@ -64,22 +64,36 @@ const CONTRACT_TYPE_MAP: Record<string, { up: string; down: string; upEquals?: s
 // Same rank-based color assignment used on the Dcircles page, so digit
 // coloring is consistent (and correlates with live data the same way)
 // across the whole app rather than each page inventing its own scheme.
-const getDigitColor = (digit: number, counts: number[]): string | undefined => {
+const getRankMap = (counts: number[]) => {
     const uniqueCounts = Array.from(new Set(counts)).sort((a, b) => b - a);
-    if (uniqueCounts.length <= 1) return undefined;
+    const rankMap: Array<'highest' | 'second' | 'lowest' | 'second_low' | 'neutral'> = Array(10).fill('neutral');
 
-    const count = counts[digit];
+    if (uniqueCounts.length > 1) {
+        const top1 = uniqueCounts[0];
+        const top2 = uniqueCounts[1];
+        const bot1 = uniqueCounts[uniqueCounts.length - 1];
+        const bot2 = uniqueCounts.length > 2 ? uniqueCounts[uniqueCounts.length - 2] : null;
 
-    if (count === uniqueCounts[0]) return '#4caf50'; // most appearing
-    if (count === uniqueCounts[1]) return '#2196f3'; // second most appearing
+        counts.forEach((count, digit) => {
+            if (count === top1) rankMap[digit] = 'highest';
+            else if (count === top2) rankMap[digit] = 'second';
+            else if (count === bot1 && uniqueCounts.length > 2) rankMap[digit] = 'lowest';
+            else if (bot2 !== null && count === bot2 && uniqueCounts.length > 3) rankMap[digit] = 'second_low';
+            else rankMap[digit] = 'neutral';
+        });
+    }
 
-    const leastAppearing = uniqueCounts[uniqueCounts.length - 1];
-    if (count === leastAppearing && uniqueCounts.length > 2) return '#f44336'; // least appearing
+    return rankMap;
+};
 
-    const secondLeast = uniqueCounts[uniqueCounts.length - 2];
-    if (count === secondLeast && uniqueCounts.length > 3) return '#ffeb3b'; // second least appearing
-
-    return undefined;
+const getDigitColor = (rank: 'highest' | 'second' | 'lowest' | 'second_low' | 'neutral' | undefined) => {
+    switch (rank) {
+        case 'highest': return '#4caf50';
+        case 'second': return '#2196f3';
+        case 'lowest': return '#f44336';
+        case 'second_low': return '#ffeb3b';
+        default: return undefined;
+    }
 };
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -93,12 +107,14 @@ const DigitGrid = ({
     digitFrequencies: number[];
 }) => {
     const total = digitFrequencies.reduce((a, b) => a + b, 0) || 1;
+    const rankMap = getRankMap(digitFrequencies);
+
     return (
         <div className='ts-digit-grid'>
             {Array.from({ length: 10 }, (_, i) => {
                 const freq = digitFrequencies[i] ?? 0;
                 const pct = ((freq / total) * 100).toFixed(1);
-                const color = getDigitColor(i, digitFrequencies);
+                const color = getDigitColor(rankMap[i]);
                 return (
                     <button
                         key={i}

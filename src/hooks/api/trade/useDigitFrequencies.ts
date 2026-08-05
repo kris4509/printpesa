@@ -24,7 +24,15 @@ export const useDigitFrequencies = (symbol: string | undefined, tickCount = 1000
         setFrequencies(Array(10).fill(0));
         setTotal(0);
 
-        let localDigits: number[] = [];
+        const digitsRef = { current: [] as number[] };
+        const pipSizeRef = { current: 2 };
+
+        const rebuildFrequencies = (digits: number[]) => {
+            const counts = Array(10).fill(0);
+            digits.forEach(d => { if (d >= 0 && d <= 9) counts[d]++; });
+            setFrequencies(counts);
+            setTotal(digits.length);
+        };
 
         const connect = async () => {
             try {
@@ -53,27 +61,22 @@ export const useDigitFrequencies = (symbol: string | undefined, tickCount = 1000
 
                     if (data.msg_type === 'history' && data.echo_req?.ticks_history === symbol) {
                         const history = data.history;
-                        const pipSize = data.pip_size ?? 0;
+                        const pipSize = data.pip_size ?? pipSizeRef.current ?? 2;
+                        pipSizeRef.current = pipSize;
                         if (history?.prices) {
-                            localDigits = history.prices.map((p: number) => getLastDigit(p, pipSize));
-                            rebuildFrequencies(localDigits);
+                            digitsRef.current = history.prices.map((p: number) => getLastDigit(p, pipSize));
+                            rebuildFrequencies(digitsRef.current);
                         }
                     }
 
                     if (data.msg_type === 'tick' && data.tick?.symbol === symbol) {
-                        const pipSize = data.tick.pip_size ?? 0;
+                        const pipSize = data.tick.pip_size ?? pipSizeRef.current ?? 2;
+                        pipSizeRef.current = pipSize;
                         const digit = getLastDigit(data.tick.quote, pipSize);
                         if (data.subscription) subscriptionIdRef.current = data.subscription.id;
-                        localDigits = [...localDigits, digit].slice(-tickCount);
-                        rebuildFrequencies(localDigits);
+                        digitsRef.current = [...digitsRef.current, digit].slice(-tickCount);
+                        rebuildFrequencies(digitsRef.current);
                     }
-                };
-
-                const rebuildFrequencies = (digits: number[]) => {
-                    const counts = Array(10).fill(0);
-                    digits.forEach(d => { if (d >= 0 && d <= 9) counts[d]++; });
-                    setFrequencies(counts);
-                    setTotal(digits.length);
                 };
 
                 ws.addEventListener('message', handleMessage);
