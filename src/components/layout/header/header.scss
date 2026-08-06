@@ -293,3 +293,63 @@
     from { transform: rotate(0deg); }
     to   { transform: rotate(360deg); }
 }
+
+// ── Announcements in header (replacing WhatsApp icon) ─────────────────────────
+.header-announcements {
+    display: flex;
+    align-items: center;
+    margin-inline-start: 0.8rem;
+
+    // Override absolute positioning from announcements.scss when used in header
+    .announcements {
+        position: relative;
+        inset-inline-end: unset;
+        top: unset;
+        z-index: 200;
+    }
+
+    // Make dropdown open downward from header position
+    .notifications__wrapper {
+        &--desktop,
+        &--tablet {
+            top: 4.2rem;
+            right: 0;
+        }
+    }
+}
+
+// ── Referral Button ────────────────────────────────────────────────────────────
+.header-referral-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.4rem;
+    margin-inline-end: 0.8rem;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: #ffffff !important;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    border-radius: 2rem;
+    border: none;
+    text-decoration: none !important;
+    cursor: pointer;
+    box-shadow: 0 3px 12px rgba(34, 197, 94, 0.35);
+    transition: opacity 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    white-space: nowrap;
+
+    &:hover {
+        opacity: 0.92;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(34, 197, 94, 0.45);
+    }
+
+    &:active {
+        transform: scale(0.97);
+    }
+
+    @media (max-width: 640px) {
+        font-size: 1.1rem;
+        padding: 0.5rem 1rem;
+    }
+}

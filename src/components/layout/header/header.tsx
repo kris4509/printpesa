@@ -14,8 +14,10 @@ import { AppLogo } from '../app-logo';
 import AccountSwitcher from './account-switcher';
 import MenuItems from './menu-items';
 import MobileMenu from './mobile-menu';
-import WhatsAppSupport from './whatsapp-support';
+import Announcements from '@/pages/dashboard/announcements';
 import './header.scss';
+
+const REFERRAL_URL = 'https://partner-tracking.deriv.com/click?a=26775&o=1&c=3&link_id=1';
 
 const AppHeader = observer(() => {
     const { isDesktop } = useDevice();
@@ -230,6 +232,9 @@ const AppHeader = observer(() => {
 
     if (client?.should_hide_header) return null;
 
+    const isLoggedIn = Boolean(activeLoginid && !is_account_regenerating);
+
+
     return (
         <>
             <Header
@@ -241,10 +246,30 @@ const AppHeader = observer(() => {
                 <Wrapper variant='left'>
                     <MobileMenu onLogout={handleLogout} />
                     <AppLogo />
-                    <WhatsAppSupport phoneNumber='+254707546201' />
+                    {/* Announcements bell moved here replacing WhatsApp icon */}
+                    {isLoggedIn && (
+                        <div className='header-announcements'>
+                            <Announcements
+                                is_mobile={!isDesktop}
+                                handleTabChange={() => {}}
+                            />
+                        </div>
+                    )}
                     {isDesktop ? <MenuItems /> : renderAccountSection('left')}
                 </Wrapper>
                 <Wrapper variant='right'>
+                    {/* Referral link — only shown when not logged in */}
+                    {!isLoggedIn && !isOAuthPending && !isAuthorizing && (
+                        <a
+                            href={REFERRAL_URL}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            className='header-referral-btn'
+                            title='Create a free Deriv account'
+                        >
+                            🎁 Create Account
+                        </a>
+                    )}
                     {renderAccountSection('right')}
                 </Wrapper>
             </Header>

@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ChevronRight } from 'lucide-react';
 
 const WelcomeCard: React.FC = () => {
     return (
@@ -16,7 +15,9 @@ const WelcomeCard: React.FC = () => {
                     <p className='text-sm text-gray-300 mt-1'>Your AI-powered trading companion for smarter decisions and automated trading.</p>
                 </div>
                 <div className='text-gray-400'>
-                    <ChevronRight />
+                    <svg width='20' height='20' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                        <path d='M9 18l6-6-6-6' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' />
+                    </svg>
                 </div>
             </div>
         </motion.div>
