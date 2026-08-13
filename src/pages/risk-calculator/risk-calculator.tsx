@@ -17,19 +17,44 @@ interface DayBreakdown {
 }
 
 const RiskCalculator: React.FC = () => {
-    const [startingCapitalInput, setStartingCapitalInput] = useState<string>('40');
-    const [numberOfDaysInput, setNumberOfDaysInput] = useState<string>('30');
-    const [dailyTargetInput, setDailyTargetInput] = useState<string>('9');
+    const [startingCapitalInput, setStartingCapitalInput] = useState<string>(
+        () => localStorage.getItem('risk_calc_starting_capital') || '40'
+    );
+    const [numberOfDaysInput, setNumberOfDaysInput] = useState<string>(
+        () => localStorage.getItem('risk_calc_number_of_days') || '30'
+    );
+    const [dailyTargetInput, setDailyTargetInput] = useState<string>(
+        () => localStorage.getItem('risk_calc_daily_target') || '9'
+    );
+
+    const initialCap = parseFloat(startingCapitalInput) || 40;
+    const initialDays = parseInt(numberOfDaysInput, 10) || 30;
+    const initialTarget = parseFloat(dailyTargetInput) || 9;
 
     const [appliedConfig, setAppliedConfig] = useState<{
         capital: number;
         days: number;
         targetPct: number;
     } | null>({
-        capital: 40,
-        days: 30,
-        targetPct: 9,
+        capital: initialCap,
+        days: initialDays,
+        targetPct: initialTarget,
     });
+
+    const handleCapitalChange = (val: string) => {
+        setStartingCapitalInput(val);
+        localStorage.setItem('risk_calc_starting_capital', val);
+    };
+
+    const handleDaysChange = (val: string) => {
+        setNumberOfDaysInput(val);
+        localStorage.setItem('risk_calc_number_of_days', val);
+    };
+
+    const handleTargetChange = (val: string) => {
+        setDailyTargetInput(val);
+        localStorage.setItem('risk_calc_daily_target', val);
+    };
 
     const handleCalculate = () => {
         const cap = parseFloat(startingCapitalInput);
@@ -211,7 +236,7 @@ const RiskCalculator: React.FC = () => {
                                 type='number'
                                 className='input-field'
                                 value={startingCapitalInput}
-                                onChange={e => setStartingCapitalInput(e.target.value)}
+                                onChange={e => handleCapitalChange(e.target.value)}
                                 placeholder='40'
                             />
                         </div>
@@ -226,7 +251,7 @@ const RiskCalculator: React.FC = () => {
                                 type='number'
                                 className='input-field'
                                 value={numberOfDaysInput}
-                                onChange={e => setNumberOfDaysInput(e.target.value)}
+                                onChange={e => handleDaysChange(e.target.value)}
                                 placeholder='30'
                             />
                             <span className='suffix'>days</span>
@@ -242,7 +267,7 @@ const RiskCalculator: React.FC = () => {
                                 type='number'
                                 className='input-field'
                                 value={dailyTargetInput}
-                                onChange={e => setDailyTargetInput(e.target.value)}
+                                onChange={e => handleTargetChange(e.target.value)}
                                 placeholder='9'
                             />
                             <span className='suffix'>%</span>
