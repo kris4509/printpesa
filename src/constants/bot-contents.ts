@@ -19,6 +19,7 @@ export const DBOT_TABS: TDashboardTabIndex = Object.freeze({
     DCIRCLES: 4,
     MANUAL_TRADE: 5,
     TUTORIAL: 6,
+    RISK_CALCULATOR: 7,
 });
 
 export const MAX_STRATEGIES = 10;
@@ -31,6 +32,8 @@ export const TAB_IDS = [
     'id-dcircles',
     'id-manual-trade',
     'id-tutorials',
+    'id-risk-calculator',
 ];
+
 
 export const DEBOUNCE_INTERVAL_TIME = 500;

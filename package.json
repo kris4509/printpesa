@@ -39,6 +39,8 @@
     "html-react-parser": "^5.1.18",
     "i18next": "^26.3.1",
     "js-cookie": "^3.0.5",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "localforage": "^1.10.0",
     "lucide-react": "^0.276.0",
     "lz-string": "^1.5.0",
