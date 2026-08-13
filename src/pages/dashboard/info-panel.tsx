@@ -58,17 +58,8 @@ const InfoPanel = observer(() => {
         </div>
     );
 
-    return isDesktop ? (
-        !active_tour && (
-            <div
-                className={classNames('tab__dashboard__info-panel', {
-                    'tab__dashboard__info-panel--active': is_info_panel_visible,
-                })}
-            >
-                {renderInfo()}
-            </div>
-        )
-    ) : (
+    return isDesktop ? null : (
+
         <Modal
             className='statistics__modal statistics__modal--mobile'
             is_open={is_tour_open}
