@@ -14,8 +14,18 @@ import { guide_content } from '../../tutorials/constants';
 import { performButtonAction } from './utils/accumulator-helper-functions';
 import { MessageAnnounce, TitleAnnounce } from './announcement-components';
 import AnnouncementDialog from './announcement-dialog';
-import { BOT_ANNOUNCEMENTS_LIST, TAnnouncement, TNotifications } from './config';
+import { BOT_ANNOUNCEMENTS_LIST, BUTTON_ACTION_TYPE, TAnnouncement, TAnnouncementItem, TNotifications } from './config';
+import { IconAnnounce } from './announcement-components';
 import './announcements.scss';
+
+// Shape of items returned by /api/announcements.json
+type TApiAnnouncement = {
+    id: string;
+    title: string;
+    message: string;
+    date: string;
+    type: 'info' | 'warning' | 'maintenance';
+};
 
 type TAnnouncements = {
     is_mobile?: boolean;
@@ -36,6 +46,8 @@ const Announcements = observer(({ is_mobile, is_tablet, handleTabChange }: TAnno
     const [amount_active_announce, setAmountActiveAnnounce] = React.useState(0);
     const navigate = useNavigate();
     const [notifications, setNotifications] = React.useState([] as TNotifications[]);
+    // API-fetched announcements (from /api/announcements.json)
+    const [api_announcements, setApiAnnouncements] = React.useState<TAnnouncementItem[]>([]);
 
     const action_button_class_name = 'announcements__label';
 
@@ -66,7 +78,21 @@ const Announcements = observer(({ is_mobile, is_tablet, handleTabChange }: TAnno
         }
     };
 
-    const updateNotifications = () => {
+    const buildApiNotifications = (items: TAnnouncementItem[], data: Record<string, boolean>) => {
+        return items.map(item => {
+            const is_not_read = Object.prototype.hasOwnProperty.call(data, item.id) ? data[item.id] : true;
+            return {
+                id: item.id,
+                icon: <IconAnnounce announce={is_not_read} />,
+                title: <TitleAnnounce title={item.title} announce={is_not_read} />,
+                message: <MessageAnnounce message={item.message} date={item.date} announce={is_not_read} />,
+                buttonAction: () => {},
+                actionText: '',
+            };
+        });
+    };
+
+    const updateNotifications = (extra_items: TAnnouncementItem[] = api_announcements) => {
         let data: Record<string, boolean> | null = null;
         data = JSON.parse(localStorage.getItem('bot-announcements') ?? '{}');
         const tmp_notifications: TNotifications[] = [];
@@ -80,6 +106,15 @@ const Announcements = observer(({ is_mobile, is_tablet, handleTabChange }: TAnno
             accountDate = new Date(currentAccount.created_at * 1000);
         }
 
+        // ── API announcements first (always shown, not date-filtered) ──────────
+        const api_notifications = buildApiNotifications(extra_items, data);
+        tmp_notifications.push(...api_notifications);
+        extra_items.forEach(item => {
+            const is_not_read = Object.prototype.hasOwnProperty.call(data, item.id) ? data[item.id] : true;
+            temp_localstorage_data[item.id] = is_not_read;
+        });
+
+        // ── Static hard-coded announcements ───────────────────────────────────
         BOT_ANNOUNCEMENTS_LIST.map(item => {
             let is_not_read = true;
             if (data && Object.prototype.hasOwnProperty.call(data, item.id)) {
@@ -102,10 +137,31 @@ const Announcements = observer(({ is_mobile, is_tablet, handleTabChange }: TAnno
         return temp_localstorage_data;
     };
 
+    // Fetch live announcements from /api/announcements.json
     React.useEffect(() => {
-        const temp_localstorage_data = updateNotifications();
-        storeDataInLocalStorage(temp_localstorage_data);
-        setReadAnnouncementsMap(temp_localstorage_data);
+        fetch('/api/announcements.json')
+            .then(res => (res.ok ? res.json() : []))
+            .then((items: TApiAnnouncement[]) => {
+                const mapped: TAnnouncementItem[] = items.map(item => ({
+                    id: item.id,
+                    icon: IconAnnounce,
+                    title: item.title,
+                    message: item.message,
+                    date: item.date,
+                    buttonAction: BUTTON_ACTION_TYPE.NO_ACTION,
+                    actionText: '',
+                }));
+                setApiAnnouncements(mapped);
+                const temp_localstorage_data = updateNotifications(mapped);
+                storeDataInLocalStorage(temp_localstorage_data);
+                setReadAnnouncementsMap(temp_localstorage_data);
+            })
+            .catch(() => {
+                // Fallback: load static list only
+                const temp_localstorage_data = updateNotifications([]);
+                storeDataInLocalStorage(temp_localstorage_data);
+                setReadAnnouncementsMap(temp_localstorage_data);
+            });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

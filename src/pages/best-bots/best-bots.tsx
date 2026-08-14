@@ -147,6 +147,7 @@ const STORE_BOT_NAMES = [
     'Under Destroyer V2💀',
     'Over HitnRun V2🤖',
     'Under HitnRun V2🤖',
+    'Over 2 Pro Bot 💰',
 ];
 
 
