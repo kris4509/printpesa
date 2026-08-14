@@ -139,6 +139,16 @@ const BOT_CATALOGUE = [
     },
 ];
 
+// ─── Premium Bots List for Bots Store Section
+// Only include the specific premium bots requested by the user.
+const PREMIUM_BOT_NAMES = [
+    'OVER 2 AI',
+    'Even-Odd Analyzer Pro',
+    'Over HitnRun V2🤖',
+    'Osam HnR🤖',
+    'Over Destroyer V2💀',
+];
+
 
 // ─── BotCard ──────────────────────────────────────────────────────────────────
 interface BotCardProps {
@@ -174,6 +184,8 @@ const BestBots = observer(() => {
     const { dashboard } = useStore();
     const { setActiveTab } = dashboard;
     const [loadingBotId, setLoadingBotId] = useState<number | null>(null);
+    // New state to toggle between free bots and premium bots store view
+    const [activeSection, setActiveSection] = useState<'free' | 'store'>('free');
 
     const handleLoadBot = async (bot: (typeof BOT_CATALOGUE)[number]) => {
         setLoadingBotId(bot.id);
@@ -205,6 +217,15 @@ const BestBots = observer(() => {
         }
     };
 
+    // Determine which bots to display based on the active tab
+    const displayedBots = BOT_CATALOGUE.filter(bot => {
+        if (activeSection === 'free') {
+            return !bot.isPremium;
+        }
+        // "store" section – show only the selected premium bots
+        return bot.isPremium && PREMIUM_BOT_NAMES.includes(bot.name);
+    });
+
     return (
         <div className='best-bots' id='id-best-bots-content'>
             {/* Fixed Hero Header */}
@@ -213,10 +234,26 @@ const BestBots = observer(() => {
                 <p>Discover our top-performing trading bots designed for maximum profitability.</p>
             </div>
 
+            {/* Tab navigation for Free Bots / Bots Store */}
+            <div className='best-bots__tabs'>
+                <button
+                    className={`best-bots__tab${activeSection === 'free' ? '--active' : ''}`}
+                    onClick={() => setActiveSection('free')}
+                >
+                    Free Bots
+                </button>
+                <button
+                    className={`best-bots__tab${activeSection === 'store' ? '--active' : ''}`}
+                    onClick={() => setActiveSection('store')}
+                >
+                    Bots Store
+                </button>
+            </div>
+
             {/* Scrollable Card Grid */}
             <div className='best-bots__scroll-container'>
                 <div className='best-bots__grid'>
-                    {BOT_CATALOGUE.map(bot => (
+                    {displayedBots.map(bot => (
                         <BotCard
                             key={bot.id}
                             bot={bot}
