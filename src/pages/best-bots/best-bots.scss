@@ -184,3 +184,34 @@
         }
     }
 }
+// Updated tab navigation styles for a modern pill appearance
+.best-bots__tabs {
+  display: inline-flex;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.8rem;
+  padding: 0.2rem;
+}
+
+.best-bots__tab {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 0.6rem;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.4rem;
+  color: var(--text-prominent, #ffffff);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.best-bots__tab:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.best-bots__tab--active {
+  background: var(--accent, #00c2f3);
+  color: #fff;
+  font-weight: 600;
+}
+

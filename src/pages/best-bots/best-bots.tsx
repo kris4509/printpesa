@@ -139,15 +139,17 @@ const BOT_CATALOGUE = [
     },
 ];
 
-// ─── Premium Bots List for Bots Store Section
-// Only include the specific premium bots requested by the user.
-const PREMIUM_BOT_NAMES = [
-    'OVER 2 AI',
-    'Even-Odd Analyzer Pro',
-    'Over HitnRun V2🤖',
+// ─── Bots Store List ───────────────────────────────────────────────────────
+const STORE_BOT_NAMES = [
     'Osam HnR🤖',
+    'Even-Odd Analyzer Pro',
     'Over Destroyer V2💀',
+    'Under Destroyer V2💀',
+    'Over HitnRun V2🤖',
+    'Under HitnRun V2🤖',
 ];
+
+
 
 
 // ─── BotCard ──────────────────────────────────────────────────────────────────
@@ -220,10 +222,10 @@ const BestBots = observer(() => {
     // Determine which bots to display based on the active tab
     const displayedBots = BOT_CATALOGUE.filter(bot => {
         if (activeSection === 'free') {
-            return !bot.isPremium;
+            return !STORE_BOT_NAMES.includes(bot.name);
         }
-        // "store" section – show only the selected premium bots
-        return bot.isPremium && PREMIUM_BOT_NAMES.includes(bot.name);
+        // "store" section – show only the selected store bots
+        return STORE_BOT_NAMES.includes(bot.name);
     });
 
     return (
@@ -237,13 +239,13 @@ const BestBots = observer(() => {
             {/* Tab navigation for Free Bots / Bots Store */}
             <div className='best-bots__tabs'>
                 <button
-                    className={`best-bots__tab${activeSection === 'free' ? '--active' : ''}`}
+                    className={`best-bots__tab ${activeSection === 'free' ? 'best-bots__tab--active' : ''}`}
                     onClick={() => setActiveSection('free')}
                 >
                     Free Bots
                 </button>
                 <button
-                    className={`best-bots__tab${activeSection === 'store' ? '--active' : ''}`}
+                    className={`best-bots__tab ${activeSection === 'store' ? 'best-bots__tab--active' : ''}`}
                     onClick={() => setActiveSection('store')}
                 >
                     Bots Store
