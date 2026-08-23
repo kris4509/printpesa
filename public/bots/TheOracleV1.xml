@@ -6,7 +6,7 @@
     <variable id="tp_var_01">TargetProfit</variable>
     <variable id="sl_var_01">StopLoss</variable>
   </variables>
-  <block type="trade_definition" id="xgH69|xFn9=70w.*3Vo@" deletable="false" x="0" y="60">
+  <block type="trade_definition" id="xgH69|xFn9=70w.*3Vo@" deletable="false" x="0" y="0">
     <statement name="TRADE_OPTIONS">
       <block type="trade_definition_market" id="mkt_block" deletable="false" movable="false">
         <field name="MARKET_LIST">synthetic_index</field>
@@ -115,7 +115,7 @@
       </block>
     </statement>
   </block>
-  <block type="after_purchase" id="D^Jz1^n=2vtZku1vBN@;" x="714" y="60">
+  <block type="after_purchase" id="D^Jz1^n=2vtZku1vBN@;" x="752" y="0">
     <statement name="AFTERPURCHASE_STACK">
       <block type="controls_if" id="3#ly)z/Ykx](!K25FFcR">
         <mutation xmlns="http://www.w3.org/1999/xhtml" else="1"></mutation>
@@ -204,7 +204,7 @@
               <block type="text_print" id="print_tp">
                 <value name="TEXT">
                   <block type="text" id="txt_tp">
-                    <field name="TEXT">Target Profit Reached! Bot Stopped.</field>
+                    <field name="TEXT">🎯 BULLSEYE! Target Profit Secured. Session Closed.</field>
                   </block>
                 </value>
               </block>
@@ -231,7 +231,7 @@
               <block type="text_print" id="print_sl">
                 <value name="TEXT">
                   <block type="text" id="txt_sl">
-                    <field name="TEXT">Stop Loss Reached! Bot Stopped.</field>
+                    <field name="TEXT">🔴 RISK MANAGEMENT COMPLETE: Stop Loss Hit. Session Closed</field>
                   </block>
                 </value>
               </block>
@@ -244,7 +244,7 @@
       </block>
     </statement>
   </block>
-  <block type="before_purchase" id="i-CIx.(Onm4?ihxzA}Y]" deletable="false" x="0" y="886">
+  <block type="before_purchase" id="i-CIx.(Onm4?ihxzA}Y]" deletable="false" x="0" y="826">
     <statement name="BEFOREPURCHASE_STACK">
       <block type="controls_if" id="7BSf!^*Qy1ySo9*sLnI@">
         <mutation xmlns="http://www.w3.org/1999/xhtml" elseif="1"></mutation>
