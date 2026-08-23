@@ -6,19 +6,19 @@
     <variable id="tp_var_01">TargetProfit</variable>
     <variable id="sl_var_01">StopLoss</variable>
   </variables>
-  <block type="trade_definition" id="xgH69|xFn9=70w.*3Vo@" deletable="false" x="0" y="0">
+  <block type="trade_definition" id="xgH69|xFn9=70w.*3Vo@" deletable="false" x="0" y="60">
     <statement name="TRADE_OPTIONS">
       <block type="trade_definition_market" id="mkt_block" deletable="false" movable="false">
         <field name="MARKET_LIST">synthetic_index</field>
         <field name="SUBMARKET_LIST">random_index</field>
-        <field name="SYMBOL_LIST">R_25</field>
+        <field name="SYMBOL_LIST">1HZ10V</field>
         <next>
           <block type="trade_definition_tradetype" id="tt_block" deletable="false" movable="false">
             <field name="TRADETYPECAT_LIST">digits</field>
             <field name="TRADETYPE_LIST">overunder</field>
             <next>
               <block type="trade_definition_contracttype" id="ct_block" deletable="false" movable="false">
-                <field name="TYPE_LIST">both</field>
+                <field name="TYPE_LIST">DIGITOVER</field>
                 <next>
                   <block type="trade_definition_candleinterval" id="ci_block" deletable="false" movable="false">
                     <field name="CANDLEINTERVAL_LIST">60</field>
@@ -61,7 +61,7 @@
                 <field name="VAR" id="pred_var_01">Prediction</field>
                 <value name="VALUE">
                   <block type="math_number" id="n_pred">
-                    <field name="NUM">2</field>
+                    <field name="NUM">3</field>
                   </block>
                 </value>
                 <next>
@@ -115,7 +115,7 @@
       </block>
     </statement>
   </block>
-  <block type="after_purchase" id="D^Jz1^n=2vtZku1vBN@;" x="752" y="0">
+  <block type="after_purchase" id="D^Jz1^n=2vtZku1vBN@;" x="786" y="60">
     <statement name="AFTERPURCHASE_STACK">
       <block type="controls_if" id="3#ly)z/Ykx](!K25FFcR">
         <mutation xmlns="http://www.w3.org/1999/xhtml" else="1"></mutation>
@@ -157,7 +157,7 @@
                 </value>
                 <value name="B">
                   <block type="math_number" id="9dsxl~Kz`m5O;J^Axn83">
-                    <field name="NUM">2.1</field>
+                    <field name="NUM">2</field>
                   </block>
                 </value>
               </block>
@@ -204,7 +204,7 @@
               <block type="text_print" id="print_tp">
                 <value name="TEXT">
                   <block type="text" id="txt_tp">
-                    <field name="TEXT">🎯 BULLSEYE! Target Profit Secured. Session Closed.</field>
+                    <field name="TEXT">🚀 MISSION ACCOMPLISHED! 🤑Target Profit Smashed! 💰💥🥳💥🎉</field>
                   </block>
                 </value>
               </block>
@@ -244,7 +244,7 @@
       </block>
     </statement>
   </block>
-  <block type="before_purchase" id="i-CIx.(Onm4?ihxzA}Y]" deletable="false" x="0" y="826">
+  <block type="before_purchase" id="i-CIx.(Onm4?ihxzA}Y]" deletable="false" x="0" y="886">
     <statement name="BEFOREPURCHASE_STACK">
       <block type="controls_if" id="7BSf!^*Qy1ySo9*sLnI@">
         <mutation xmlns="http://www.w3.org/1999/xhtml" elseif="1"></mutation>
