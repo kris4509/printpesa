@@ -148,6 +148,9 @@ const STORE_BOT_NAMES = [
     'Over HitnRun V2🤖',
     'Under HitnRun V2🤖',
     'Over 2 Pro Bot 💰',
+    'Market Killer💀',
+    'Dollar printer Alpha version 2026 version 2',
+    'Under 7 pro bot V2💰',
 ];
 
 

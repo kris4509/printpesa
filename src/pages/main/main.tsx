@@ -53,7 +53,7 @@ const MarketAnalyzer = lazy(() => import('../market-analyzer'));
 const Dcircles = lazy(() => import('../dcircles'));
 const ManualTrade = lazy(() => import('../manual-trade/manual-trade'));
 const Tutorial = lazy(() => import('../tutorials'));
-const RiskCalculator = lazy(() => import('../risk-calculator'));
+const RiskTools = lazy(() => import('../risk-tools'));
 
 
 const AppWrapper = observer(() => {
@@ -550,13 +550,13 @@ const AppWrapper = observer(() => {
                                             <line x1='8' y1='10' x2='16' y2='10' />
                                             <line x1='8' y1='14' x2='12' y2='14' />
                                         </svg>
-                                        <Localize i18n_default_text='Risk Calculator' />
+                                        <Localize i18n_default_text='Risk Tools' />
                                     </>
                                 }
-                                id='id-risk-calculator'
+                                id='id-risk-tools'
                             >
-                                <Suspense fallback={<ChunkLoader message={localize('Please wait, loading risk calculator...')} />}>
-                                    <RiskCalculator />
+                                <Suspense fallback={<ChunkLoader message={localize('Please wait, loading risk tools...')} />}>
+                                    <RiskTools />
                                 </Suspense>
                             </div>
                         </Tabs>

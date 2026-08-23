@@ -1,0 +1,70 @@
+.risk-tools-page {
+    box-sizing: border-box;
+    width: 100%;
+    height: var(--tab-content-height);
+    overflow: hidden;
+    background-color: var(--general-section-1);
+    color: var(--text-general);
+    display: flex;
+    flex-direction: column;
+
+    @media (max-width: 768px) {
+        height: var(--tab-content-height-mobile, var(--tab-content-height));
+    }
+
+    // Sub-tab nav — fixed at top, never scrolls
+    .risk-tools-tabs {
+        flex-shrink: 0;
+        display: flex;
+        justify-content: center;
+        gap: 0.8rem;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 0.4rem;
+        border-radius: 999px;
+        width: fit-content;
+        margin: 1.6rem auto;
+
+        .risk-tools-tab {
+            padding: 0.8rem 2.4rem;
+            border-radius: 999px;
+            border: none;
+            background: transparent;
+            color: var(--text-general);
+            font-size: 1.4rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.05);
+            }
+
+            &--active {
+                background: var(--brand-red-coral);
+                color: var(--text-colored-background);
+
+                &:hover {
+                    background: var(--brand-red-coral);
+                }
+            }
+        }
+    }
+
+    // Scrollable content area — grows to fill remaining height
+    .risk-tools-content {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 0 2.4rem 2.4rem;
+
+        &::-webkit-scrollbar { width: 6px; }
+        &::-webkit-scrollbar-track { background: transparent; }
+        &::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 3px;
+
+            &:hover { background: rgba(255, 255, 255, 0.22); }
+        }
+    }
+}
