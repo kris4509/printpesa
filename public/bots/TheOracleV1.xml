@@ -1,75 +1,113 @@
-<xml xmlns="http://www.w3.org/1999/xhtml" collection="false">
+<xml xmlns="http://www.w3.org/1999/xhtml" is_dbot="true" collection="false">
   <variables>
-    <variable type="" id="^ZJD*~{Z/KmB$/R$Q0bB">monto inicial</variable>
-    <variable type="" id="o6G%Sde6MBsXqtNVweSn">time</variable>
+    <variable type="" id="^ZJD*~{Z/KmB$/R$Q0bB" islocal="false" iscloud="false">InitialAmount</variable>
+    <variable type="" id="o6G%Sde6MBsXqtNVweSn" islocal="false" iscloud="false">time</variable>
+    <variable type="" id="pred_var_01" islocal="false" iscloud="false">Prediction</variable>
+    <variable type="" id="tp_var_01" islocal="false" iscloud="false">TargetProfit</variable>
+    <variable type="" id="sl_var_01" islocal="false" iscloud="false">StopLoss</variable>
   </variables>
-  <block type="trade" id="xgH69|xFn9=70w.*3Vo@" x="0" y="0">
-    <field name="MARKET_LIST">synthetic_index</field>
-    <field name="SUBMARKET_LIST">random_index</field>
-    <field name="SYMBOL_LIST">R_100</field>
-    <field name="TRADETYPECAT_LIST">digits</field>
-    <field name="TRADETYPE_LIST">overunder</field>
-    <field name="TYPE_LIST">both</field>
-    <field name="CANDLEINTERVAL_LIST">60</field>
-    <field name="TIME_MACHINE_ENABLED">FALSE</field>
-    <field name="RESTARTONERROR">TRUE</field>
-    <statement name="INITIALIZATION">
-      <block type="variables_set" id=".a(PNU8,:qUT67+-fL=e">
-        <field name="VAR" id="^ZJD*~{Z/KmB$/R$Q0bB" variabletype="">monto inicial</field>
-        <value name="VALUE">
-          <block type="math_number" id="3@#FVEiz?W@%nKAT4eoL">
-            <field name="NUM">0.35</field>
-          </block>
-        </value>
+
+  <!-- 1. TRADE PARAMETERS -->
+  <block type="trade_definition" id="xgH69|xFn9=70w.*3Vo@" x="0" y="0">
+    <statement name="TRADE_OPTIONS">
+      <block type="trade_definition_market" id="mkt_block">
+        <field name="MARKET_LIST">synthetic_index</field>
+        <field name="SUBMARKET_LIST">random_index</field>
+        <field name="SYMBOL_LIST">R_25</field>
         <next>
-          <block type="variables_set" id="9c$o^/D,O4XWXM5Qd5gn">
-            <field name="VAR" id="o6G%Sde6MBsXqtNVweSn" variabletype="">time</field>
-            <value name="VALUE">
-              <block type="math_number" id="$Jcz`504@)e`w~2o)P^K">
-                <field name="NUM">1</field>
-              </block>
-            </value>
+          <block type="trade_definition_tradetype" id="tt_block">
+            <field name="TRADETYPECAT_LIST">digits</field>
+            <field name="TRADETYPE_LIST">overunder</field>
             <next>
-              <block type="text_print" id="%~/;}`!R;=*{(VFMY*hY" collapsed="true">
-                <value name="TEXT">
-                  <shadow type="text" id="nZ#?Vz4}A._]eI$*5Gt-">
-                    <field name="TEXT">THE ORACLE ====&gt;&gt; Oracle V1 updated</field>
-                  </shadow>
-                </value>
+              <block type="trade_definition_contracttype" id="ct_block">
+                <field name="TYPE_LIST">both</field>
+                <next>
+                  <block type="trade_definition_candleinterval" id="ci_block">
+                    <field name="CANDLEINTERVAL_LIST">60</field>
+                    <next>
+                      <block type="trade_definition_restartbuysell" id="rbs_block">
+                        <field name="TIME_MACHINE_ENABLED">FALSE</field>
+                        <next>
+                          <block type="trade_definition_restartonerror" id="roe_block">
+                            <field name="RESTARTONERROR">TRUE</field>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
               </block>
             </next>
           </block>
         </next>
       </block>
     </statement>
+
+    <!-- RUN ONCE AT START -->
+    <statement name="INITIALIZATION">
+      <block type="variables_set" id="s_amt">
+        <field name="VAR" id="^ZJD*~{Z/KmB$/R$Q0bB" variabletype="">InitialAmount</field>
+        <value name="VALUE">
+          <block type="math_number" id="n_amt"><field name="NUM">1</field></block>
+        </value>
+        <next>
+          <block type="variables_set" id="s_time">
+            <field name="VAR" id="o6G%Sde6MBsXqtNVweSn" variabletype="">time</field>
+            <value name="VALUE">
+              <block type="math_number" id="n_time"><field name="NUM">1</field></block>
+            </value>
+            <next>
+              <block type="variables_set" id="s_pred">
+                <field name="VAR" id="pred_var_01" variabletype="">Prediction</field>
+                <value name="VALUE">
+                  <block type="math_number" id="n_pred"><field name="NUM">2</field></block>
+                </value>
+                <next>
+                  <block type="variables_set" id="s_tp">
+                    <field name="VAR" id="tp_var_01" variabletype="">TargetProfit</field>
+                    <value name="VALUE">
+                      <block type="math_number" id="n_tp"><field name="NUM">2</field></block>
+                    </value>
+                    <next>
+                      <block type="variables_set" id="s_sl">
+                        <field name="VAR" id="sl_var_01" variabletype="">StopLoss</field>
+                        <value name="VALUE">
+                          <block type="math_number" id="n_sl"><field name="NUM">4</field></block>
+                        </value>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+
+    <!-- TRADE OPTIONS -->
     <statement name="SUBMARKET">
-      <block type="tradeOptions" id="x=V33~4Lb|(sLv`J[:Eb">
+      <block type="trade_definition_tradeoptions" id="to_block">
         <field name="DURATIONTYPE_LIST">t</field>
-        <field name="CURRENCY_LIST">USD</field>
-        <field name="BARRIEROFFSETTYPE_LIST">+</field>
-        <field name="SECONDBARRIEROFFSETTYPE_LIST">-</field>
         <value name="DURATION">
-          <shadow type="math_number" id="LDMc_w:J3$tl|`-!vglT">
-            <field name="NUM">1</field>
-          </shadow>
+          <block type="math_number" id="dur_num"><field name="NUM">1</field></block>
         </value>
         <value name="AMOUNT">
-          <shadow type="math_number" id="ml)25~7^q}3I9}vjf:%K">
-            <field name="NUM">1</field>
-          </shadow>
-          <block type="variables_get" id="~aUDVe)tq2$eoMXfsX5s">
-            <field name="VAR" id="^ZJD*~{Z/KmB$/R$Q0bB" variabletype="">monto inicial</field>
+          <block type="variables_get" id="v_amt">
+            <field name="VAR" id="^ZJD*~{Z/KmB$/R$Q0bB" variabletype="">InitialAmount</field>
           </block>
         </value>
         <value name="PREDICTION">
-          <shadow type="math_number" id="esFuBQ-P8GxC#$$zbC`L">
-            <field name="NUM">4</field>
-          </shadow>
+          <block type="variables_get" id="v_pred">
+            <field name="VAR" id="pred_var_01" variabletype="">Prediction</field>
+          </block>
         </value>
       </block>
     </statement>
   </block>
-  <block type="before_purchase" id="i-CIx.(Onm4?ihxzA}Y]" collapsed="true" x="2" y="490">
+
+  <!-- 2. PURCHASE CONDITIONS -->
+  <block type="before_purchase" id="i-CIx.(Onm4?ihxzA}Y]" x="0" y="550">
     <statement name="BEFOREPURCHASE_STACK">
       <block type="controls_if" id="7BSf!^*Qy1ySo9*sLnI@">
         <mutation elseif="1"></mutation>
@@ -82,9 +120,7 @@
               </block>
             </value>
             <value name="B">
-              <block type="math_number" id="3PNIw.augy7u-V^I8ysF">
-                <field name="NUM">2</field>
-              </block>
+              <block type="math_number" id="3PNIw.augy7u-V^I8ysF"><field name="NUM">2</field></block>
             </value>
           </block>
         </value>
@@ -102,9 +138,7 @@
               </block>
             </value>
             <value name="B">
-              <block type="math_number" id=")yQzYB*U{4p|}|APTgEh">
-                <field name="NUM">3</field>
-              </block>
+              <block type="math_number" id=")yQzYB*U{4p|}|APTgEh"><field name="NUM">3</field></block>
             </value>
           </block>
         </value>
@@ -116,16 +150,16 @@
               </block>
             </statement>
             <value name="SECONDS">
-              <shadow type="math_number" id="`q)*rx:Q.:X$b(8;l!pt">
-                <field name="NUM">6</field>
-              </shadow>
+              <block type="math_number" id="`q)*rx:Q.:X$b(8;l!pt"><field name="NUM">6</field></block>
             </value>
           </block>
         </statement>
       </block>
     </statement>
   </block>
-  <block type="after_purchase" id="D^Jz1^n=2vtZku1vBN@;" x="2" y="807">
+
+  <!-- 4. RESTART TRADING CONDITIONS -->
+  <block type="after_purchase" id="D^Jz1^n=2vtZku1vBN@;" x="0" y="850">
     <statement name="AFTERPURCHASE_STACK">
       <block type="controls_if" id="3#ly)z/Ykx](!K25FFcR">
         <mutation else="1"></mutation>
@@ -136,19 +170,15 @@
         </value>
         <statement name="DO0">
           <block type="variables_set" id="G+Gm5lB*@4H(I{ofgLB[">
-            <field name="VAR" id="^ZJD*~{Z/KmB$/R$Q0bB" variabletype="">monto inicial</field>
+            <field name="VAR" id="^ZJD*~{Z/KmB$/R$Q0bB" variabletype="">InitialAmount</field>
             <value name="VALUE">
-              <block type="math_number" id="7/0,.C]dRhNBh2cb07OU">
-                <field name="NUM">0.35</field>
-              </block>
+              <block type="math_number" id="7/0,.C]dRhNBh2cb07OU"><field name="NUM">1</field></block>
             </value>
             <next>
               <block type="variables_set" id="/Y6zvs~6E@Mg@,Ry?SuG">
                 <field name="VAR" id="o6G%Sde6MBsXqtNVweSn" variabletype="">time</field>
                 <value name="VALUE">
-                  <block type="math_number" id="8`VA)x)k^`^)f|tQ3oxK">
-                    <field name="NUM">1</field>
-                  </block>
+                  <block type="math_number" id="8`VA)x)k^`^)f|tQ3oxK"><field name="NUM">1</field></block>
                 </value>
               </block>
             </next>
@@ -156,22 +186,17 @@
         </statement>
         <statement name="ELSE">
           <block type="variables_set" id="G5?gT0_@+kXXw/PPB*3{">
-            <field name="VAR" id="^ZJD*~{Z/KmB$/R$Q0bB" variabletype="">monto inicial</field>
+            <field name="VAR" id="^ZJD*~{Z/KmB$/R$Q0bB" variabletype="">InitialAmount</field>
             <value name="VALUE">
               <block type="math_arithmetic" id="|c`_;!S4=/GENyY#`/Pe">
                 <field name="OP">MULTIPLY</field>
                 <value name="A">
-                  <shadow type="math_number" id="04EaS4-2CvhAN7y|.-e9">
-                    <field name="NUM">1</field>
-                  </shadow>
                   <block type="variables_get" id="Bzfs[,|mt9FIGt!Uce+X">
-                    <field name="VAR" id="^ZJD*~{Z/KmB$/R$Q0bB" variabletype="">monto inicial</field>
+                    <field name="VAR" id="^ZJD*~{Z/KmB$/R$Q0bB" variabletype="">InitialAmount</field>
                   </block>
                 </value>
                 <value name="B">
-                  <shadow type="math_number" id="9dsxl~Kz`m5O;J^Axn83">
-                    <field name="NUM">2.1</field>
-                  </shadow>
+                  <block type="math_number" id="9dsxl~Kz`m5O;J^Axn83"><field name="NUM">2.1</field></block>
                 </value>
               </block>
             </value>
@@ -182,17 +207,12 @@
                   <block type="math_arithmetic" id=",I8np+iyoZ@n4Xst^-(8">
                     <field name="OP">ADD</field>
                     <value name="A">
-                      <shadow type="math_number" id="04EaS4-2CvhAN7y|.-e9">
-                        <field name="NUM">1</field>
-                      </shadow>
                       <block type="variables_get" id="$@OnTolbv+vmAK~oYi:Y">
                         <field name="VAR" id="o6G%Sde6MBsXqtNVweSn" variabletype="">time</field>
                       </block>
                     </value>
                     <value name="B">
-                      <shadow type="math_number" id="5u6!`R4I7}K|eVvo5bQW">
-                        <field name="NUM">1</field>
-                      </shadow>
+                      <block type="math_number" id="5u6!`R4I7}K|eVvo5bQW"><field name="NUM">1</field></block>
                     </value>
                   </block>
                 </value>
@@ -201,7 +221,57 @@
           </block>
         </statement>
         <next>
-          <block type="trade_again" id="c)S|KjoQdXc8l#J@5z3P"></block>
+          <block type="controls_if" id="check_tp_sl">
+            <mutation elseif="1" else="1"></mutation>
+            <value name="IF0">
+              <block type="logic_compare" id="cmp_tp">
+                <field name="OP">GTE</field>
+                <value name="A">
+                  <block type="total_profit" id="tp_val_1"/>
+                </value>
+                <value name="B">
+                  <block type="variables_get" id="tp_var_get">
+                    <field name="VAR" id="tp_var_01" variabletype="">TargetProfit</field>
+                  </block>
+                </value>
+              </block>
+            </value>
+            <statement name="DO0">
+              <block type="text_print" id="print_tp">
+                <value name="TEXT">
+                  <block type="text" id="txt_tp"><field name="TEXT">Target Profit Reached! Bot Stopped.</field></block>
+                </value>
+              </block>
+            </statement>
+            <value name="IF1">
+              <block type="logic_compare" id="cmp_sl">
+                <field name="OP">LTE</field>
+                <value name="A">
+                  <block type="total_profit" id="sl_val_1"/>
+                </value>
+                <value name="B">
+                  <block type="math_single" id="neg_sl">
+                    <field name="OP">NEG</field>
+                    <value name="NUM">
+                      <block type="variables_get" id="sl_var_get">
+                        <field name="VAR" id="sl_var_01" variabletype="">StopLoss</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+              </block>
+            </value>
+            <statement name="DO1">
+              <block type="text_print" id="print_sl">
+                <value name="TEXT">
+                  <block type="text" id="txt_sl"><field name="TEXT">Stop Loss Reached! Bot Stopped.</field></block>
+                </value>
+              </block>
+            </statement>
+            <statement name="ELSE">
+              <block type="trade_again" id="c)S|KjoQdXc8l#J@5z3P"/>
+            </statement>
+          </block>
         </next>
       </block>
     </statement>
