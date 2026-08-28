@@ -21,6 +21,10 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
     const has_dashboard_strategies = !!dashboard_strategies?.length;
     const { isDesktop, isTablet } = useDevice();
 
+    // Change background image based on the current day of the week (0 to 6)
+    const today = new Date().getDay();
+    const backgroundNumber = today % 6; // We generated 6 images (car-0 to car-5)
+
     return (
         <React.Fragment>
             <div
@@ -28,7 +32,15 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
                     'tab__dashboard--tour-active': active_tour,
                 })}
             >
-                <div className='tab__dashboard__content'>
+                <div 
+                    className='tab__dashboard__content'
+                    style={{
+                        backgroundImage: `linear-gradient(rgba(11, 19, 43, 0.85), rgba(11, 19, 43, 0.95)), url('/backgrounds/car-${backgroundNumber}.jpg')`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundAttachment: 'fixed'
+                    }}
+                >
                     <div className='quick-panel'>
                         <div
                             className={classNames('tab__dashboard__header', {
