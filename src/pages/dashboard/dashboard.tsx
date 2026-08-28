@@ -35,7 +35,7 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
                 <div 
                     className='tab__dashboard__content'
                     style={{
-                        backgroundImage: `linear-gradient(rgba(11, 19, 43, 0.85), rgba(11, 19, 43, 0.95)), url('/backgrounds/car-${backgroundNumber}.jpg')`,
+                        backgroundImage: `linear-gradient(rgba(11, 19, 43, 0.45), rgba(11, 19, 43, 0.65)), url('/backgrounds/car-${backgroundNumber}.jpg')`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundAttachment: 'fixed'
