@@ -187,10 +187,12 @@
 // Updated tab navigation styles for a modern pill appearance
 .best-bots__tabs {
   display: inline-flex;
+  align-self: center;
   gap: 0.5rem;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 0.8rem;
   padding: 0.2rem;
+  margin: 1.6rem 0 0;
 }
 
 .best-bots__tab {
