@@ -49,7 +49,7 @@ const MiniDcirclesPanel: React.FC = () => {
     const [currentPrice, setCurrentPrice] = useState<string>('---');
     const [pipSize, setPipSize] = useState<number>(2);
 
-    // Dragging state
+    // Panel Dragging state
     const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const dragStartRef = useRef<{ mouseX: number; mouseY: number; posX: number; posY: number }>({
@@ -58,6 +58,18 @@ const MiniDcirclesPanel: React.FC = () => {
         posX: 0,
         posY: 0,
     });
+    
+    // Toggle Button Dragging state
+    const [togglePosition, setTogglePosition] = useState<{ x: number; y: number } | null>(null);
+    const [isToggleDragging, setIsToggleDragging] = useState(false);
+    const toggleDragStartRef = useRef<{ mouseX: number; mouseY: number; posX: number; posY: number; moved: boolean }>({
+        mouseX: 0,
+        mouseY: 0,
+        posX: 0,
+        posY: 0,
+        moved: false,
+    });
+
     const panelRef = useRef<HTMLDivElement | null>(null);
 
     const subscriptionIdRef = useRef<string | null>(null);
@@ -129,6 +141,70 @@ const MiniDcirclesPanel: React.FC = () => {
             window.removeEventListener('touchend', handleMouseUp);
         };
     }, [isDragging]);
+
+    // Handle Toggle Dragging
+    const handleToggleMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
+        const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+        const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+
+        const currentPos = togglePosition || {
+            x: window.innerWidth - 64, // roughly right: 16px (width 48)
+            y: window.innerHeight - 120, // roughly bottom: 72px (height 48)
+        };
+
+        toggleDragStartRef.current = {
+            mouseX: clientX,
+            mouseY: clientY,
+            posX: currentPos.x,
+            posY: currentPos.y,
+            moved: false,
+        };
+        setIsToggleDragging(true);
+    };
+
+    useEffect(() => {
+        if (!isToggleDragging) return;
+
+        const handleToggleMouseMove = (e: MouseEvent | TouchEvent) => {
+            const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+            const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+
+            const deltaX = clientX - toggleDragStartRef.current.mouseX;
+            const deltaY = clientY - toggleDragStartRef.current.mouseY;
+
+            if (Math.abs(deltaX) > 3 || Math.abs(deltaY) > 3) {
+                toggleDragStartRef.current.moved = true;
+            }
+
+            let newX = toggleDragStartRef.current.posX + deltaX;
+            let newY = toggleDragStartRef.current.posY + deltaY;
+
+            // Boundaries for toggle (48x48)
+            newX = Math.max(10, Math.min(window.innerWidth - 58, newX));
+            newY = Math.max(10, Math.min(window.innerHeight - 58, newY));
+
+            setTogglePosition({ x: newX, y: newY });
+        };
+
+        const handleToggleMouseUp = () => {
+            if (!toggleDragStartRef.current.moved) {
+                setIsOpen(prev => !prev);
+            }
+            setIsToggleDragging(false);
+        };
+
+        window.addEventListener('mousemove', handleToggleMouseMove);
+        window.addEventListener('mouseup', handleToggleMouseUp);
+        window.addEventListener('touchmove', handleToggleMouseMove);
+        window.addEventListener('touchend', handleToggleMouseUp);
+
+        return () => {
+            window.removeEventListener('mousemove', handleToggleMouseMove);
+            window.removeEventListener('mouseup', handleToggleMouseUp);
+            window.removeEventListener('touchmove', handleToggleMouseMove);
+            window.removeEventListener('touchend', handleToggleMouseUp);
+        };
+    }, [isToggleDragging]);
 
     // Connect and fetch digit data when panel is open
     useEffect(() => {
@@ -303,24 +379,26 @@ const MiniDcirclesPanel: React.FC = () => {
           }
         : undefined;
 
+    const toggleInlineStyle = togglePosition
+        ? {
+              left: `${togglePosition.x}px`,
+              top: `${togglePosition.y}px`,
+              right: 'auto',
+              bottom: 'auto',
+          }
+        : undefined;
+
     return (
         <>
             {/* Floating Toggle Button */}
             <button
                 type='button'
-                className={`mini-dc-toggle${isOpen ? ' mini-dc-toggle--active' : ''}`}
-                onClick={() => setIsOpen(prev => !prev)}
-                onMouseDown={e => e.stopPropagation()}
-                onPointerDown={e => e.stopPropagation()}
-                onPointerUp={e => {
-                    e.stopPropagation();
-                    setIsOpen(prev => !prev);
-                }}
-                onTouchStart={e => e.stopPropagation()}
-                onTouchEnd={e => {
-                    e.stopPropagation();
-                    setIsOpen(prev => !prev);
-                }}
+                className={`mini-dc-toggle${isOpen ? ' mini-dc-toggle--active' : ''}${
+                    isToggleDragging ? ' mini-dc-toggle--dragging' : ''
+                }`}
+                style={toggleInlineStyle}
+                onMouseDown={handleToggleMouseDown}
+                onTouchStart={handleToggleMouseDown}
                 title='Digit Distribution'
                 id='mini-dc-toggle-btn'
                 aria-label='Toggle Digit Distribution Panel'
