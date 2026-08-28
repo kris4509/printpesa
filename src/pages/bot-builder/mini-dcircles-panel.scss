@@ -296,7 +296,7 @@
 
 .mini-dc-bar-row {
     display: grid;
-    grid-template-columns: 80px 1fr 80px;
+    grid-template-columns: minmax(80px, max-content) 1fr minmax(80px, max-content);
     align-items: center;
     gap: 6px;
 }
@@ -311,6 +311,22 @@
 
     &--green { color: #22c55e; text-align: left; }
     &--red { color: #ef4444; text-align: right; }
+    
+    &--winning {
+        font-size: 10px;
+        text-shadow: 0 0 4px currentColor;
+    }
+}
+
+.mini-dc-diff {
+    font-size: 8px;
+    font-weight: 800;
+    opacity: 0.9;
+    margin: 0 4px;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 1px 4px;
+    border-radius: 4px;
 }
 
 .mini-dc-bar-track {

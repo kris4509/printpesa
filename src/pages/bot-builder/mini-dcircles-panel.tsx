@@ -267,16 +267,26 @@ const MiniDcirclesPanel: React.FC = () => {
 
     const patternMetrics = useMemo(() => {
         let evenCount = 0, oddCount = 0, overCount = 0, underCount = 0;
+        let riseCount = 0, fallCount = 0;
         ticks.forEach(t => {
             if (t.digit % 2 === 0) evenCount++; else oddCount++;
             if (t.digit >= 5) overCount++; else underCount++;
+            if (t.direction === 'rise') riseCount++; else fallCount++;
         });
         const total = ticks.length || 1;
+        const evenPct = (evenCount / total) * 100;
+        const oddPct = (oddCount / total) * 100;
+        
         return {
-            evenPct: ((evenCount / total) * 100).toFixed(1),
-            oddPct: ((oddCount / total) * 100).toFixed(1),
+            evenPct: evenPct.toFixed(1),
+            oddPct: oddPct.toFixed(1),
+            evenOddDiff: Math.abs(evenPct - oddPct).toFixed(1),
+            isEvenGreater: evenPct > oddPct,
+            isOddGreater: oddPct > evenPct,
             overPct: ((overCount / total) * 100).toFixed(1),
             underPct: ((underCount / total) * 100).toFixed(1),
+            risePct: ((riseCount / total) * 100).toFixed(1),
+            fallPct: ((fallCount / total) * 100).toFixed(1),
         };
     }, [ticks]);
 
@@ -415,18 +425,22 @@ const MiniDcirclesPanel: React.FC = () => {
                 {/* Pattern Summary Bars */}
                 <div className='mini-dc-panel__bars'>
                     <div className='mini-dc-bar-row'>
-                        <span className='mini-dc-bar-row__label mini-dc-bar-row__label--green'>EVEN {patternMetrics.evenPct}%</span>
+                        <span className={`mini-dc-bar-row__label mini-dc-bar-row__label--green ${patternMetrics.isEvenGreater ? 'mini-dc-bar-row__label--winning' : ''}`}>
+                            EVEN {patternMetrics.evenPct}% {patternMetrics.isEvenGreater && <span className='mini-dc-diff'>(+{patternMetrics.evenOddDiff}%)</span>}
+                        </span>
                         <div className='mini-dc-bar-track'>
                             <div className='mini-dc-bar-fill mini-dc-bar-fill--even' style={{ width: `${patternMetrics.evenPct}%` }} />
                         </div>
-                        <span className='mini-dc-bar-row__label mini-dc-bar-row__label--red'>ODD {patternMetrics.oddPct}%</span>
+                        <span className={`mini-dc-bar-row__label mini-dc-bar-row__label--red ${patternMetrics.isOddGreater ? 'mini-dc-bar-row__label--winning' : ''}`}>
+                            {patternMetrics.isOddGreater && <span className='mini-dc-diff'>(+{patternMetrics.evenOddDiff}%)</span>} ODD {patternMetrics.oddPct}%
+                        </span>
                     </div>
                     <div className='mini-dc-bar-row'>
-                        <span className='mini-dc-bar-row__label mini-dc-bar-row__label--green'>RISE</span>
+                        <span className='mini-dc-bar-row__label mini-dc-bar-row__label--green'>RISE {patternMetrics.risePct}%</span>
                         <div className='mini-dc-bar-track'>
-                            <div className='mini-dc-bar-fill mini-dc-bar-fill--rise' style={{ width: `${patternMetrics.overPct}%` }} />
+                            <div className='mini-dc-bar-fill mini-dc-bar-fill--rise' style={{ width: `${patternMetrics.risePct}%` }} />
                         </div>
-                        <span className='mini-dc-bar-row__label mini-dc-bar-row__label--red'>FALL</span>
+                        <span className='mini-dc-bar-row__label mini-dc-bar-row__label--red'>FALL {patternMetrics.fallPct}%</span>
                     </div>
                     <div className='mini-dc-bar-row'>
                         <span className='mini-dc-bar-row__label mini-dc-bar-row__label--green'>OVER 4 {patternMetrics.overPct}%</span>
