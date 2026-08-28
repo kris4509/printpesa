@@ -137,6 +137,27 @@ const BOT_CATALOGUE = [
         isPremium: true,
         xmlFile: 'Under Destroyer V2💀.xml',
     },
+    {
+        id: 19,
+        name: 'Market Killer💀',
+        description: 'Advanced automated bot using dynamic entry points with martingale recovery to hunt for consistent profits across synthetic indices.',
+        isPremium: true,
+        xmlFile: 'Market Killer💀.xml',
+    },
+    {
+        id: 20,
+        name: 'Dollar printer Alpha version 2026 version 2',
+        description: 'High-frequency digits bot utilizing smart take-profit and stop-loss features for aggressive yet controlled scaling.',
+        isPremium: true,
+        xmlFile: 'Dollar printer Alpha version 2026 version 2.xml',
+    },
+    {
+        id: 21,
+        name: 'Under 7 pro bot V2💰',
+        description: 'Precision Under 7 strategy bot featuring custom digit analysis, built-in survivability metrics, and dynamic stake sizing.',
+        isPremium: true,
+        xmlFile: 'Under 7 pro bot V2💰.xml',
+    },
 ];
 
 // ─── Bots Store List ───────────────────────────────────────────────────────
