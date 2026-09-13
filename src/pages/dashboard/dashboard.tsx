@@ -35,36 +35,21 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
                 <div 
                     className='tab__dashboard__content'
                     style={{
-                        backgroundImage: `linear-gradient(rgba(11, 19, 43, 0.45), rgba(11, 19, 43, 0.65)), url('/backgrounds/car-${backgroundNumber}.jpg')`,
+                        backgroundImage: `linear-gradient(to bottom, rgba(5, 10, 20, 0.15) 0%, rgba(5, 10, 20, 0.35) 100%), url('/backgrounds/car-${backgroundNumber}.jpg')`,
                         backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundAttachment: 'fixed'
+                        backgroundPosition: 'center center',
+                        backgroundAttachment: 'fixed',
+                        backgroundRepeat: 'no-repeat',
                     }}
                 >
                     <div className='quick-panel'>
-                        <div
-                            className={classNames('tab__dashboard__header', {
-                                'tab__dashboard__header--listed': isDesktop && has_dashboard_strategies,
-                            })}
-                        >
-                            {!has_dashboard_strategies && (
-                                <Text
-                                    className='title'
-                                    as='h2'
-                                    color='prominent'
-                                    size={isDesktop ? 'sm' : 's'}
-                                    lineHeight='xxl'
-                                    weight='bold'
-                                >
-                                    {localize('Load or build your bot')}
-                                </Text>
-                            )}
+                        <div className='tab__dashboard__header'>
                             <Text
                                 as='p'
                                 color='prominent'
                                 lineHeight='s'
                                 size={isDesktop ? 's' : 'xxs'}
-                                className={classNames('subtitle', { 'subtitle__has-list': has_dashboard_strategies })}
+                                className='subtitle'
                             >
                                 {is_google_drive_configured
                                     ? localize(

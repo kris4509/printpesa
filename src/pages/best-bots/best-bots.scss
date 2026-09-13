@@ -217,3 +217,60 @@
   font-weight: 600;
 }
 
+// ── Light Theme Overrides ───────────────────────────────────────────────────
+body.theme--light {
+  .best-bots {
+    background: #f1f5f9;
+
+    &__hero {
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+
+      h1 {
+        color: #0f172a !important;
+      }
+
+      p {
+        color: #475569 !important;
+      }
+    }
+
+    &__card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+
+      &:hover {
+        border-color: #0284c7;
+        box-shadow: 0 8px 24px rgba(2, 132, 199, 0.12);
+      }
+    }
+
+    &__card-name {
+      color: #0f172a !important;
+    }
+
+    &__card-desc {
+      color: #334155 !important;
+    }
+
+    &__tabs {
+      background: #e2e8f0;
+    }
+
+    &__tab {
+      color: #475569;
+
+      &:hover {
+        background: #cbd5e1;
+        color: #0f172a;
+      }
+
+      &--active {
+        background: #0284c7;
+        color: #ffffff;
+      }
+    }
+  }
+}
+

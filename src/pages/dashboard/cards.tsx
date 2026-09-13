@@ -9,6 +9,7 @@ import Dialog from '@/components/shared_ui/dialog';
 import MobileFullPageModal from '@/components/shared_ui/mobile-full-page-modal';
 import Text from '@/components/shared_ui/text';
 import { DBOT_TABS } from '@/constants/bot-contents';
+import { getSavedWorkspaces } from '@/external/bot-skeleton';
 import { useStore } from '@/hooks/useStore';
 import {
     DerivLightBotBuilderIcon,
@@ -37,11 +38,20 @@ type TCardArray = {
 
 const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => {
     const { dashboard, load_modal, quick_strategy, google_drive, client } = useStore();
-    const { toggleLoadModal, setActiveTabIndex } = load_modal;
+    const { toggleLoadModal, setActiveTabIndex, dashboard_strategies, setDashboardStrategies } = load_modal;
     const { is_google_drive_configured } = google_drive;
     const { isDesktop } = useDevice();
-    const { onCloseDialog, dialog_options, is_dialog_open, setActiveTab, setPreviewOnPopup } = dashboard;
+    const { onCloseDialog, dialog_options, is_dialog_open, setActiveTab, setPreviewOnPopup, strategy_save_type } = dashboard;
     const { setFormVisibility } = quick_strategy;
+    const [is_history_open, setIsHistoryOpen] = React.useState(false);
+
+    React.useEffect(() => {
+        const fetchRecentWorkspaces = async () => {
+            const strategies = await getSavedWorkspaces();
+            setDashboardStrategies(strategies);
+        };
+        fetchRecentWorkspaces();
+    }, [strategy_save_type, setDashboardStrategies]);
 
     const openFileLoader = () => {
         toggleLoadModal();
@@ -105,6 +115,8 @@ const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => 
     ]
         // Hide the Google Drive tile when the feature isn't configured (no GD_* env vars).
         .filter(action => action.id !== 'google-drive' || is_google_drive_configured);
+
+    const strategies_count = dashboard_strategies?.length || 0;
 
     return React.useMemo(
         () => (
@@ -184,11 +196,45 @@ const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => 
                         </span>
                     </div>
                 )}
-                <DashboardBotList />
+
+                {strategies_count > 0 && (
+                    <div className='tab__dashboard__history-toggle-wrapper'>
+                        <button
+                            type='button'
+                            className={classNames('tab__dashboard__history-toggle-btn', {
+                                'tab__dashboard__history-toggle-btn--open': is_history_open,
+                            })}
+                            onClick={() => setIsHistoryOpen(prev => !prev)}
+                            id='tab__dashboard__history-toggle-btn'
+                        >
+                            <span className='history-toggle-icon'>
+                                <svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.2' strokeLinecap='round' strokeLinejoin='round'>
+                                    <circle cx='12' cy='12' r='10' />
+                                    <polyline points='12 6 12 12 16 14' />
+                                </svg>
+                            </span>
+                            <span className='history-toggle-label'>
+                                {is_history_open ? <Localize i18n_default_text='Hide Past Bots' /> : <Localize i18n_default_text='Past Used Bots' />}
+                            </span>
+                            <span className='history-toggle-badge'>{strategies_count}</span>
+                            <span className={classNames('history-toggle-chevron', { 'history-toggle-chevron--open': is_history_open })}>
+                                <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'>
+                                    <polyline points='6 9 12 15 18 9' />
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+                )}
+
+                {strategies_count > 0 && is_history_open && (
+                    <div className='tab__dashboard__history-container'>
+                        <DashboardBotList />
+                    </div>
+                )}
             </div>
         ),
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [is_dialog_open, has_dashboard_strategies, is_google_drive_configured]
+        [is_dialog_open, has_dashboard_strategies, is_google_drive_configured, is_history_open, strategies_count, client.is_logged_in]
     );
 });
 
