@@ -69,6 +69,7 @@ const NAV_ITEMS = [
             </svg>
         ),
     },
+    /* Manual Trade - hidden from navigation, preserved for future use
     {
         key: 'manual_trade',
         hash: '#manual_trade',
@@ -79,6 +80,7 @@ const NAV_ITEMS = [
             </svg>
         ),
     },
+    */
     {
         key: 'tutorial',
         hash: '#tutorial',
@@ -86,6 +88,19 @@ const NAV_ITEMS = [
         icon: (
             <svg height='18' width='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
                 <polygon points='5 3 19 12 5 21 5 3' />
+            </svg>
+        ),
+    },
+    {
+        key: 'risk_tools',
+        hash: '#risk_tools',
+        label: 'Risk Tools',
+        icon: (
+            <svg height='18' width='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
+                <rect x='4' y='2' width='16' height='20' rx='2' />
+                <line x1='8' y1='6' x2='16' y2='6' />
+                <line x1='8' y1='10' x2='16' y2='10' />
+                <line x1='8' y1='14' x2='12' y2='14' />
             </svg>
         ),
     },

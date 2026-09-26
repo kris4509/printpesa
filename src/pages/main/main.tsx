@@ -87,7 +87,7 @@ const AppWrapper = observer(() => {
     const { clear } = summary_card;
     const { DASHBOARD, BOT_BUILDER } = DBOT_TABS;
     const init_render = React.useRef(true);
-    const hash = ['dashboard', 'bot_builder', 'best_bots', 'market_analyzer', 'dcircles', 'manual_trade', 'tutorial'];
+    const hash = ['dashboard', 'bot_builder', 'best_bots', 'market_analyzer', 'dcircles', 'tutorial', 'risk_tools'];
     const { isDesktop } = useDevice();
     const location = useLocation();
     const navigate = useNavigate();
@@ -484,6 +484,7 @@ const AppWrapper = observer(() => {
                                     <Dcircles />
                                 </Suspense>
                             </div>
+                            {/* Manual Trade tab - hidden from UI as requested, code preserved for future use
                             <div
                                 label={
                                     <>
@@ -507,6 +508,7 @@ const AppWrapper = observer(() => {
                                     <ManualTrade />
                                 </Suspense>
                             </div>
+                            */}
                             <div
                                 label={
                                     <>
