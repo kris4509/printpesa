@@ -10,6 +10,7 @@ import { localize } from '@deriv-com/translations';
 import { Notifications as Announcement } from '@deriv-com/ui';
 /* [AI] - Analytics event tracking removed - see migrate-docs/MONITORING_PACKAGES.md for re-implementation guide */
 /* [/AI] */
+import { observer as globalObserver } from '@/external/bot-skeleton/utils/observer';
 import { guide_content } from '../../tutorials/constants';
 import { performButtonAction } from './utils/accumulator-helper-functions';
 import { MessageAnnounce, TitleAnnounce } from './announcement-components';
@@ -120,18 +121,15 @@ const Announcements = observer(({ is_mobile, is_tablet, handleTabChange }: TAnno
             if (data && Object.prototype.hasOwnProperty.call(data, item.id)) {
                 is_not_read = data[item.id];
             }
-            const notificationDate = new Date(item.date);
-            if (accountDate && notificationDate > accountDate) {
-                tmp_notifications.push({
-                    id: item.id,
-                    icon: <item.icon announce={is_not_read} />,
-                    title: <TitleAnnounce title={item.title} announce={is_not_read} />,
-                    message: <MessageAnnounce message={item.message} date={item.date} announce={is_not_read} />,
-                    buttonAction: performButtonAction(item, modalButtonAction, handleRedirect),
-                    actionText: item.actionText,
-                });
-                temp_localstorage_data[item.id] = is_not_read;
-            }
+            tmp_notifications.push({
+                id: item.id,
+                icon: <item.icon announce={is_not_read} />,
+                title: <TitleAnnounce title={item.title} announce={is_not_read} />,
+                message: <MessageAnnounce message={item.message} date={item.date} announce={is_not_read} />,
+                buttonAction: performButtonAction(item, modalButtonAction, handleRedirect),
+                actionText: item.actionText,
+            });
+            temp_localstorage_data[item.id] = is_not_read;
         });
         setNotifications(tmp_notifications);
         return temp_localstorage_data;
@@ -162,6 +160,33 @@ const Announcements = observer(({ is_mobile, is_tablet, handleTabChange }: TAnno
                 storeDataInLocalStorage(temp_localstorage_data);
                 setReadAnnouncementsMap(temp_localstorage_data);
             });
+
+        // Listen to real-time Deriv WebSocket website_status maintenance broadcasts
+        const handleWebsiteStatus = (status: any) => {
+            if (status?.site_status === 'maintenance' || status?.message) {
+                const maintenance_item: TAnnouncementItem = {
+                    id: 'DERIV_LIVE_WEBSITE_STATUS',
+                    icon: IconAnnounce,
+                    title: localize('Deriv System Maintenance'),
+                    message: status.message || localize('Deriv is currently undergoing scheduled system maintenance.'),
+                    date: new Date().toUTCString(),
+                    buttonAction: BUTTON_ACTION_TYPE.NO_ACTION,
+                    actionText: '',
+                };
+                setApiAnnouncements(prev => {
+                    const exists = prev.some(item => item.id === maintenance_item.id);
+                    const updated = exists ? prev : [maintenance_item, ...prev];
+                    updateNotifications(updated);
+                    return updated;
+                });
+            }
+        };
+
+        try {
+            globalObserver.register('website_status', handleWebsiteStatus);
+        } catch (e) {
+            // Ignore if observer not ready
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

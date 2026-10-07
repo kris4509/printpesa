@@ -177,6 +177,12 @@ class APIBase {
             this.api?.connection.addEventListener('open', this.onsocketopen.bind(this));
             this.api?.connection.addEventListener('close', this.onsocketclose.bind(this));
 
+            this.api?.onMessage().subscribe((data: any) => {
+                if (data?.msg_type === 'website_status' && data?.website_status) {
+                    globalObserver.emit('website_status', data.website_status);
+                }
+            });
+
             // Store the current account ID used for this WebSocket connection
             // This will be used to check if we need to regenerate the connection when the tab becomes active
             const currentClientStore = globalObserver.getState('client.store');
@@ -386,7 +392,7 @@ class APIBase {
             );
         };
 
-        const streamsToSubscribe = ['balance', 'transaction', 'proposal_open_contract'];
+        const streamsToSubscribe = ['balance', 'transaction', 'proposal_open_contract', 'website_status'];
 
         await Promise.all(streamsToSubscribe.map(subscribeToStream));
     }

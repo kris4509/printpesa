@@ -1,4 +1,11 @@
-﻿[
+[
+  {
+    "id": "DERIV_MAINTENANCE_NOTICE_2026",
+    "title": "Deriv Maintenance & System Status",
+    "message": "Deriv periodically schedules platform maintenance. Running bots will safely pause during maintenance windows and resume automatically once services are restored.",
+    "date": "07 October 2026 00:00 UTC",
+    "type": "maintenance"
+  },
   {
     "id": "DERIV_PLATFORM_UPDATE_2024_08",
     "title": "Platform Update",
