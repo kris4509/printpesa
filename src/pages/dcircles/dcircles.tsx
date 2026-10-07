@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Localize } from '@deriv-com/translations';
-import { generateDerivApiInstance } from '@/external/bot-skeleton/services/api/appId';
+import { useDcirclesTicks } from '@/hooks/useDcirclesTicks';
 import './dcircles.scss';
 
 const MARKETS = [
@@ -23,215 +23,80 @@ const TICK_COUNTS = [
     { value: 1000, label: '1000 ticks' },
 ];
 
-const getLastDigit = (price: number, pipSize: number): number => {
-    const fixedPrice = price.toFixed(pipSize);
-    return parseInt(fixedPrice.charAt(fixedPrice.length - 1), 10);
-};
-
-interface TickData {
-    price: number;
-    digit: number;
-    direction?: 'rise' | 'fall';
-}
-
-const STORAGE_KEY_MARKET = 'dcircles_market';
-const STORAGE_KEY_TICKS = 'dcircles_ticks';
-
 const Dcircles = observer(() => {
-    const [selectedMarket, setSelectedMarket] = useState<string>(
-        () => localStorage.getItem(STORAGE_KEY_MARKET) || 'R_100'
-    );
-    const [selectedTicks, setSelectedTicks] = useState<number>(
-        () => Number(localStorage.getItem(STORAGE_KEY_TICKS)) || 1000
-    );
+    // ── All tick data comes from the shared singleton — same data as MiniDcirclesPanel ──
+    const {
+        ticks,
+        currentPrice,
+        pipSize,
+        selectedMarket,
+        selectedTicks,
+        setMarket,
+        setTickCount,
+    } = useDcirclesTicks();
+
     const [patternType, setPatternType] = useState<'even_odd' | 'over_under'>('even_odd');
-    
-    const [ticks, setTicks] = useState<TickData[]>([]);
-    const [currentPrice, setCurrentPrice] = useState<string>('---');
-    const [pipSize, setPipSize] = useState<number>(2);
-    const [isConnected, setIsConnected] = useState(false);
-
-    const subscriptionIdRef = useRef<string | null>(null);
-    const wsRef = useRef<WebSocket | null>(null);
-
-    // Persist market & ticks selections to localStorage and notify other same-tab components
-    useEffect(() => {
-        localStorage.setItem(STORAGE_KEY_MARKET, selectedMarket);
-        window.dispatchEvent(new CustomEvent('dcircles_market_change', { detail: selectedMarket }));
-    }, [selectedMarket]);
-
-    useEffect(() => {
-        localStorage.setItem(STORAGE_KEY_TICKS, String(selectedTicks));
-        window.dispatchEvent(new CustomEvent('dcircles_ticks_change', { detail: selectedTicks }));
-    }, [selectedTicks]);
-
-    useEffect(() => {
-        let active = true;
-
-        const connectAndSubscribe = async () => {
-            try {
-                const api = await generateDerivApiInstance();
-                if (!active) return;
-
-                const ws = api.connection;
-                wsRef.current = ws;
-                setIsConnected(true);
-
-                // Clear previous state on market change
-                setTicks([]);
-                setCurrentPrice('---');
-
-                // Send request for history
-                ws.send(
-                    JSON.stringify({
-                        ticks_history: selectedMarket,
-                        adjust_start_time: 1,
-                        count: selectedTicks,
-                        end: 'latest',
-                        start: 1,
-                        style: 'ticks',
-                    })
-                );
-
-                // Send request for subscription
-                ws.send(
-                    JSON.stringify({
-                        ticks: selectedMarket,
-                        subscribe: 1,
-                    })
-                );
-
-                const handleMessage = (event: MessageEvent) => {
-                    if (!active) return;
-                    const data = JSON.parse(event.data);
-
-                    // Handle History
-                    if (data.msg_type === 'history' && data.echo_req?.ticks_history === selectedMarket) {
-                        const history = data.history;
-                        const pSize = data.pip_size || 2;
-                        setPipSize(pSize);
-
-                        if (history && history.prices) {
-                            const rawPrices: number[] = history.prices;
-                            const parsedTicks: TickData[] = rawPrices.map((price, idx) => {
-                                const digit = getLastDigit(price, pSize);
-                                const prevPrice = idx > 0 ? rawPrices[idx - 1] : price;
-                                const direction = price >= prevPrice ? 'rise' : 'fall';
-                                return { price, digit, direction };
-                            });
-
-                            setTicks(parsedTicks);
-                            if (parsedTicks.length > 0) {
-                                setCurrentPrice(parsedTicks[parsedTicks.length - 1].price.toFixed(pSize));
-                            }
-                        }
-                    }
-
-                    // Handle Live Tick
-                    if (data.msg_type === 'tick' && data.tick?.symbol === selectedMarket) {
-                        const tick = data.tick;
-                        const pSize = tick.pip_size || pipSize;
-                        setPipSize(pSize);
-
-                        const price = tick.quote;
-                        const digit = getLastDigit(price, pSize);
-
-                        if (data.subscription) {
-                            subscriptionIdRef.current = data.subscription.id;
-                        }
-
-                        setCurrentPrice(price.toFixed(pSize));
-
-                        setTicks(prev => {
-                            const lastPrice = prev.length > 0 ? prev[prev.length - 1].price : price;
-                            const direction = price >= lastPrice ? 'rise' : 'fall';
-                            const newTick: TickData = { price, digit, direction };
-                            const updated = [...prev, newTick];
-                            if (updated.length > selectedTicks) {
-                                return updated.slice(updated.length - selectedTicks);
-                            }
-                            return updated;
-                        });
-                    }
-                };
-
-                ws.addEventListener('message', handleMessage);
-
-                return () => {
-                    active = false;
-                    ws.removeEventListener('message', handleMessage);
-                    if (subscriptionIdRef.current && ws.readyState === WebSocket.OPEN) {
-                        ws.send(JSON.stringify({ forget: subscriptionIdRef.current }));
-                    }
-                };
-            } catch (err) {
-                console.error('Dcircles WebSocket connection failed:', err);
-            }
-        };
-
-        const cleanupPromise = connectAndSubscribe();
-
-        return () => {
-            active = false;
-            cleanupPromise.then(cleanup => cleanup && cleanup());
-        };
-    }, [selectedMarket, selectedTicks]);
 
     // Current last digit
     const currentLastDigit = ticks.length > 0 ? ticks[ticks.length - 1].digit : null;
 
-    // Calculate percentage distributions for digits 0-9
-    const { counts, percentages, rankMap, highestInfo, secondInfo, lowestInfo, secondLowInfo } = useMemo(() => {
-        const countsArray = Array(10).fill(0);
-        ticks.forEach(t => {
-            if (t.digit >= 0 && t.digit <= 9) {
-                countsArray[t.digit]++;
-            }
-        });
-
-        const total = ticks.length || 1;
-        const pcts = countsArray.map(c => ((c / total) * 100).toFixed(2));
-
-        const uniqueCounts = Array.from(new Set(countsArray)).sort((a, b) => b - a);
-
-        const rMap: Record<number, 'highest' | 'second' | 'lowest' | 'second_low' | 'neutral'> = {};
-
-        if (uniqueCounts.length > 1) {
-            const top1 = uniqueCounts[0];
-            const top2 = uniqueCounts[1];
-            const bot1 = uniqueCounts[uniqueCounts.length - 1];
-            const bot2 = uniqueCounts.length > 2 ? uniqueCounts[uniqueCounts.length - 2] : null;
-
-            countsArray.forEach((cnt, digit) => {
-                if (cnt === top1) rMap[digit] = 'highest';
-                else if (cnt === top2) rMap[digit] = 'second';
-                else if (cnt === bot1 && uniqueCounts.length > 2) rMap[digit] = 'lowest';
-                else if (bot2 !== null && cnt === bot2 && uniqueCounts.length > 3) rMap[digit] = 'second_low';
-                else rMap[digit] = 'neutral';
+    // ── Percentage distributions for digits 0-9 ──────────────────────────────
+    // Uses .toFixed(2) to match Deriv's SmartChart precision (2 decimal places).
+    const { counts, percentages, rankMap, highestInfo, secondInfo, lowestInfo, secondLowInfo } =
+        useMemo(() => {
+            const countsArray = Array(10).fill(0);
+            ticks.forEach(t => {
+                if (t.digit >= 0 && t.digit <= 9) {
+                    countsArray[t.digit]++;
+                }
             });
-        } else {
-            countsArray.forEach((_, digit) => { rMap[digit] = 'neutral'; });
-        }
 
-        const getFirstDigitForRank = (rankType: string) => {
-            const entry = Object.entries(rMap).find(([_, r]) => r === rankType);
-            if (!entry) return null;
-            const digit = parseInt(entry[0], 10);
-            return { digit, pct: pcts[digit] };
-        };
+            const total = ticks.length || 1;
+            const pcts = countsArray.map(c => ((c / total) * 100).toFixed(2));
 
-        return {
-            counts: countsArray,
-            percentages: pcts,
-            rankMap: rMap,
-            highestInfo: getFirstDigitForRank('highest'),
-            secondInfo: getFirstDigitForRank('second'),
-            lowestInfo: getFirstDigitForRank('lowest'),
-            secondLowInfo: getFirstDigitForRank('second_low'),
-        };
-    }, [ticks]);
+            const uniqueCounts = Array.from(new Set(countsArray)).sort((a, b) => b - a);
 
-    // Pattern Analysis Metrics (Last 50 ticks)
+            const rMap: Record<number, 'highest' | 'second' | 'lowest' | 'second_low' | 'neutral'> = {};
+
+            if (uniqueCounts.length > 1) {
+                const top1 = uniqueCounts[0];
+                const top2 = uniqueCounts[1];
+                const bot1 = uniqueCounts[uniqueCounts.length - 1];
+                const bot2 = uniqueCounts.length > 2 ? uniqueCounts[uniqueCounts.length - 2] : null;
+
+                countsArray.forEach((cnt, digit) => {
+                    if (cnt === top1) rMap[digit] = 'highest';
+                    else if (cnt === top2) rMap[digit] = 'second';
+                    else if (cnt === bot1 && uniqueCounts.length > 2) rMap[digit] = 'lowest';
+                    else if (bot2 !== null && cnt === bot2 && uniqueCounts.length > 3)
+                        rMap[digit] = 'second_low';
+                    else rMap[digit] = 'neutral';
+                });
+            } else {
+                countsArray.forEach((_, digit) => {
+                    rMap[digit] = 'neutral';
+                });
+            }
+
+            const getFirstDigitForRank = (rankType: string) => {
+                const entry = Object.entries(rMap).find(([, r]) => r === rankType);
+                if (!entry) return null;
+                const digit = parseInt(entry[0], 10);
+                return { digit, pct: pcts[digit] };
+            };
+
+            return {
+                counts: countsArray,
+                percentages: pcts,
+                rankMap: rMap,
+                highestInfo: getFirstDigitForRank('highest'),
+                secondInfo: getFirstDigitForRank('second'),
+                lowestInfo: getFirstDigitForRank('lowest'),
+                secondLowInfo: getFirstDigitForRank('second_low'),
+            };
+        }, [ticks]);
+
+    // ── Pattern Analysis Metrics (Last 50 ticks) ──────────────────────────────
     const last50Ticks = useMemo(() => ticks.slice(-50), [ticks]);
 
     const patternMetrics = useMemo(() => {
@@ -252,7 +117,13 @@ const Dcircles = observer(() => {
                 digit: t.digit,
             }));
 
-            return { primaryPct: evenPct, secondaryPct: oddPct, primaryLabel: 'EVEN', secondaryLabel: 'ODD', pattern50 };
+            return {
+                primaryPct: evenPct,
+                secondaryPct: oddPct,
+                primaryLabel: 'EVEN',
+                secondaryLabel: 'ODD',
+                pattern50,
+            };
         } else {
             let overCount = 0;
             let underCount = 0;
@@ -270,11 +141,17 @@ const Dcircles = observer(() => {
                 digit: t.digit,
             }));
 
-            return { primaryPct: overPct, secondaryPct: underPct, primaryLabel: 'OVER (5-9)', secondaryLabel: 'UNDER (0-4)', pattern50 };
+            return {
+                primaryPct: overPct,
+                secondaryPct: underPct,
+                primaryLabel: 'OVER (5-9)',
+                secondaryLabel: 'UNDER (0-4)',
+                pattern50,
+            };
         }
     }, [ticks, patternType, last50Ticks]);
 
-    // Market Movement Metrics (Rise vs Fall)
+    // ── Market Movement Metrics (Rise vs Fall) ───────────────────────────────
     const marketMovement = useMemo(() => {
         let riseCount = 0;
         let fallCount = 0;
@@ -289,7 +166,7 @@ const Dcircles = observer(() => {
         return { risePct, fallPct };
     }, [ticks]);
 
-    // Strength percentage calculation for live badge
+    // ── Strength percentage for live badge ───────────────────────────────────
     const strengthPct = useMemo(() => {
         if (percentages.length === 0) return '50.0';
         const maxPct = Math.max(...percentages.map(p => parseFloat(p)));
@@ -315,7 +192,7 @@ const Dcircles = observer(() => {
                         <select
                             id='dcircles-market-select'
                             value={selectedMarket}
-                            onChange={e => setSelectedMarket(e.target.value)}
+                            onChange={e => setMarket(e.target.value)}
                         >
                             {MARKETS.map(market => (
                                 <option key={market.value} value={market.value}>
@@ -332,7 +209,7 @@ const Dcircles = observer(() => {
                         <select
                             id='dcircles-ticks-select'
                             value={selectedTicks}
-                            onChange={e => setSelectedTicks(Number(e.target.value))}
+                            onChange={e => setTickCount(Number(e.target.value))}
                         >
                             {TICK_COUNTS.map(count => (
                                 <option key={count.value} value={count.value}>
@@ -346,7 +223,6 @@ const Dcircles = observer(() => {
 
             {/* ── Main Content Container ── */}
             <div className='dcircles-dashboard__grid-layout'>
-                
                 {/* ── Left / Main Analytics Panel ── */}
                 <div className='dcircles-dashboard__main-col'>
 
@@ -365,7 +241,10 @@ const Dcircles = observer(() => {
                                 const isCurrent = currentLastDigit === digit;
 
                                 return (
-                                    <div key={digit} className={`dc-digit-item dc-digit-item--${rank}${isCurrent ? ' dc-digit-item--active' : ''}`}>
+                                    <div
+                                        key={digit}
+                                        className={`dc-digit-item dc-digit-item--${rank}${isCurrent ? ' dc-digit-item--active' : ''}`}
+                                    >
                                         <div className='dc-digit-item__circle'>
                                             <span className='dc-digit-item__num'>{digit}</span>
                                             <span className='dc-digit-item__pct'>{pct}%</span>
@@ -429,11 +308,17 @@ const Dcircles = observer(() => {
 
                         {/* Dual Bar Display */}
                         <div className='dc-pattern-bars'>
-                            <div className='dc-bar-block dc-bar-block--primary' style={{ flex: parseFloat(patternMetrics.primaryPct) || 1 }}>
+                            <div
+                                className='dc-bar-block dc-bar-block--primary'
+                                style={{ flex: parseFloat(patternMetrics.primaryPct) || 1 }}
+                            >
                                 <span className='dc-bar-block__val'>{patternMetrics.primaryPct}%</span>
                                 <span className='dc-bar-block__lbl'>{patternMetrics.primaryLabel}</span>
                             </div>
-                            <div className='dc-bar-block dc-bar-block--secondary' style={{ flex: parseFloat(patternMetrics.secondaryPct) || 1 }}>
+                            <div
+                                className='dc-bar-block dc-bar-block--secondary'
+                                style={{ flex: parseFloat(patternMetrics.secondaryPct) || 1 }}
+                            >
                                 <span className='dc-bar-block__val'>{patternMetrics.secondaryPct}%</span>
                                 <span className='dc-bar-block__lbl'>{patternMetrics.secondaryLabel}</span>
                             </div>
@@ -466,11 +351,17 @@ const Dcircles = observer(() => {
                             </h3>
                         </div>
                         <div className='dc-pattern-bars'>
-                            <div className='dc-bar-block dc-bar-block--rise' style={{ flex: parseFloat(marketMovement.risePct) || 1 }}>
+                            <div
+                                className='dc-bar-block dc-bar-block--rise'
+                                style={{ flex: parseFloat(marketMovement.risePct) || 1 }}
+                            >
                                 <span className='dc-bar-block__val'>{marketMovement.risePct}%</span>
                                 <span className='dc-bar-block__lbl'><Localize i18n_default_text='RISE' /></span>
                             </div>
-                            <div className='dc-bar-block dc-bar-block--fall' style={{ flex: parseFloat(marketMovement.fallPct) || 1 }}>
+                            <div
+                                className='dc-bar-block dc-bar-block--fall'
+                                style={{ flex: parseFloat(marketMovement.fallPct) || 1 }}
+                            >
                                 <span className='dc-bar-block__val'>{marketMovement.fallPct}%</span>
                                 <span className='dc-bar-block__lbl'><Localize i18n_default_text='FALL' /></span>
                             </div>
@@ -495,10 +386,9 @@ const Dcircles = observer(() => {
                             ))}
                         </div>
                     </div>
-
                 </div>
 
-                {/* ── Right Side / Live Focus Panel (Image 5 Style) ── */}
+                {/* ── Right Side / Live Focus Panel ── */}
                 <div className='dcircles-dashboard__side-col'>
                     <div className='dc-side-card'>
                         <span className='dc-side-card__label'>
@@ -512,9 +402,7 @@ const Dcircles = observer(() => {
                             <div className='dc-side-card__pulse-ring' />
                         </div>
 
-                        <div className='dc-side-card__price-sub'>
-                            {currentPrice}
-                        </div>
+                        <div className='dc-side-card__price-sub'>{currentPrice}</div>
 
                         <div className='dc-side-card__strength'>
                             <div className='dc-side-card__strength-header'>
@@ -524,7 +412,9 @@ const Dcircles = observer(() => {
                             <div className='dc-side-card__progress-track'>
                                 <div
                                     className='dc-side-card__progress-fill'
-                                    style={{ width: `${Math.min(100, Math.max(0, parseFloat(strengthPct)))}%` }}
+                                    style={{
+                                        width: `${Math.min(100, Math.max(0, parseFloat(strengthPct)))}%`,
+                                    }}
                                 />
                             </div>
                         </div>
@@ -541,7 +431,6 @@ const Dcircles = observer(() => {
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     );

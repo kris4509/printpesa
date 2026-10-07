@@ -87,7 +87,7 @@ const AppWrapper = observer(() => {
     const { clear } = summary_card;
     const { DASHBOARD, BOT_BUILDER } = DBOT_TABS;
     const init_render = React.useRef(true);
-    const hash = ['dashboard', 'bot_builder', 'best_bots', 'market_analyzer', 'dcircles', 'tutorial', 'risk_tools'];
+    const hash = ['dashboard', 'bot_builder', 'dcircles', 'best_bots', 'market_analyzer', 'tutorial', 'risk_tools'];
     const { isDesktop } = useDevice();
     const location = useLocation();
     const navigate = useNavigate();
@@ -423,6 +423,32 @@ const AppWrapper = observer(() => {
                                             height='20px'
                                             width='20px'
                                             viewBox='0 0 24 24'
+                                            fill='none'
+                                            stroke='currentColor'
+                                            strokeWidth='2'
+                                            strokeLinecap='round'
+                                            strokeLinejoin='round'
+                                            aria-hidden='true'
+                                        >
+                                            <circle cx='12' cy='12' r='10' />
+                                            <circle cx='12' cy='12' r='3' fill='currentColor' />
+                                        </svg>
+                                        <Localize i18n_default_text='Dcircles' />
+                                    </>
+                                }
+                                id='id-dcircles'
+                            >
+                                <Suspense fallback={<ChunkLoader message={localize('Please wait, loading dcircles...')} />}>
+                                    <Dcircles />
+                                </Suspense>
+                            </div>
+                            <div
+                                label={
+                                    <>
+                                        <svg
+                                            height='20px'
+                                            width='20px'
+                                            viewBox='0 0 24 24'
                                             fill='var(--text-general)'
                                             aria-hidden='true'
                                         >
@@ -456,32 +482,6 @@ const AppWrapper = observer(() => {
                             >
                                 <Suspense fallback={<ChunkLoader message={localize('Please wait, loading market analyzer...')} />}>
                                     <MarketAnalyzer />
-                                </Suspense>
-                            </div>
-                            <div
-                                label={
-                                    <>
-                                        <svg
-                                            height='20px'
-                                            width='20px'
-                                            viewBox='0 0 24 24'
-                                            fill='none'
-                                            stroke='currentColor'
-                                            strokeWidth='2'
-                                            strokeLinecap='round'
-                                            strokeLinejoin='round'
-                                            aria-hidden='true'
-                                        >
-                                            <circle cx='12' cy='12' r='10' />
-                                            <circle cx='12' cy='12' r='3' fill='currentColor' />
-                                        </svg>
-                                        <Localize i18n_default_text='Dcircles' />
-                                    </>
-                                }
-                                id='id-dcircles'
-                            >
-                                <Suspense fallback={<ChunkLoader message={localize('Please wait, loading dcircles...')} />}>
-                                    <Dcircles />
                                 </Suspense>
                             </div>
                             {/* Manual Trade tab - hidden from UI as requested, code preserved for future use
