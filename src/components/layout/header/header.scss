@@ -318,6 +318,42 @@
     }
 }
 
+// ── Mobile Header Optimization ──────────────────────────────────────────────────
+@media (max-width: 768px) {
+    .app-header--mobile {
+        padding: 0 0.8rem;
+        min-height: 48px;
+
+        .deriv-header__wrapper {
+            gap: 0.4rem;
+        }
+
+        .app-header__logo {
+            padding-inline-start: 0.2rem;
+            padding-inline-end: 0.4rem;
+            height: 24px;
+        }
+
+        .header-announcements {
+            margin-inline-start: 0.2rem;
+        }
+
+        .auth-actions {
+            padding-block: 4px;
+
+            button {
+                padding: 0.4rem 1.2rem;
+                font-size: 1.2rem;
+                height: 32px;
+                min-height: 32px;
+                margin-inline-end: 0;
+                border-radius: 16px;
+                font-weight: 600;
+            }
+        }
+    }
+}
+
 // ── Referral Button ────────────────────────────────────────────────────────────
 .header-referral-btn {
     display: inline-flex;

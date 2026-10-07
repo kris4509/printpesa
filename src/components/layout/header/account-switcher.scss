@@ -881,6 +881,42 @@
         }
     }
 
+    // ── Mobile responsive header optimization ──────────────────────────────
+    @media (max-width: 768px) {
+        gap: 0.3rem;
+
+        &__currency-pill {
+            display: none !important; // Hide redundant duplicate currency pill on mobile header
+        }
+
+        &__balance-btn {
+            padding: 3px 6px 3px 4px;
+            font-size: 1.2rem;
+            gap: 4px;
+
+            .accs-icon {
+                width: 2rem;
+                height: 2rem;
+
+                svg {
+                    width: 2rem;
+                    height: 2rem;
+                }
+            }
+        }
+
+        &__balance-amount {
+            font-size: 1.2rem;
+            letter-spacing: -0.2px;
+        }
+
+        &__panel {
+            width: calc(100vw - 24px);
+            max-width: 34rem;
+            right: -8px;
+        }
+    }
+
     &__balance-icon {
         display: flex;
         align-items: center;
