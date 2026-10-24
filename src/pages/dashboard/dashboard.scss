@@ -58,55 +58,6 @@
     }
 }
 
-.db {
-    --icon-height: 2.4rem;
-    --icon-width: 2.4rem;
-    --border-radius: 2.4rem;
-
-    &-sidebar {
-        position: relative;
-        background-color: var(--general-main-1);
-        padding: 2.4rem;
-        height: 100%;
-        display: none;
-
-        &--block {
-            display: block;
-        }
-
-        &__images {
-            background: var(--general-section-6);
-        }
-    }
-
-    &-info-panel {
-        &__close-action {
-            position: absolute;
-            right: 1.4rem;
-            top: 1.4rem;
-            height: 2rem;
-            width: 2rem;
-            line-height: 2.3rem;
-            text-align: center;
-            border-radius: 1rem;
-
-            &:hover {
-                cursor: pointer;
-                background: var(--general-section-1);
-            }
-        }
-
-        &__content {
-            cursor: pointer;
-
-            &:hover {
-                text-decoration: underline;
-                color: var(--button-primary-default);
-            }
-        }
-    }
-}
-
 // ── Dashboard Master Styling ───────────────────────────────────────────────────
 .tab {
     &__dashboard {

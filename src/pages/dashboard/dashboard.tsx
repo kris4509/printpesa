@@ -7,7 +7,6 @@ import { localize } from '@deriv-com/translations';
 import { useDevice } from '@deriv-com/ui';
 import OnboardTourHandler from '../tutorials/dbot-tours/onboarding-tour';
 import Cards from './cards';
-import InfoPanel from './info-panel';
 import { getDashboardBackgroundImage, getMillisecondsUntilNextDashboardBackground } from './dashboard-backgrounds';
 
 const DASHBOARD_WELCOME_MESSAGES = [
@@ -110,7 +109,6 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
                     </div>
                 </div>
             </div>
-            <InfoPanel />
             {active_tab === 0 && <OnboardTourHandler is_mobile={!isDesktop} />}
         </React.Fragment>
     );

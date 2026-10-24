@@ -208,8 +208,6 @@ window.Blockly.JavaScript.javascriptGenerator.forBlock.trade_definition = block 
           timeMachineEnabled  : ${should_restart_on_buy_sell},
           virtualHook         : {
             enabled   : ${market_block.getFieldValue('VH_ENABLED') === 'TRUE'},
-            maxVirtualLosses: ${Number(market_mutation.vh_max_steps ?? 1)},
-            realWinsBeforeVirtual: ${Number(market_mutation.vh_min_trades ?? 1)},
             stake    : ${Number(market_mutation.vh_stake ?? 0.35)},
           },
           autoScanVolatilityMarkets: {

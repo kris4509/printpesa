@@ -5,19 +5,10 @@ import './virtual-hook-settings-modal.scss';
 
 type TSettings = {
     enabled: boolean;
-    virtualLosses: number;
-    realWins: number;
 };
 
 const DEFAULT_SETTINGS: TSettings = {
     enabled: false,
-    virtualLosses: 1,
-    realWins: 1,
-};
-
-const getSettingNumber = (value: string | undefined, fallback: number) => {
-    const parsed_value = Number(value);
-    return Number.isInteger(parsed_value) && parsed_value > 0 ? parsed_value : fallback;
 };
 
 const VirtualHookSettingsModal = () => {
@@ -29,12 +20,9 @@ const VirtualHookSettingsModal = () => {
             const block = window.Blockly?.derivWorkspace?.getBlockById(id);
             if (!block || block.type !== 'trade_definition_market') return;
 
-            const mutation = block.referenceMutation ?? {};
             setBlockId(id);
             setSettings({
                 enabled: block.getFieldValue('VH_ENABLED') === 'TRUE',
-                virtualLosses: getSettingNumber(mutation.vh_max_steps, 1),
-                realWins: getSettingNumber(mutation.vh_min_trades, 1),
             });
         };
 
@@ -51,19 +39,6 @@ const VirtualHookSettingsModal = () => {
         return () => window.removeEventListener('keydown', on_key_down);
     }, [block_id]);
 
-    const updateCount = (field: 'virtualLosses' | 'realWins', delta: number) => {
-        setSettings(current => ({
-            ...current,
-            [field]: Math.min(1000, Math.max(1, current[field] + delta)),
-        }));
-    };
-
-    const updateInput = (field: 'virtualLosses' | 'realWins', value: string) => {
-        if (!/^\d*$/.test(value)) return;
-        const number = value === '' ? 1 : Number(value);
-        setSettings(current => ({ ...current, [field]: Math.min(1000, Math.max(1, number)) }));
-    };
-
     const applySettings = () => {
         if (!block_id) return;
         const block = window.Blockly?.derivWorkspace?.getBlockById(block_id);
@@ -77,11 +52,14 @@ const VirtualHookSettingsModal = () => {
         const previous_group = window.Blockly.Events.getGroup();
         window.Blockly.Events.setGroup(`virtual-hook-settings-${Date.now()}`);
         try {
+            const existing_mutation = Object.fromEntries(
+                Object.entries(block.referenceMutation ?? {}).filter(
+                    ([key]) => key !== 'vh_max_steps' && key !== 'vh_min_trades'
+                )
+            );
             block.referenceMutation = {
-                ...block.referenceMutation,
+                ...existing_mutation,
                 vh_enabled: settings.enabled ? 'true' : 'false',
-                vh_max_steps: String(settings.virtualLosses),
-                vh_min_trades: String(settings.realWins),
             };
             block.setFieldValue(settings.enabled ? 'TRUE' : 'FALSE', 'VH_ENABLED');
 
@@ -131,66 +109,11 @@ const VirtualHookSettingsModal = () => {
                         type='checkbox'
                     />
                 </label>
-                <div className='virtual-hook-modal__setting'>
-                    <label htmlFor='vh-virtual-losses'>{localize('No of Consecutive Virtual Losses')}</label>
-                    <div className='virtual-hook-modal__stepper'>
-                        <button
-                            aria-label={localize('Decrease consecutive virtual losses')}
-                            disabled={!settings.enabled || settings.virtualLosses <= 1}
-                            onClick={() => updateCount('virtualLosses', -1)}
-                            type='button'
-                        >
-                            −
-                        </button>
-                        <input
-                            disabled={!settings.enabled}
-                            id='vh-virtual-losses'
-                            max='1000'
-                            min='1'
-                            onChange={event => updateInput('virtualLosses', event.target.value)}
-                            type='number'
-                            value={settings.virtualLosses}
-                        />
-                        <button
-                            aria-label={localize('Increase consecutive virtual losses')}
-                            disabled={!settings.enabled || settings.virtualLosses >= 1000}
-                            onClick={() => updateCount('virtualLosses', 1)}
-                            type='button'
-                        >
-                            +
-                        </button>
-                    </div>
-                </div>
-                <div className='virtual-hook-modal__setting'>
-                    <label htmlFor='vh-real-wins'>{localize('No of wins on Real before switching to VH')}</label>
-                    <div className='virtual-hook-modal__stepper'>
-                        <button
-                            aria-label={localize('Decrease real wins threshold')}
-                            disabled={!settings.enabled || settings.realWins <= 1}
-                            onClick={() => updateCount('realWins', -1)}
-                            type='button'
-                        >
-                            −
-                        </button>
-                        <input
-                            disabled={!settings.enabled}
-                            id='vh-real-wins'
-                            max='1000'
-                            min='1'
-                            onChange={event => updateInput('realWins', event.target.value)}
-                            type='number'
-                            value={settings.realWins}
-                        />
-                        <button
-                            aria-label={localize('Increase real wins threshold')}
-                            disabled={!settings.enabled || settings.realWins >= 1000}
-                            onClick={() => updateCount('realWins', 1)}
-                            type='button'
-                        >
-                            +
-                        </button>
-                    </div>
-                </div>
+                <p className='virtual-hook-modal__description'>
+                    {localize(
+                        'Virtual trades continue until one wins. Then the bot trades with real funds until one loses, and switches back to virtual trades.'
+                    )}
+                </p>
                 <button className='virtual-hook-modal__apply' onClick={applySettings} type='button'>
                     {localize('Apply Settings')}
                 </button>

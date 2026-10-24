@@ -41,15 +41,11 @@
     line-height: 1;
 }
 
-.virtual-hook-modal__toggle,
-.virtual-hook-modal__setting {
+.virtual-hook-modal__toggle {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1.6rem;
-}
-
-.virtual-hook-modal__toggle {
     color: #f1eaf5;
     font-size: 1.5rem;
 }
@@ -60,48 +56,11 @@
     accent-color: #c247a1;
 }
 
-.virtual-hook-modal__setting > label {
+.virtual-hook-modal__description {
+    margin: 0;
     color: #ded5e4;
-    font-size: 1.4rem;
-}
-
-.virtual-hook-modal__stepper {
-    display: flex;
-    flex: 0 0 13rem;
-    align-items: center;
-    justify-content: space-between;
-    overflow: hidden;
-    border: 1px solid #574960;
-    border-radius: 0.6rem;
-}
-
-.virtual-hook-modal__stepper button {
-    width: 3.6rem;
-    height: 3.6rem;
-    border: 0;
-    background: #33253b;
-    color: #fff;
-    cursor: pointer;
-    font-size: 2rem;
-}
-
-.virtual-hook-modal__stepper button:disabled {
-    color: #766e7a;
-    cursor: not-allowed;
-}
-
-.virtual-hook-modal__stepper input {
-    width: 5rem;
-    border: 0;
-    outline: 0;
-    background: transparent;
-    color: #fff;
-    font-size: 1.5rem;
-    text-align: center;
-}
-
-.virtual-hook-modal__stepper input:disabled {
-    color: #8f8794;
+    font-size: 1.3rem;
+    line-height: 1.5;
 }
 
 .virtual-hook-modal__apply {
@@ -119,11 +78,5 @@
     .virtual-hook-modal {
         gap: 1.5rem;
         padding: 2rem 1.6rem;
-    }
-
-    .virtual-hook-modal__setting {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 0.8rem;
     }
 }
