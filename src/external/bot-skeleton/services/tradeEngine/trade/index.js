@@ -4,6 +4,7 @@ import { getLocalizedErrorMessage } from '@/constants/backend-error-messages';
 import { createError } from '../../../utils/error';
 import { observer as globalObserver } from '../../../utils/observer';
 import { api_base } from '../../api/api-base';
+import ApiHelpers from '../../api/api-helpers';
 import { checkBlocksForProposalRequest, doUntilDone } from '../utils/helpers';
 import { expectInitArg } from '../utils/sanitize';
 import { proposalsReady, start } from './state/actions';
@@ -17,6 +18,7 @@ import Sell from './Sell';
 import Ticks from './Ticks';
 import Total from './Total';
 import { createVirtualHookState } from '../utils/virtual-hook';
+import { getNextVolatilityScanSymbol, getVolatilityScanSymbols } from '../utils/volatility-market-scan';
 
 const watchBefore = store =>
     watchScope({
@@ -85,6 +87,27 @@ export default class TradeEngine extends Balance(Purchase(Sell(OpenContract(Prop
         this.initArgs = args;
         this.options = options;
         this.virtualHookState = createVirtualHookState(options.virtualHook);
+        this.autoScanMarketIndex = -1;
+        this.autoScanMarketSymbols = [];
+        if (options.autoScanVolatilityMarkets?.enabled) {
+            const candidates = options.autoScanVolatilityMarkets.symbols;
+            if (!Array.isArray(candidates) || candidates.length === 0) {
+                throw new Error('Auto-scan is enabled but no volatility markets are configured.');
+            }
+            const active_symbols = ApiHelpers?.instance?.active_symbols;
+            if (!active_symbols) {
+                throw new Error('Auto-scan could not load available volatility markets.');
+            }
+            const available_symbols = active_symbols.getAllSymbols(true).map(item => item.symbol);
+            this.autoScanMarketSymbols = getVolatilityScanSymbols(
+                symbol,
+                candidates,
+                available_symbols
+            );
+            if (!this.autoScanMarketSymbols.length) {
+                throw new Error('Auto-scan could not find an open volatility market to monitor.');
+            }
+        }
         this.startPromise = this.loginAndGetBalance(token);
 
         if (!this.checkTicksPromiseExists()) this.watchTicks(symbol);
@@ -146,11 +169,53 @@ export default class TradeEngine extends Balance(Purchase(Sell(OpenContract(Prop
         this.observeProposals();
     }
 
-    watch(watchName) {
+    async watch(watchName) {
         if (watchName === 'before') {
+            if (this.autoScanMarketSymbols.length) {
+                const next_market = getNextVolatilityScanSymbol(
+                    this.autoScanMarketSymbols,
+                    this.autoScanMarketIndex
+                );
+                this.autoScanMarketIndex = next_market.index;
+                await this.selectAutoScanMarket(next_market.symbol);
+                if (this.store.getState().scope === constants.STOP) {
+                    return false;
+                }
+            }
             return watchBefore(this.store);
         }
         return watchDuring(this.store);
+    }
+
+    async selectAutoScanMarket(symbol) {
+        if (symbol === this.symbol) return;
+
+        this.options.symbol = symbol;
+        if (this.tradeOptions) {
+            this.tradeOptions = { ...this.tradeOptions, symbol };
+        }
+
+        await this.watchTicks(symbol);
+        globalObserver.emit('bot.auto_scan.market', symbol);
+
+        if (!this.is_proposal_subscription_required || !this.tradeOptions) return;
+
+        this.trade_option = null;
+        this.makeProposals({ ...this.options, ...this.tradeOptions });
+        await new Promise(resolve => {
+            if (this.store.getState().proposalsReady) {
+                resolve(true);
+                return;
+            }
+
+            const unsubscribe = this.store.subscribe(() => {
+                const state = this.store.getState();
+                if (state.proposalsReady || state.scope === constants.STOP) {
+                    unsubscribe();
+                    resolve(state.proposalsReady);
+                }
+            });
+        });
     }
 
     makeDirectPurchaseDecision() {

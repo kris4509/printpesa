@@ -5,12 +5,6 @@ import { excludeOptionFromContextMenu, modifyContextMenu, runIrreversibleEvents 
 import { observer as globalObserver } from '../../../../utils/observer';
 import { setDcirclesMarket } from '../../../../../../hooks/useDcirclesTicks';
 /* eslint-disable */
-const syncBlocklyMarketToDcircles = symbol => {
-    if (symbol) {
-        setDcirclesMarket(symbol);
-    }
-};
-
 const syncDcirclesMarketToBlockly = event => {
     const symbol = event.detail;
     if (typeof symbol !== 'string') return;
@@ -49,6 +43,11 @@ const syncDcirclesMarketToBlockly = event => {
 };
 
 window.addEventListener('dcircles_market_change', syncDcirclesMarketToBlockly);
+globalObserver.register('bot.auto_scan.market', symbol => {
+    if (typeof symbol === 'string') {
+        setDcirclesMarket(symbol);
+    }
+});
 
 window.Blockly.Blocks.trade_definition_market = {
     init() {
@@ -97,6 +96,9 @@ window.Blockly.Blocks.trade_definition_market = {
                     () => globalObserver.emit('virtual-hook.settings.open', this.id)
                 )
             );
+        this.appendDummyInput('AUTO_SCAN_VOLATILITY')
+            .appendField(localize('Auto-scan volatility markets and trade first match:'))
+            .appendField(new window.Blockly.FieldCheckbox('FALSE'), 'AUTO_SCAN_VOLATILITY');
 
         const reference_settings = this.appendDummyInput('REFERENCE_SETTINGS');
         reference_settings

@@ -16,20 +16,25 @@ export default Engine =>
     class Ticks extends Engine {
         async watchTicks(symbol) {
             if (symbol && this.symbol !== symbol) {
+                const previous_symbol = this.symbol;
+                if (tickListenerKey && previous_symbol) {
+                    await this.$scope.ticksService.stopMonitor({
+                        symbol: previous_symbol,
+                        key: tickListenerKey,
+                    });
+                    tickListenerKey = null;
+                }
+
                 this.symbol = symbol;
                 const { ticksService } = this.$scope;
 
-                await ticksService.stopMonitor({
-                    symbol,
-                    key: tickListenerKey,
-                });
                 const callback = ticks => {
                     if (this.is_proposal_subscription_required) {
                         this.checkProposalReady();
                     }
                     const lastTick = ticks.slice(-1)[0];
                     const { epoch } = lastTick;
-                    this.store.dispatch({ type: constants.NEW_TICK, payload: epoch });
+                    this.store.dispatch({ type: constants.NEW_TICK, payload: `${symbol}:${epoch}` });
                 };
 
                 const key = await ticksService.monitor({ symbol, callback });

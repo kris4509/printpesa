@@ -9,6 +9,7 @@ import {
     runIrreversibleEvents,
 } from '../../../utils';
 import { defineContract } from '../../images';
+import { DCIRCLES_MARKETS } from '@/constants/dcircles-markets';
 
 window.Blockly.Blocks.trade_definition = {
     init() {
@@ -188,6 +189,11 @@ window.Blockly.JavaScript.javascriptGenerator.forBlock.trade_definition = block 
         contract_type === 'both'
             ? opposites[trade_type.toUpperCase()].map(opposite => Object.keys(opposite)[0])
             : [contract_type];
+    const auto_scan_enabled = market_block.getFieldValue('AUTO_SCAN_VOLATILITY') === 'TRUE';
+    const digit_contract_types = ['DIGITOVER', 'DIGITUNDER', 'DIGITEVEN', 'DIGITODD', 'DIGITMATCH', 'DIGITDIFF'];
+    if (auto_scan_enabled && !contract_type_list.every(type => digit_contract_types.includes(type))) {
+        throw new Error('Auto-scan volatility markets currently supports digit contracts only.');
+    }
 
     const initialization = window.Blockly.JavaScript.javascriptGenerator.statementToCode(block, 'INITIALIZATION');
     const trade_options_statement = window.Blockly.JavaScript.javascriptGenerator.statementToCode(block, 'SUBMARKET');
@@ -205,6 +211,10 @@ window.Blockly.JavaScript.javascriptGenerator.forBlock.trade_definition = block 
             maxVirtualLosses: ${Number(market_mutation.vh_max_steps ?? 1)},
             realWinsBeforeVirtual: ${Number(market_mutation.vh_min_trades ?? 1)},
             stake    : ${Number(market_mutation.vh_stake ?? 0.35)},
+          },
+          autoScanVolatilityMarkets: {
+            enabled: ${auto_scan_enabled},
+            symbols: ${JSON.stringify(DCIRCLES_MARKETS.map(market => market.value))},
           },
         });
         ${initialization.trim()}
