@@ -1,20 +1,8 @@
 // @ts-nocheck
 import React, { useEffect, useState, useRef, useMemo } from 'react';
+import { DCIRCLES_MARKETS } from '@/constants/dcircles-markets';
 import { useDcirclesTicks } from '@/hooks/useDcirclesTicks';
 import './mini-dcircles-panel.scss';
-
-const MARKETS = [
-    { value: 'R_10', label: 'Vol 10' },
-    { value: 'R_25', label: 'Vol 25' },
-    { value: 'R_50', label: 'Vol 50' },
-    { value: 'R_75', label: 'Vol 75' },
-    { value: 'R_100', label: 'Vol 100' },
-    { value: '1HZ10V', label: 'Vol 10 (1s)' },
-    { value: '1HZ25V', label: 'Vol 25 (1s)' },
-    { value: '1HZ50V', label: 'Vol 50 (1s)' },
-    { value: '1HZ75V', label: 'Vol 75 (1s)' },
-    { value: '1HZ100V', label: 'Vol 100 (1s)' },
-];
 
 const TICK_COUNTS = [
     { value: 100, label: '100' },
@@ -219,7 +207,7 @@ const MiniDcirclesPanel: React.FC = () => {
         };
     }, [ticks]);
 
-    const selectedMarketLabel = MARKETS.find(m => m.value === selectedMarket)?.label || selectedMarket;
+    const selectedMarketLabel = DCIRCLES_MARKETS.find(m => m.value === selectedMarket)?.shortLabel || selectedMarket;
 
     const inlineStyle = position
         ? {
@@ -307,9 +295,9 @@ const MiniDcirclesPanel: React.FC = () => {
                     <div className='mini-dc-panel__control-group'>
                         <label>MARKET</label>
                         <select value={selectedMarket} onChange={e => setMarket(e.target.value)}>
-                            {MARKETS.map(m => (
+                            {DCIRCLES_MARKETS.map(m => (
                                 <option key={m.value} value={m.value}>
-                                    {m.label}
+                                    {m.shortLabel}
                                 </option>
                             ))}
                         </select>

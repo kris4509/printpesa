@@ -4,6 +4,7 @@ import { LogTypes } from '../../../constants/messages';
 import { createError } from '../../../utils/error';
 import { observer as globalObserver } from '../../../utils/observer';
 import { info, log } from '../utils/broadcast';
+import { recordRealHookTrade } from '../utils/virtual-hook';
 
 const skeleton = {
     totalProfit: 0,
@@ -40,6 +41,7 @@ export default Engine =>
             const profit = getRoundedNumber(Number(sellPrice) - Number(buyPrice), currency);
 
             const win = profit > 0;
+            this.virtualHookState = recordRealHookTrade(this.virtualHookState, profit);
 
             const accountStat = this.getAccountStat();
 

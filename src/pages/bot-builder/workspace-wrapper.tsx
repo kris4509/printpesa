@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite';
 import Flyout from '@/components/flyout';
 import { useStore } from '@/hooks/useStore';
 import StopBotModal from '../dashboard/stop-bot-modal';
+import VirtualHookSettingsModal from './virtual-hook-settings-modal';
 import Toolbar from './toolbar';
 import Toolbox from './toolbox';
 import './workspace.scss';
@@ -27,6 +28,7 @@ const WorkspaceWrapper = observer(() => {
                 <Toolbar />
                 <Flyout />
                 <StopBotModal />
+                <VirtualHookSettingsModal />
             </React.Fragment>
         );
 

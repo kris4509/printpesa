@@ -6,6 +6,7 @@ import { getLast } from '../../../utils/binary-utils';
 import { observer as globalObserver } from '../../../utils/observer';
 import { api_base } from '../../api/api-base';
 import { getDirection, getLastDigit } from '../utils/helpers';
+import { getDigitFrequency, getDigitPercentage } from '@/utils/digit-statistics';
 import { expectPositiveInteger } from '../utils/sanitize';
 import * as constants from './state/constants';
 
@@ -87,14 +88,127 @@ export default Engine =>
             return new Promise(resolve => this.getLastTick(false, true).then(tick => resolve(getLastDigit(tick))));
         }
 
+        getNthLastDigit(index) {
+            return new Promise(resolve => {
+                const n = Number(index);
+                if (!Number.isFinite(n) || n < 1) {
+                    resolve(null);
+                    return;
+                }
+
+                this.getTicks().then(ticks => {
+                    if (!Array.isArray(ticks) || ticks.length < n) {
+                        resolve(null);
+                        return;
+                    }
+
+                    const target = ticks[ticks.length - n];
+                    resolve(target == null ? null : getLastDigit(target.toFixed(this.getPipSize())));
+                });
+            });
+        }
+
         getLastDigitList() {
             return new Promise(resolve => this.getTicks().then(ticks => resolve(this.getLastDigitsFromList(ticks))));
         }
+
+        getRecentDigits(count) {
+            const n = Number(count);
+            if (!Number.isInteger(n) || n < 1 || n > 1000) {
+                return Promise.resolve(null);
+            }
+
+            return this.getLastDigitList().then(digits => (digits.length < n ? null : digits.slice(-n)));
+        }
+
+        getDigitFrequencyAnalysis(count, analysis_type) {
+            return this.getRecentDigits(count).then(digits => (digits ? getDigitFrequency(digits, analysis_type) : null));
+        }
+
+        getEvenOddAnalysis(count, analysis_type) {
+            return this.getRecentDigits(count).then(digits =>
+                digits ? getDigitPercentage(digits, analysis_type) : null
+            );
+        }
+
+        getOverUnderAnalysis(count, condition_type, barrier) {
+            return this.getRecentDigits(count).then(digits =>
+                digits
+                    ? getDigitPercentage(
+                          digits,
+                          condition_type,
+                          Number(barrier)
+                      )
+                    : null
+            );
+        }
+
         getLastDigitsFromList(ticks) {
             const digits = ticks.map(tick => {
                 return getLastDigit(tick.toFixed(this.getPipSize()));
             });
             return digits;
+        }
+
+        getLastDigitsCondition(count, condition, compare_value) {
+            return new Promise(resolve => {
+                const n = Number(count);
+                const threshold = Number(compare_value);
+                const normalized_condition = String(condition || '').toUpperCase();
+
+                if (!Number.isFinite(n) || n < 1 || n > 1000) {
+                    resolve(false);
+                    return;
+                }
+
+                this.getTicks().then(ticks => {
+                    if (!Array.isArray(ticks) || ticks.length < n) {
+                        resolve(false);
+                        return;
+                    }
+
+                    const digits = this.getLastDigitsFromList(ticks).slice(-n);
+                    if (!digits.length) {
+                        resolve(false);
+                        return;
+                    }
+
+                    const matches = digit => {
+                        switch (normalized_condition) {
+                            case 'LESS_THAN':
+                                return digit < threshold;
+                            case 'LESS_OR_EQUAL':
+                                return digit <= threshold;
+                            case 'GREATER_THAN':
+                                return digit > threshold;
+                            case 'GREATER_OR_EQUAL':
+                                return digit >= threshold;
+                            case 'EQUAL':
+                                return digit === threshold;
+                            case 'NOT_EQUAL':
+                                return digit !== threshold;
+                            case 'ALL_EVEN':
+                                return digit % 2 === 0;
+                            case 'ALL_ODD':
+                                return digit % 2 !== 0;
+                            default:
+                                return false;
+                        }
+                    };
+
+                    if (['ALL_EVEN', 'ALL_ODD'].includes(normalized_condition)) {
+                        resolve(digits.every(matches));
+                        return;
+                    }
+
+                    if (!Number.isFinite(threshold) || threshold < 0 || threshold > 9) {
+                        resolve(false);
+                        return;
+                    }
+
+                    resolve(digits.every(matches));
+                });
+            });
         }
 
         checkDirection(dir) {

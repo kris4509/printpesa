@@ -16,6 +16,7 @@ import Purchase from './Purchase';
 import Sell from './Sell';
 import Ticks from './Ticks';
 import Total from './Total';
+import { createVirtualHookState } from '../utils/virtual-hook';
 
 const watchBefore = store =>
     watchScope({
@@ -83,6 +84,7 @@ export default class TradeEngine extends Balance(Purchase(Sell(OpenContract(Prop
 
         this.initArgs = args;
         this.options = options;
+        this.virtualHookState = createVirtualHookState(options.virtualHook);
         this.startPromise = this.loginAndGetBalance(token);
 
         if (!this.checkTicksPromiseExists()) this.watchTicks(symbol);

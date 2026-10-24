@@ -176,6 +176,7 @@ window.Blockly.JavaScript.javascriptGenerator.forBlock.trade_definition = block 
     const restart_on_buy_sell_block = block.getChildByType('trade_definition_restartbuysell');
 
     const symbol = market_block.getFieldValue('SYMBOL_LIST');
+    const market_mutation = market_block.referenceMutation || {};
     const trade_type = trade_type_block.getFieldValue('TRADETYPE_LIST');
     const contract_type = contract_type_block.getFieldValue('TYPE_LIST');
     const candle_interval = candle_interval_block.getFieldValue('CANDLEINTERVAL_LIST');
@@ -199,6 +200,12 @@ window.Blockly.JavaScript.javascriptGenerator.forBlock.trade_definition = block 
           candleInterval      : '${candle_interval || 'FALSE'}',
           shouldRestartOnError: ${should_restart_on_error},
           timeMachineEnabled  : ${should_restart_on_buy_sell},
+          virtualHook         : {
+            enabled   : ${market_block.getFieldValue('VH_ENABLED') === 'TRUE'},
+            maxVirtualLosses: ${Number(market_mutation.vh_max_steps ?? 1)},
+            realWinsBeforeVirtual: ${Number(market_mutation.vh_min_trades ?? 1)},
+            stake    : ${Number(market_mutation.vh_stake ?? 0.35)},
+          },
         });
         ${initialization.trim()}
     };

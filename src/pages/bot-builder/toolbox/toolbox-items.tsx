@@ -161,6 +161,14 @@ export const ToolboxItems = () =>
             <Category id='purchase_conditions' name={localize('Purchase conditions')}>
                 <Block type='before_purchase' />
                 <Block type='purchase' />
+                <Block type='apollo_purchase2'>
+                    <Field name='PURCHASE_LIST'>DIGITOVER</Field>
+                    <Value name='PREDICTION'>
+                        <Shadow type='math_number_positive'>
+                            <Field name='NUM'>4</Field>
+                        </Shadow>
+                    </Value>
+                </Block>
             </Category>
             <Category id='sell_conditions' name={localize('Sell conditions (optional)')}>
                 <Block type='during_purchase' />
@@ -379,6 +387,55 @@ export const ToolboxItems = () =>
                     <Block type='tick_analysis' />
                     <Block type='tick' />
                     <Block type='last_digit' />
+                    <Block type='second_last_digit' />
+                    <Block type='nth_last_digit'>
+                        <Value name='N'>
+                            <Shadow type='math_number'>
+                                <Field name='NUM'>2</Field>
+                            </Shadow>
+                        </Value>
+                    </Block>
+                    <Block type='last_digits_condition'>
+                        <Value name='N'>
+                            <Shadow type='math_number'>
+                                <Field name='NUM'>2</Field>
+                            </Shadow>
+                        </Value>
+                        <Value name='COMPARE_VALUE'>
+                            <Shadow type='math_number'>
+                                <Field name='NUM'>4</Field>
+                            </Shadow>
+                        </Value>
+                    </Block>
+                    <Block type='digit_frequency_analysis'>
+                        <Field name='ANALYSIS_TYPE'>MOST_FREQUENT</Field>
+                        <Value name='N'>
+                            <Shadow type='math_number'>
+                                <Field name='NUM'>1000</Field>
+                            </Shadow>
+                        </Value>
+                    </Block>
+                    <Block type='even_odd_analysis'>
+                        <Field name='ANALYSIS_TYPE'>EVEN_PERCENTAGE</Field>
+                        <Value name='N'>
+                            <Shadow type='math_number'>
+                                <Field name='NUM'>1000</Field>
+                            </Shadow>
+                        </Value>
+                    </Block>
+                    <Block type='over_under_analysis'>
+                        <Field name='CONDITION_TYPE'>OVER</Field>
+                        <Value name='DIGIT'>
+                            <Shadow type='math_number'>
+                                <Field name='NUM'>4</Field>
+                            </Shadow>
+                        </Value>
+                        <Value name='N'>
+                            <Shadow type='math_number'>
+                                <Field name='NUM'>1000</Field>
+                            </Shadow>
+                        </Value>
+                    </Block>
                     <Block type='stat' />
                     <Block type='stat_list' />
                     <Block type='ticks' />

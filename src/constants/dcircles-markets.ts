@@ -1,0 +1,15 @@
+export const DCIRCLES_MARKETS = [
+    { value: 'R_10', label: 'Volatility 10 Index', shortLabel: 'Vol 10' },
+    { value: 'R_25', label: 'Volatility 25 Index', shortLabel: 'Vol 25' },
+    { value: 'R_50', label: 'Volatility 50 Index', shortLabel: 'Vol 50' },
+    { value: 'R_75', label: 'Volatility 75 Index', shortLabel: 'Vol 75' },
+    { value: 'R_100', label: 'Volatility 100 Index', shortLabel: 'Vol 100' },
+    { value: '1HZ10V', label: 'Volatility 10 (1s) Index', shortLabel: 'Vol 10 (1s)' },
+    { value: '1HZ15V', label: 'Volatility 15 (1s) Index', shortLabel: 'Vol 15 (1s)' },
+    { value: '1HZ25V', label: 'Volatility 25 (1s) Index', shortLabel: 'Vol 25 (1s)' },
+    { value: '1HZ30V', label: 'Volatility 30 (1s) Index', shortLabel: 'Vol 30 (1s)' },
+    { value: '1HZ50V', label: 'Volatility 50 (1s) Index', shortLabel: 'Vol 50 (1s)' },
+    { value: '1HZ75V', label: 'Volatility 75 (1s) Index', shortLabel: 'Vol 75 (1s)' },
+    { value: '1HZ90V', label: 'Volatility 90 (1s) Index', shortLabel: 'Vol 90 (1s)' },
+    { value: '1HZ100V', label: 'Volatility 100 (1s) Index', shortLabel: 'Vol 100 (1s)' },
+] as const;

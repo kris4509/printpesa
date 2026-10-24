@@ -1,21 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Localize } from '@deriv-com/translations';
+import { DCIRCLES_MARKETS } from '@/constants/dcircles-markets';
 import { useDcirclesTicks } from '@/hooks/useDcirclesTicks';
+import { getDigitCounts, getDigitPercentage } from '@/utils/digit-statistics';
 import './dcircles.scss';
-
-const MARKETS = [
-    { value: 'R_10', label: 'Volatility 10 Index' },
-    { value: 'R_25', label: 'Volatility 25 Index' },
-    { value: 'R_50', label: 'Volatility 50 Index' },
-    { value: 'R_75', label: 'Volatility 75 Index' },
-    { value: 'R_100', label: 'Volatility 100 Index' },
-    { value: '1HZ10V', label: 'Volatility 10 (1s) Index' },
-    { value: '1HZ25V', label: 'Volatility 25 (1s) Index' },
-    { value: '1HZ50V', label: 'Volatility 50 (1s) Index' },
-    { value: '1HZ75V', label: 'Volatility 75 (1s) Index' },
-    { value: '1HZ100V', label: 'Volatility 100 (1s) Index' },
-];
 
 const TICK_COUNTS = [
     { value: 100, label: '100 ticks' },
@@ -44,12 +33,7 @@ const Dcircles = observer(() => {
     // Uses .toFixed(2) to match Deriv's SmartChart precision (2 decimal places).
     const { counts, percentages, rankMap, highestInfo, secondInfo, lowestInfo, secondLowInfo } =
         useMemo(() => {
-            const countsArray = Array(10).fill(0);
-            ticks.forEach(t => {
-                if (t.digit >= 0 && t.digit <= 9) {
-                    countsArray[t.digit]++;
-                }
-            });
+            const countsArray = getDigitCounts(ticks.map(tick => tick.digit));
 
             const total = ticks.length || 1;
             const pcts = countsArray.map(c => ((c / total) * 100).toFixed(2));
@@ -100,16 +84,11 @@ const Dcircles = observer(() => {
     const last50Ticks = useMemo(() => ticks.slice(-50), [ticks]);
 
     const patternMetrics = useMemo(() => {
+        const digits = ticks.map(tick => tick.digit);
+
         if (patternType === 'even_odd') {
-            let evenCount = 0;
-            let oddCount = 0;
-            ticks.forEach(t => {
-                if (t.digit % 2 === 0) evenCount++;
-                else oddCount++;
-            });
-            const total = ticks.length || 1;
-            const evenPct = ((evenCount / total) * 100).toFixed(1);
-            const oddPct = ((oddCount / total) * 100).toFixed(1);
+            const evenPct = (getDigitPercentage(digits, 'EVEN_PERCENTAGE') ?? 0).toFixed(1);
+            const oddPct = (getDigitPercentage(digits, 'ODD_PERCENTAGE') ?? 0).toFixed(1);
 
             const pattern50 = last50Ticks.map(t => ({
                 label: t.digit % 2 === 0 ? 'E' : 'O',
@@ -125,15 +104,8 @@ const Dcircles = observer(() => {
                 pattern50,
             };
         } else {
-            let overCount = 0;
-            let underCount = 0;
-            ticks.forEach(t => {
-                if (t.digit >= 5) overCount++;
-                else underCount++;
-            });
-            const total = ticks.length || 1;
-            const overPct = ((overCount / total) * 100).toFixed(1);
-            const underPct = ((underCount / total) * 100).toFixed(1);
+            const overPct = (getDigitPercentage(digits, 'OVER', 4) ?? 0).toFixed(1);
+            const underPct = (getDigitPercentage(digits, 'UNDER', 5) ?? 0).toFixed(1);
 
             const pattern50 = last50Ticks.map(t => ({
                 label: t.digit >= 5 ? 'O' : 'U',
@@ -194,7 +166,7 @@ const Dcircles = observer(() => {
                             value={selectedMarket}
                             onChange={e => setMarket(e.target.value)}
                         >
-                            {MARKETS.map(market => (
+                            {DCIRCLES_MARKETS.map(market => (
                                 <option key={market.value} value={market.value}>
                                     {market.label}
                                 </option>

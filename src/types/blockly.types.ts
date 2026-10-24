@@ -8,9 +8,12 @@ export type TBlocklyEvents = {
 
 // Define Blockly types for consistent usage across the application
 export interface BlocklyBlock {
+    id: string;
     type: string;
+    referenceMutation?: Record<string, string>;
     getFieldValue: (fieldName: string) => string;
     setFieldValue: (value: string, fieldName: string) => void;
+    mutationToDom?: () => Element | null;
     getChildByType: (type: string) => BlocklyBlock | null;
 }
 
@@ -77,6 +80,7 @@ export interface BlocklyUtils {
 }
 
 export interface ExtendedBlocklyWorkspace extends BlocklyWorkspace {
+    getBlockById: (id: string) => BlocklyBlock | null;
     addBlockNode: (blockNode: Element | null) => void;
     strategy_to_load?: string;
     current_strategy_id?: string;
