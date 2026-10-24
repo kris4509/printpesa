@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { observer } from 'mobx-react-lite';
 import Text from '@/components/shared_ui/text';
@@ -8,6 +8,7 @@ import { useDevice } from '@deriv-com/ui';
 import OnboardTourHandler from '../tutorials/dbot-tours/onboarding-tour';
 import Cards from './cards';
 import InfoPanel from './info-panel';
+import { getDashboardBackgroundImage, getMillisecondsUntilNextDashboardBackground } from './dashboard-backgrounds';
 
 type TMobileIconGuide = {
     handleTabChange: (active_number: number) => void;
@@ -20,10 +21,19 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
     const { active_tab, active_tour } = dashboard;
     const has_dashboard_strategies = !!dashboard_strategies?.length;
     const { isDesktop, isTablet } = useDevice();
+    const [backgroundRotationSlot, setBackgroundRotationSlot] = useState(() =>
+        Math.floor(Date.now() / (6 * 60 * 60 * 1000))
+    );
+    const backgroundImage = getDashboardBackgroundImage(backgroundRotationSlot * 6 * 60 * 60 * 1000);
 
-    // Change background image based on the current day of the week (0 to 6)
-    const today = new Date().getDay();
-    const backgroundNumber = today % 6; // We generated 6 images (car-0 to car-5)
+    useEffect(() => {
+        const now = Date.now();
+        const timeout_id = window.setTimeout(() => {
+            setBackgroundRotationSlot(Math.floor(Date.now() / (6 * 60 * 60 * 1000)));
+        }, getMillisecondsUntilNextDashboardBackground(now));
+
+        return () => window.clearTimeout(timeout_id);
+    }, [backgroundRotationSlot]);
 
     return (
         <React.Fragment>
@@ -32,10 +42,10 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
                     'tab__dashboard--tour-active': active_tour,
                 })}
             >
-                <div 
+                <div
                     className='tab__dashboard__content'
                     style={{
-                        backgroundImage: `linear-gradient(to bottom, rgba(5, 10, 20, 0.15) 0%, rgba(5, 10, 20, 0.35) 100%), url('/backgrounds/car-${backgroundNumber}.jpg')`,
+                        backgroundImage: `linear-gradient(to bottom, rgba(5, 10, 20, 0.15) 0%, rgba(5, 10, 20, 0.35) 100%), url('/backgrounds/${backgroundImage}')`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center center',
                         backgroundAttachment: 'fixed',
