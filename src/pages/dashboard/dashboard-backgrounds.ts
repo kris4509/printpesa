@@ -12,6 +12,10 @@ const DASHBOARD_BACKGROUNDS = [
     'car-4.jpg',
     'action-4.svg',
     'car-5.jpg',
+    'anime-gojo-awakening.png',
+    'anime-gojo-purple.png',
+    'anime-ninja-action.png',
+    'anime-ninja-sky.png',
 ];
 
 export const getDashboardBackgroundImage = (timestamp: number): string => {

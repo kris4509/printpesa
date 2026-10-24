@@ -141,6 +141,7 @@
 
         &__content {
             display: flex;
+            flex-direction: column;
             align-items: flex-start;
             justify-content: center;
             min-height: var(--tab-content-height);
@@ -154,6 +155,125 @@
 
             @include mobile-or-tablet-screen {
                 padding: 1.6rem 1.2rem;
+            }
+
+            .dashboard-welcome {
+                width: min(100%, 98rem);
+                flex-shrink: 0;
+                margin: 0 auto 1rem;
+                padding: 1.4rem 1rem 0.8rem;
+                color: #fff;
+                text-align: center;
+
+                &__eyebrow {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.9rem;
+                    margin: 0 0 1.2rem;
+                    color: #a9c9e8;
+                    font-size: 1rem;
+                    font-weight: 700;
+                    letter-spacing: 0.25em;
+                    line-height: 1.4;
+                    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.75);
+
+                    > span:first-child {
+                        width: 0.7rem;
+                        height: 0.7rem;
+                        border-radius: 50%;
+                        background: #46e6cb;
+                        box-shadow: 0 0 1.2rem rgba(70, 230, 203, 0.8);
+                    }
+                }
+
+                &__slash {
+                    color: #4c9ac2;
+                }
+
+                &__headline {
+                    display: inline;
+                    margin: 0;
+                    color: #59d5e7;
+                    font-size: clamp(2.8rem, 5vw, 5.2rem);
+                    font-weight: 800;
+                    letter-spacing: -0.035em;
+                    line-height: 1.12;
+                    text-shadow: 0 3px 24px rgba(0, 0, 0, 0.55);
+                    animation: dashboard-welcome-in 0.45s ease both;
+                }
+
+                &__cursor {
+                    display: inline-block;
+                    width: 0.12em;
+                    height: 0.88em;
+                    margin-left: 0.1em;
+                    background: #59d5e7;
+                    vertical-align: -0.04em;
+                    animation: dashboard-welcome-cursor 1s steps(2, start) infinite;
+                }
+
+                &__divider {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 1rem;
+                    margin: 1.6rem 0 1.2rem;
+
+                    span {
+                        width: 7rem;
+                        height: 1px;
+                        background: linear-gradient(90deg, transparent, rgba(89, 213, 231, 0.55));
+
+                        &:last-child {
+                            transform: rotate(180deg);
+                        }
+                    }
+
+                    i {
+                        width: 0.55rem;
+                        height: 0.55rem;
+                        border: 1px solid #59d5e7;
+                        transform: rotate(45deg);
+                    }
+                }
+
+                &__quote {
+                    min-height: 2.5rem;
+                    margin: 0;
+                    color: #d3dfef;
+                    font-size: clamp(1.45rem, 2vw, 2rem);
+                    font-style: italic;
+                    font-weight: 500;
+                    line-height: 1.4;
+                    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.85);
+                    animation: dashboard-welcome-in 0.55s ease both;
+                }
+            }
+
+            @keyframes dashboard-welcome-in {
+                from {
+                    opacity: 0;
+                    transform: translateY(0.6rem);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes dashboard-welcome-cursor {
+                to {
+                    visibility: hidden;
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .dashboard-welcome__headline,
+                .dashboard-welcome__quote,
+                .dashboard-welcome__cursor {
+                    animation: none;
+                }
             }
 
             // Floating Hero Quick Panel Dock
@@ -181,6 +301,30 @@
                 &:hover {
                     border-color: rgba(99, 179, 237, 0.45);
                     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), 0 0 25px rgba(99, 179, 237, 0.18);
+                }
+            }
+
+            @include mobile-or-tablet-screen {
+                .dashboard-welcome {
+                    padding: 1rem 0.4rem 0.6rem;
+
+                    &__eyebrow {
+                        gap: 0.6rem;
+                        font-size: 0.85rem;
+                        letter-spacing: 0.15em;
+                    }
+
+                    &__headline {
+                        font-size: clamp(2.6rem, 8vw, 3.8rem);
+                    }
+
+                    &__divider {
+                        margin: 1.2rem 0 0.9rem;
+                    }
+
+                    &__quote {
+                        font-size: 1.4rem;
+                    }
                 }
             }
 

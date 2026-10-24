@@ -10,6 +10,14 @@ import Cards from './cards';
 import InfoPanel from './info-panel';
 import { getDashboardBackgroundImage, getMillisecondsUntilNextDashboardBackground } from './dashboard-backgrounds';
 
+const DASHBOARD_WELCOME_MESSAGES = [
+    { headline: 'Build. Automate. Explore.', quote: 'Consistency starts with discipline, not prediction.' },
+    { headline: 'Find your trading rhythm', quote: 'Patience is a position. You do not need to take every trade.' },
+    { headline: 'Center for automations', quote: 'Know your risk before you enter the market.' },
+    { headline: 'Make your next move intentional', quote: 'A clear plan matters more than a fast entry.' },
+    { headline: 'Your strategy starts here', quote: 'Review your settings. Trade within your limits.' },
+];
+
 type TMobileIconGuide = {
     handleTabChange: (active_number: number) => void;
 };
@@ -24,7 +32,9 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
     const [backgroundRotationSlot, setBackgroundRotationSlot] = useState(() =>
         Math.floor(Date.now() / (6 * 60 * 60 * 1000))
     );
+    const [welcomeMessageIndex, setWelcomeMessageIndex] = useState(0);
     const backgroundImage = getDashboardBackgroundImage(backgroundRotationSlot * 6 * 60 * 60 * 1000);
+    const welcomeMessage = DASHBOARD_WELCOME_MESSAGES[welcomeMessageIndex];
 
     useEffect(() => {
         const now = Date.now();
@@ -34,6 +44,14 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
 
         return () => window.clearTimeout(timeout_id);
     }, [backgroundRotationSlot]);
+
+    useEffect(() => {
+        const interval_id = window.setInterval(() => {
+            setWelcomeMessageIndex(index => (index + 1) % DASHBOARD_WELCOME_MESSAGES.length);
+        }, 8000);
+
+        return () => window.clearInterval(interval_id);
+    }, []);
 
     return (
         <React.Fragment>
@@ -52,6 +70,24 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
                         backgroundRepeat: 'no-repeat',
                     }}
                 >
+                    <section className='dashboard-welcome' aria-live='polite' aria-atomic='true'>
+                        <p className='dashboard-welcome__eyebrow'>
+                            <span aria-hidden='true' />
+                            TRADERSCHEME <span className='dashboard-welcome__slash'>/</span> YOUR TRADING WORKSPACE
+                        </p>
+                        <h1 key={welcomeMessage.headline} className='dashboard-welcome__headline'>
+                            {welcomeMessage.headline}
+                            <span className='dashboard-welcome__cursor' aria-hidden='true' />
+                        </h1>
+                        <div className='dashboard-welcome__divider' aria-hidden='true'>
+                            <span />
+                            <i />
+                            <span />
+                        </div>
+                        <p key={welcomeMessage.quote} className='dashboard-welcome__quote'>
+                            “{welcomeMessage.quote}”
+                        </p>
+                    </section>
                     <div className='quick-panel'>
                         <div className='tab__dashboard__header'>
                             <Text

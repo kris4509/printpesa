@@ -13,7 +13,9 @@ describe('dashboard background rotation', () => {
     it('cycles through the complete car and anime-action set', () => {
         const six_hours = 6 * 60 * 60 * 1000;
 
-        expect(getDashboardBackgroundImage(six_hours * 11)).toBe('car-0.jpg');
+        expect(getDashboardBackgroundImage(six_hours * 15)).toBe('car-0.jpg');
+        expect(getDashboardBackgroundImage(six_hours * 11)).toBe('anime-gojo-awakening.png');
+        expect(getDashboardBackgroundImage(six_hours * 14)).toBe('anime-ninja-sky.png');
     });
 
     it('calculates the delay to the next six-hour boundary', () => {
