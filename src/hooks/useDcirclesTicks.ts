@@ -88,6 +88,16 @@ const connectAndSubscribe = async () => {
         const handleMessage = (event: MessageEvent) => {
             const data = JSON.parse(event.data);
 
+            // Bot shutdown clears all tick subscriptions on the shared socket.
+            // Restore this independent feed so the panel keeps updating.
+            if (data.msg_type === 'forget_all' && data.echo_req?.forget_all === 'ticks') {
+                subscriptionId = null;
+                if (ws === wsRef && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({ ticks: market, subscribe: 1 }));
+                }
+                return;
+            }
+
             // ── History response ──────────────────────────────────────────
             if (
                 data.msg_type === 'history' &&

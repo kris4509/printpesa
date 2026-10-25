@@ -491,8 +491,29 @@
             -webkit-backdrop-filter: blur(24px);
             box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
             animation: dashboardFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            max-height: 380px;
+            max-height: min(70vh, 56rem);
             overflow-y: auto;
+            overscroll-behavior: contain;
+
+            &:focus-visible {
+                outline: 2px solid #60a5fa;
+                outline-offset: 2px;
+            }
+
+            &::-webkit-scrollbar {
+                width: 6px;
+            }
+            &::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            &::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.15);
+                border-radius: 3px;
+
+                &:hover {
+                    background: rgba(255, 255, 255, 0.25);
+                }
+            }
 
             @keyframes dashboardFadeIn {
                 from {
@@ -520,25 +541,15 @@
 
             .bot-list__table {
                 height: auto;
-                max-height: 260px;
-                overflow-y: auto;
-
-                &::-webkit-scrollbar {
-                    width: 6px;
-                }
-                &::-webkit-scrollbar-track {
-                    background: transparent;
-                }
-                &::-webkit-scrollbar-thumb {
-                    background: rgba(255, 255, 255, 0.15);
-                    border-radius: 3px;
-                    &:hover {
-                        background: rgba(255, 255, 255, 0.25);
-                    }
-                }
+                max-height: none;
+                overflow: visible;
             }
 
             .bot-list__header {
+                position: sticky;
+                top: 0;
+                z-index: 1;
+                background: rgba(15, 23, 42, 0.96);
                 border-bottom: 1px solid rgba(255, 255, 255, 0.12);
                 padding-bottom: 0.8rem;
 

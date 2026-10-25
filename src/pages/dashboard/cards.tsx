@@ -227,7 +227,12 @@ const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => 
                 )}
 
                 {strategies_count > 0 && is_history_open && (
-                    <div className='tab__dashboard__history-container'>
+                    <div
+                        className='tab__dashboard__history-container'
+                        role='region'
+                        aria-label={localize('Past bot history')}
+                        tabIndex={0}
+                    >
                         <DashboardBotList />
                     </div>
                 )}
