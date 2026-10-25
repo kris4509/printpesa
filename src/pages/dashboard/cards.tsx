@@ -44,6 +44,7 @@ const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => 
     const { onCloseDialog, dialog_options, is_dialog_open, setActiveTab, setPreviewOnPopup, strategy_save_type } = dashboard;
     const { setFormVisibility } = quick_strategy;
     const [is_history_open, setIsHistoryOpen] = React.useState(false);
+    const historyContainerRef = React.useRef<HTMLDivElement | null>(null);
 
     React.useEffect(() => {
         const fetchRecentWorkspaces = async () => {
@@ -52,6 +53,16 @@ const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => 
         };
         fetchRecentWorkspaces();
     }, [strategy_save_type, setDashboardStrategies]);
+
+    React.useEffect(() => {
+        if (!is_history_open) return;
+
+        const frame = window.requestAnimationFrame(() => {
+            historyContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+
+        return () => window.cancelAnimationFrame(frame);
+    }, [is_history_open]);
 
     const openFileLoader = () => {
         toggleLoadModal();
@@ -228,6 +239,7 @@ const Cards = observer(({ is_mobile, has_dashboard_strategies }: TCardProps) => 
 
                 {strategies_count > 0 && is_history_open && (
                     <div
+                        ref={historyContainerRef}
                         className='tab__dashboard__history-container'
                         role='region'
                         aria-label={localize('Past bot history')}

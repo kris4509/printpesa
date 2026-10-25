@@ -491,7 +491,8 @@
             -webkit-backdrop-filter: blur(24px);
             box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
             animation: dashboardFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            max-height: min(70vh, 56rem);
+            box-sizing: border-box;
+            max-height: min(55vh, 44rem);
             overflow-y: auto;
             overscroll-behavior: contain;
 
