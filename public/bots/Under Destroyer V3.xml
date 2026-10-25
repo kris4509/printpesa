@@ -189,23 +189,8 @@
                 <field name="NOTIFICATION_TYPE">success</field>
                 <field name="NOTIFICATION_SOUND">silent</field>
                 <value name="MESSAGE">
-                  <block type="text_join" id="udv3_target_profit_message">
-                    <mutation items="3"></mutation>
-                    <value name="ADD0">
-                      <block type="text" id="udv3_target_profit_message_prefix">
-                        <field name="TEXT">Target Profit reached! Total Profit: </field>
-                      </block>
-                    </value>
-                    <value name="ADD1">
-                      <block type="variables_get" id="udv3_target_profit_message_value">
-                        <field name="VAR" id="udv3_total_profit">totalProfit</field>
-                      </block>
-                    </value>
-                    <value name="ADD2">
-                      <block type="text" id="udv3_target_profit_message_suffix">
-                        <field name="TEXT"> USD.</field>
-                      </block>
-                    </value>
+                  <block type="text" id="udv3_target_profit_message">
+                    <field name="TEXT">Target Profit Reached!</field>
                   </block>
                 </value>
               </block>
@@ -243,23 +228,8 @@
                     <field name="NOTIFICATION_TYPE">error</field>
                     <field name="NOTIFICATION_SOUND">silent</field>
                     <value name="MESSAGE">
-                      <block type="text_join" id="udv3_stop_loss_message">
-                        <mutation items="3"></mutation>
-                        <value name="ADD0">
-                          <block type="text" id="udv3_stop_loss_message_prefix">
-                            <field name="TEXT">Stop Loss hit! Total Loss: </field>
-                          </block>
-                        </value>
-                        <value name="ADD1">
-                          <block type="variables_get" id="udv3_stop_loss_message_value">
-                            <field name="VAR" id="udv3_total_profit">totalProfit</field>
-                          </block>
-                        </value>
-                        <value name="ADD2">
-                          <block type="text" id="udv3_stop_loss_message_suffix">
-                            <field name="TEXT"> USD.</field>
-                          </block>
-                        </value>
+                      <block type="text" id="udv3_stop_loss_message">
+                        <field name="TEXT">Stop Loss Hit!</field>
                       </block>
                     </value>
                   </block>
