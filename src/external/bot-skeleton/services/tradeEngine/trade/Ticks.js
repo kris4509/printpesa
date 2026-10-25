@@ -8,6 +8,8 @@ import { api_base } from '../../api/api-base';
 import { getDirection, getLastDigit } from '../utils/helpers';
 import { getDigitFrequency, getDigitPercentage } from '@/utils/digit-statistics';
 import { expectPositiveInteger } from '../utils/sanitize';
+import { LogTypes } from '../../../constants/messages';
+import { log } from '../utils/broadcast';
 import * as constants from './state/constants';
 
 let tickListenerKey;
@@ -156,25 +158,35 @@ export default Engine =>
         }
 
         getLastDigitsCondition(count, condition, compare_value) {
-            return new Promise(resolve => {
+            return new Promise((resolve, reject) => {
                 const n = Number(count);
                 const threshold = Number(compare_value);
                 const normalized_condition = String(condition || '').toUpperCase();
+                const recordResult = (result, digits = []) => {
+                    log(LogTypes.LAST_DIGITS_ANALYSIS, {
+                        market: this.symbol || 'N/A',
+                        condition: normalized_condition,
+                        threshold,
+                        digits,
+                        result,
+                    });
+                    resolve(result);
+                };
 
                 if (!Number.isFinite(n) || n < 1 || n > 1000) {
-                    resolve(false);
+                    recordResult(false);
                     return;
                 }
 
                 this.getTicks().then(ticks => {
                     if (!Array.isArray(ticks) || ticks.length < n) {
-                        resolve(false);
+                        recordResult(false);
                         return;
                     }
 
                     const digits = this.getLastDigitsFromList(ticks).slice(-n);
                     if (!digits.length) {
-                        resolve(false);
+                        recordResult(false, digits);
                         return;
                     }
 
@@ -202,17 +214,17 @@ export default Engine =>
                     };
 
                     if (['ALL_EVEN', 'ALL_ODD'].includes(normalized_condition)) {
-                        resolve(digits.every(matches));
+                        recordResult(digits.every(matches), digits);
                         return;
                     }
 
                     if (!Number.isFinite(threshold) || threshold < 0 || threshold > 9) {
-                        resolve(false);
+                        recordResult(false, digits);
                         return;
                     }
 
-                    resolve(digits.every(matches));
-                });
+                    recordResult(digits.every(matches), digits);
+                }).catch(reject);
             });
         }
 

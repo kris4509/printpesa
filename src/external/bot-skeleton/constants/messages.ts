@@ -40,4 +40,5 @@ export enum LogTypes {
     LOST = 'lost',
     WELCOME_BACK = 'welcome_back',
     WELCOME = 'welcome',
+    LAST_DIGITS_ANALYSIS = 'last_digits_analysis',
 }

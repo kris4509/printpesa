@@ -86,6 +86,36 @@ const FormatMessage = ({ logType, className, extra }: TFormatMessageProps) => {
                     );
                 break;
             }
+            case LogTypes.LAST_DIGITS_ANALYSIS: {
+                const { market, condition, threshold, digits, result } = extra;
+                const conditions: Record<string, string> = {
+                    LESS_THAN: localize('less than'),
+                    LESS_OR_EQUAL: localize('less than or equal to'),
+                    GREATER_THAN: localize('greater than'),
+                    GREATER_OR_EQUAL: localize('greater than or equal to'),
+                    EQUAL: localize('equal to'),
+                    NOT_EQUAL: localize('not equal to'),
+                    ALL_EVEN: localize('all even'),
+                    ALL_ODD: localize('all odd'),
+                };
+                const conditionLabel = conditions[condition || ''] || condition || '';
+                const conditionText =
+                    condition === 'ALL_EVEN' || condition === 'ALL_ODD'
+                        ? conditionLabel
+                        : `${conditionLabel} ${threshold ?? ''}`.trim();
+
+                return (
+                    <Localize
+                        i18n_default_text='Last Digits Analysis Market: {{market}} Condition: {{condition}} Digits: [{{digits}}] Result: {{result}}'
+                        values={{
+                            market: market || 'N/A',
+                            condition: conditionText,
+                            digits: (digits || []).join(', '),
+                            result: result ? '✅ TRUE' : '❌ FALSE',
+                        }}
+                    />
+                );
+            }
             default:
                 return null;
         }

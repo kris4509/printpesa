@@ -7,6 +7,11 @@ type TExtraFilterMessage = {
 type TExtraJournal = {
     longcode: string;
     transaction_id: number;
+    market?: string;
+    condition?: string;
+    threshold?: number;
+    digits?: number[];
+    result?: boolean;
 };
 
 export type TDateItemProps = Record<'date' | 'time', string>;
