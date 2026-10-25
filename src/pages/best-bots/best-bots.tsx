@@ -207,6 +207,15 @@ const BOT_CATALOGUE = [
         isAdvanced: true,
         xmlFile: 'Under Destroyer V3.xml',
     },
+    {
+        id: 28,
+        name: 'Over Destroyer V3',
+        description:
+            'Volatility 100 (1s) Over 1 strategy. After a loss, doubles the stake and buys Odd after two even ticks or Even after two odd ticks.',
+        isPremium: true,
+        isAdvanced: true,
+        xmlFile: 'Over Destroyer V3.xml',
+    },
 ];
 
 // ─── Bots Store List ───────────────────────────────────────────────────────
@@ -229,6 +238,7 @@ const ADVANCED_BOT_NAMES = [
     'Prism Range',
     'Straddle Shift',
     'Under Destroyer V3',
+    'Over Destroyer V3',
 ];
 
 
