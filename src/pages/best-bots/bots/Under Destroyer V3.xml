@@ -9,6 +9,7 @@
     <variable id="udv3_total_profit">totalProfit</variable>
   </variables>
   <block type="trade_definition" id="udv3_trade_definition" deletable="false" x="0" y="0">
+    <mutation allow_mixed_digit_contracts="true"></mutation>
     <statement name="TRADE_OPTIONS">
       <block type="trade_definition_market" id="udv3_market" deletable="false" movable="false">
         <field name="MARKET_LIST">synthetic_index</field>
@@ -324,6 +325,11 @@
                     <field name="NUM">2</field>
                   </block>
                 </value>
+                <value name="COMPARE_VALUE">
+                  <block type="math_number" id="udv3_even_compare_value">
+                    <field name="NUM">0</field>
+                  </block>
+                </value>
               </block>
             </value>
             <statement name="DO0">
@@ -339,6 +345,11 @@
                     <value name="N">
                       <block type="math_number" id="udv3_odd_count">
                         <field name="NUM">2</field>
+                      </block>
+                    </value>
+                    <value name="COMPARE_VALUE">
+                      <block type="math_number" id="udv3_odd_compare_value">
+                        <field name="NUM">0</field>
                       </block>
                     </value>
                   </block>

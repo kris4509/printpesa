@@ -17,6 +17,18 @@ window.Blockly.Blocks.trade_definition = {
         this.setDeletable(false);
         this.isInit = false;
     },
+    domToMutation(xmlElement) {
+        this.allowMixedDigitContracts = xmlElement.getAttribute('allow_mixed_digit_contracts') === 'true';
+    },
+    mutationToDom() {
+        if (!this.allowMixedDigitContracts) {
+            return null;
+        }
+
+        const mutation = document.createElement('mutation');
+        mutation.setAttribute('allow_mixed_digit_contracts', 'true');
+        return mutation;
+    },
     definition() {
         return {
             message0: '%1 %2 %3',

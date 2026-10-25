@@ -1,4 +1,5 @@
 import { localize } from '@deriv-com/translations';
+import { config } from '../../../../constants/config';
 import { getContractTypeOptions } from '../../../shared';
 import { excludeOptionFromContextMenu, modifyContextMenu } from '../../../utils';
 
@@ -66,7 +67,14 @@ window.Blockly.Blocks.purchase = {
             const contract_type = contract_type_block.getFieldValue('TYPE_LIST');
             const purchase_type_list = this.getField('PURCHASE_LIST');
             const purchase_type = purchase_type_list.getValue();
-            const contract_type_options = getContractTypeOptions(contract_type, trade_type);
+            const contract_type_options =
+                trade_definition_block.allowMixedDigitContracts &&
+                trade_type_block.getFieldValue('TRADETYPECAT_LIST') === 'digits' &&
+                contract_type === 'both'
+                    ? ['OVERUNDER', 'EVENODD'].flatMap(type =>
+                          config().opposites[type].map(option => Object.entries(option)[0].reverse())
+                      )
+                    : getContractTypeOptions(contract_type, trade_type);
 
             purchase_type_list.updateOptions(contract_type_options, {
                 default_value: purchase_type,
