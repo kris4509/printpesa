@@ -2,8 +2,8 @@
 // Both MiniDcirclesPanel (bot-builder) and Dcircles (tab page) subscribe here
 // so they always display IDENTICAL percentages — no separate subscriptions.
 
-import { useEffect, useState, useRef, useCallback } from 'react';
-import { generateDerivApiInstance } from '@/external/bot-skeleton/services/api/appId';
+import { useEffect, useState, useCallback } from 'react';
+import { getSocketURL } from '@/components/shared';
 
 export interface TickData {
     price: number;
@@ -25,9 +25,9 @@ const listeners = new Set<Listener>();
 
 let wsRef: WebSocket | null = null;
 let subscriptionId: string | null = null;
-let connectPromise: Promise<void> | null = null;
-let activeMarketAtConnect: string = '';
-let activeTickCountAtConnect: number = 0;
+let reconnectTimer: number | null = null;
+let connectionGeneration = 0;
+let reconnectAttempt = 0;
 
 const notify = () => {
     listeners.forEach(fn => fn());
@@ -45,56 +45,27 @@ const doForgetSubscription = () => {
     subscriptionId = null;
 };
 
-const connectAndSubscribe = async () => {
+const connectAndSubscribe = async (generation: number) => {
     const market = currentMarket;
     const tickCount = currentTickCount;
 
-    activeMarketAtConnect = market;
-    activeTickCountAtConnect = tickCount;
-
     try {
-        const api = await generateDerivApiInstance();
-        const ws = api.connection as WebSocket;
-
-        // If market or tickCount changed while we were awaiting, restart.
-        if (activeMarketAtConnect !== currentMarket || activeTickCountAtConnect !== currentTickCount) {
-            connectPromise = null;
-            connect();
-            return;
-        }
-
+        const socketUrl = await getSocketURL();
+        if (generation !== connectionGeneration) return;
+        const ws = new WebSocket(socketUrl);
         wsRef = ws;
 
-        // Clear state for the new market
-        ticks = [];
-        currentPrice = '---';
-        notify();
-
-        // Request history
-        ws.send(
-            JSON.stringify({
-                ticks_history: market,
-                adjust_start_time: 1,
-                count: tickCount,
-                end: 'latest',
-                start: 1,
-                style: 'ticks',
-            })
-        );
-
-        // Subscribe to live ticks
-        ws.send(JSON.stringify({ ticks: market, subscribe: 1 }));
-
         const handleMessage = (event: MessageEvent) => {
-            const data = JSON.parse(event.data);
+            let data: any;
+            try {
+                data = JSON.parse(event.data);
+            } catch (error) {
+                console.error('[DcirclesTicks] Invalid WebSocket message:', error);
+                return;
+            }
 
-            // Bot shutdown clears all tick subscriptions on the shared socket.
-            // Restore this independent feed so the panel keeps updating.
-            if (data.msg_type === 'forget_all' && data.echo_req?.forget_all === 'ticks') {
-                subscriptionId = null;
-                if (ws === wsRef && ws.readyState === WebSocket.OPEN) {
-                    ws.send(JSON.stringify({ ticks: market, subscribe: 1 }));
-                }
+            if (data.error) {
+                console.error('[DcirclesTicks] API error:', data.error);
                 return;
             }
 
@@ -160,30 +131,70 @@ const connectAndSubscribe = async () => {
         };
 
         ws.addEventListener('message', handleMessage);
+        ws.addEventListener('open', () => {
+            if (generation !== connectionGeneration || ws !== wsRef) return;
 
-        // Store cleanup on the promise so we can unsubscribe on market change
-        (connectPromise as any).__cleanup = () => {
+            reconnectAttempt = 0;
+            ws.send(
+                JSON.stringify({
+                    ticks_history: market,
+                    adjust_start_time: 1,
+                    count: tickCount,
+                    end: 'latest',
+                    start: 1,
+                    style: 'ticks',
+                })
+            );
+            ws.send(JSON.stringify({ ticks: market, subscribe: 1 }));
+        });
+        ws.addEventListener('close', () => {
+            if (generation !== connectionGeneration || ws !== wsRef) return;
             ws.removeEventListener('message', handleMessage);
-            doForgetSubscription();
-        };
+            wsRef = null;
+            subscriptionId = null;
+            scheduleReconnect();
+        });
+        ws.addEventListener('error', error => {
+            console.error('[DcirclesTicks] WebSocket error:', error);
+        });
+
     } catch (err) {
         console.error('[DcirclesTicks] WebSocket error:', err);
-        connectPromise = null;
+        scheduleReconnect();
     }
 };
 
-const cleanupPrevious = () => {
-    if (connectPromise && (connectPromise as any).__cleanup) {
-        (connectPromise as any).__cleanup();
+const cleanupPrevious = (closeSocket = true) => {
+    if (reconnectTimer !== null) {
+        window.clearTimeout(reconnectTimer);
+        reconnectTimer = null;
     }
-    connectPromise = null;
+
+    const previousSocket = wsRef;
+    doForgetSubscription();
+    wsRef = null;
     ticks = [];
     currentPrice = '---';
+
+    if (closeSocket && previousSocket) {
+        previousSocket.close();
+    }
+};
+
+const scheduleReconnect = () => {
+    if (reconnectTimer !== null) return;
+    const delay = Math.min(1000 * 2 ** reconnectAttempt, 30000);
+    reconnectAttempt += 1;
+    reconnectTimer = window.setTimeout(() => {
+        reconnectTimer = null;
+        connect();
+    }, delay);
 };
 
 const connect = () => {
+    connectionGeneration += 1;
     cleanupPrevious();
-    connectPromise = connectAndSubscribe();
+    connectAndSubscribe(connectionGeneration);
 };
 
 // ─── Public setters (used by the market/ticks selectors) ────────────────────
