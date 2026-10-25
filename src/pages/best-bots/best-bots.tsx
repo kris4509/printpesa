@@ -198,6 +198,15 @@ const BOT_CATALOGUE = [
         isAdvanced: true,
         xmlFile: 'Straddle Shift.xml',
     },
+    {
+        id: 27,
+        name: 'Under Destroyer V3',
+        description:
+            'Volatility 100 (1s) Under 8 strategy. After a loss, waits for two consecutive ticks with matching parity before the next trade and doubles the stake.',
+        isPremium: true,
+        isAdvanced: true,
+        xmlFile: 'Under Destroyer V3.xml',
+    },
 ];
 
 // ─── Bots Store List ───────────────────────────────────────────────────────
@@ -213,7 +222,14 @@ const STORE_BOT_NAMES = [
     'Dollar printer Alpha version 2026 version 2',
     'Under 7 pro bot V2💰',
 ];
-const ADVANCED_BOT_NAMES = ['Nexus Flow', 'Volt Sprint', 'Apex Signal', 'Prism Range', 'Straddle Shift'];
+const ADVANCED_BOT_NAMES = [
+    'Nexus Flow',
+    'Volt Sprint',
+    'Apex Signal',
+    'Prism Range',
+    'Straddle Shift',
+    'Under Destroyer V3',
+];
 
 
 

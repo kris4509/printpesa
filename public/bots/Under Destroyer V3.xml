@@ -1,0 +1,388 @@
+<xml xmlns="https://developers.google.com/blockly/xml" is_dbot="true" collection="false">
+  <variables>
+    <variable id="udv3_stake">Stake</variable>
+    <variable id="udv3_initial_stake">initialStake</variable>
+    <variable id="udv3_martingale">Martingale</variable>
+    <variable id="udv3_has_loss">HasLoss</variable>
+    <variable id="udv3_target_profit">targetProfit</variable>
+    <variable id="udv3_stop_loss">stopLoss</variable>
+    <variable id="udv3_total_profit">totalProfit</variable>
+  </variables>
+  <block type="trade_definition" id="udv3_trade_definition" deletable="false" x="0" y="0">
+    <statement name="TRADE_OPTIONS">
+      <block type="trade_definition_market" id="udv3_market" deletable="false" movable="false">
+        <field name="MARKET_LIST">synthetic_index</field>
+        <field name="SUBMARKET_LIST">random_index</field>
+        <field name="SYMBOL_LIST">1HZ100V</field>
+        <next>
+          <block type="trade_definition_tradetype" id="udv3_trade_type" deletable="false" movable="false">
+            <field name="TRADETYPECAT_LIST">digits</field>
+            <field name="TRADETYPE_LIST">overunder</field>
+            <next>
+              <block type="trade_definition_contracttype" id="udv3_contract_type" deletable="false" movable="false">
+                <field name="TYPE_LIST">both</field>
+                <next>
+                  <block type="trade_definition_candleinterval" id="udv3_candle_interval" deletable="false" movable="false">
+                    <field name="CANDLEINTERVAL_LIST">60</field>
+                    <next>
+                      <block type="trade_definition_restartbuysell" id="udv3_restart_buysell" deletable="false" movable="false">
+                        <field name="TIME_MACHINE_ENABLED">FALSE</field>
+                        <next>
+                          <block type="trade_definition_restartonerror" id="udv3_restart_error" deletable="false" movable="false">
+                            <field name="RESTARTONERROR">TRUE</field>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+    <statement name="INITIALIZATION">
+      <block type="variables_set" id="udv3_init_stake">
+        <field name="VAR" id="udv3_stake">Stake</field>
+        <value name="VALUE">
+          <block type="math_number" id="udv3_init_stake_value">
+            <field name="NUM">1</field>
+          </block>
+        </value>
+        <next>
+          <block type="variables_set" id="udv3_set_initial_stake">
+            <field name="VAR" id="udv3_initial_stake">initialStake</field>
+            <value name="VALUE">
+              <block type="math_number" id="udv3_initial_stake_value">
+                <field name="NUM">1</field>
+              </block>
+            </value>
+            <next>
+              <block type="variables_set" id="udv3_set_martingale">
+                <field name="VAR" id="udv3_martingale">Martingale</field>
+                <value name="VALUE">
+                  <block type="math_number" id="udv3_martingale_value">
+                    <field name="NUM">2</field>
+                  </block>
+                </value>
+                <next>
+                  <block type="variables_set" id="udv3_set_has_loss">
+                    <field name="VAR" id="udv3_has_loss">HasLoss</field>
+                    <value name="VALUE">
+                      <block type="logic_boolean" id="udv3_has_loss_false">
+                        <field name="BOOL">FALSE</field>
+                      </block>
+                    </value>
+                    <next>
+                      <block type="variables_set" id="udv3_set_target_profit">
+                        <field name="VAR" id="udv3_target_profit">targetProfit</field>
+                        <value name="VALUE">
+                          <block type="math_number" id="udv3_target_profit_value">
+                            <field name="NUM">3</field>
+                          </block>
+                        </value>
+                        <next>
+                          <block type="variables_set" id="udv3_set_stop_loss">
+                            <field name="VAR" id="udv3_stop_loss">stopLoss</field>
+                            <value name="VALUE">
+                              <block type="math_number" id="udv3_stop_loss_value">
+                                <field name="NUM">6</field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="variables_set" id="udv3_set_total_profit">
+                                <field name="VAR" id="udv3_total_profit">totalProfit</field>
+                                <value name="VALUE">
+                                  <block type="math_number" id="udv3_total_profit_value">
+                                    <field name="NUM">0</field>
+                                  </block>
+                                </value>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+    <statement name="SUBMARKET">
+      <block type="trade_definition_tradeoptions" id="udv3_trade_options">
+        <mutation xmlns="http://www.w3.org/1999/xhtml" has_first_barrier="false" has_second_barrier="false" has_prediction="true"></mutation>
+        <field name="DURATIONTYPE_LIST">t</field>
+        <field name="CURRENCY_LIST">USD</field>
+        <value name="DURATION">
+          <shadow type="math_number_positive" id="udv3_duration_shadow">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+        <value name="AMOUNT">
+          <shadow type="math_number_positive" id="udv3_amount_shadow">
+            <field name="NUM">1</field>
+          </shadow>
+          <block type="variables_get" id="udv3_get_stake">
+            <field name="VAR" id="udv3_stake">Stake</field>
+          </block>
+        </value>
+        <value name="PREDICTION">
+          <shadow type="math_number_positive" id="udv3_prediction_shadow">
+            <field name="NUM">8</field>
+          </shadow>
+        </value>
+      </block>
+    </statement>
+  </block>
+  <block type="during_purchase" id="udv3_during_purchase" x="780" y="0">
+    <statement name="DURING_PURCHASE_STACK">
+      <block type="controls_if" id="udv3_sell_check">
+        <value name="IF0">
+          <block type="check_sell" id="udv3_check_sell"></block>
+        </value>
+      </block>
+    </statement>
+  </block>
+  <block type="after_purchase" id="udv3_after_purchase" x="780" y="220">
+    <statement name="AFTERPURCHASE_STACK">
+      <block type="variables_set" id="udv3_update_total_profit">
+        <field name="VAR" id="udv3_total_profit">totalProfit</field>
+        <value name="VALUE">
+          <block type="math_arithmetic" id="udv3_add_trade_profit">
+            <field name="OP">ADD</field>
+            <value name="A">
+              <block type="variables_get" id="udv3_previous_total_profit">
+                <field name="VAR" id="udv3_total_profit">totalProfit</field>
+              </block>
+            </value>
+            <value name="B">
+              <block type="read_details" id="udv3_completed_trade_profit">
+                <field name="DETAIL_INDEX">4</field>
+              </block>
+            </value>
+          </block>
+        </value>
+        <next>
+          <block type="controls_if" id="udv3_check_target_profit">
+            <mutation xmlns="http://www.w3.org/1999/xhtml" else="1"></mutation>
+            <value name="IF0">
+              <block type="logic_compare" id="udv3_target_profit_reached">
+                <field name="OP">GTE</field>
+                <value name="A">
+                  <block type="variables_get" id="udv3_get_target_total_profit">
+                    <field name="VAR" id="udv3_total_profit">totalProfit</field>
+                  </block>
+                </value>
+                <value name="B">
+                  <block type="variables_get" id="udv3_get_target_limit">
+                    <field name="VAR" id="udv3_target_profit">targetProfit</field>
+                  </block>
+                </value>
+              </block>
+            </value>
+            <statement name="DO0">
+              <block type="notify" id="udv3_notify_target_profit">
+                <field name="NOTIFICATION_TYPE">success</field>
+                <field name="NOTIFICATION_SOUND">silent</field>
+                <value name="MESSAGE">
+                  <block type="text_join" id="udv3_target_profit_message">
+                    <mutation items="3"></mutation>
+                    <value name="ADD0">
+                      <block type="text" id="udv3_target_profit_message_prefix">
+                        <field name="TEXT">Target Profit reached! Total Profit: </field>
+                      </block>
+                    </value>
+                    <value name="ADD1">
+                      <block type="variables_get" id="udv3_target_profit_message_value">
+                        <field name="VAR" id="udv3_total_profit">totalProfit</field>
+                      </block>
+                    </value>
+                    <value name="ADD2">
+                      <block type="text" id="udv3_target_profit_message_suffix">
+                        <field name="TEXT"> USD.</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+              </block>
+            </statement>
+            <statement name="ELSE">
+              <block type="controls_if" id="udv3_check_stop_loss">
+                <mutation xmlns="http://www.w3.org/1999/xhtml" else="1"></mutation>
+                <value name="IF0">
+                  <block type="logic_compare" id="udv3_stop_loss_reached">
+                    <field name="OP">LTE</field>
+                    <value name="A">
+                      <block type="variables_get" id="udv3_get_stop_total_profit">
+                        <field name="VAR" id="udv3_total_profit">totalProfit</field>
+                      </block>
+                    </value>
+                    <value name="B">
+                      <block type="math_arithmetic" id="udv3_negative_stop_loss">
+                        <field name="OP">MINUS</field>
+                        <value name="A">
+                          <shadow type="math_number" id="udv3_zero_shadow">
+                            <field name="NUM">0</field>
+                          </shadow>
+                        </value>
+                        <value name="B">
+                          <block type="variables_get" id="udv3_get_stop_limit">
+                            <field name="VAR" id="udv3_stop_loss">stopLoss</field>
+                          </block>
+                        </value>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+                <statement name="DO0">
+                  <block type="notify" id="udv3_notify_stop_loss">
+                    <field name="NOTIFICATION_TYPE">error</field>
+                    <field name="NOTIFICATION_SOUND">silent</field>
+                    <value name="MESSAGE">
+                      <block type="text_join" id="udv3_stop_loss_message">
+                        <mutation items="3"></mutation>
+                        <value name="ADD0">
+                          <block type="text" id="udv3_stop_loss_message_prefix">
+                            <field name="TEXT">Stop Loss hit! Total Loss: </field>
+                          </block>
+                        </value>
+                        <value name="ADD1">
+                          <block type="variables_get" id="udv3_stop_loss_message_value">
+                            <field name="VAR" id="udv3_total_profit">totalProfit</field>
+                          </block>
+                        </value>
+                        <value name="ADD2">
+                          <block type="text" id="udv3_stop_loss_message_suffix">
+                            <field name="TEXT"> USD.</field>
+                          </block>
+                        </value>
+                      </block>
+                    </value>
+                  </block>
+                </statement>
+                <statement name="ELSE">
+                  <block type="controls_if" id="udv3_result_branch">
+                    <mutation xmlns="http://www.w3.org/1999/xhtml" else="1"></mutation>
+                    <value name="IF0">
+                      <block type="contract_check_result" id="udv3_is_win">
+                        <field name="CHECK_RESULT">win</field>
+                      </block>
+                    </value>
+                    <statement name="DO0">
+                      <block type="variables_set" id="udv3_win_reset_stake">
+                        <field name="VAR" id="udv3_stake">Stake</field>
+                        <value name="VALUE">
+                          <block type="variables_get" id="udv3_win_initial_stake">
+                            <field name="VAR" id="udv3_initial_stake">initialStake</field>
+                          </block>
+                        </value>
+                        <next>
+                          <block type="variables_set" id="udv3_win_clear_loss">
+                            <field name="VAR" id="udv3_has_loss">HasLoss</field>
+                            <value name="VALUE">
+                              <block type="logic_boolean" id="udv3_win_loss_false">
+                                <field name="BOOL">FALSE</field>
+                              </block>
+                            </value>
+                          </block>
+                        </next>
+                      </block>
+                    </statement>
+                    <statement name="ELSE">
+                      <block type="variables_set" id="udv3_loss_double_stake">
+                        <field name="VAR" id="udv3_stake">Stake</field>
+                        <value name="VALUE">
+                          <block type="math_arithmetic" id="udv3_loss_multiply">
+                            <field name="OP">MULTIPLY</field>
+                            <value name="A">
+                              <block type="variables_get" id="udv3_loss_current_stake">
+                                <field name="VAR" id="udv3_stake">Stake</field>
+                              </block>
+                            </value>
+                            <value name="B">
+                              <block type="variables_get" id="udv3_loss_multiplier">
+                                <field name="VAR" id="udv3_martingale">Martingale</field>
+                              </block>
+                            </value>
+                          </block>
+                        </value>
+                        <next>
+                          <block type="variables_set" id="udv3_loss_set_flag">
+                            <field name="VAR" id="udv3_has_loss">HasLoss</field>
+                            <value name="VALUE">
+                              <block type="logic_boolean" id="udv3_loss_true">
+                                <field name="BOOL">TRUE</field>
+                              </block>
+                            </value>
+                          </block>
+                        </next>
+                      </block>
+                    </statement>
+                    <next>
+                      <block type="trade_again" id="udv3_trade_again"></block>
+                    </next>
+                  </block>
+                </statement>
+              </block>
+            </statement>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+  <block type="before_purchase" id="udv3_before_purchase" deletable="false" x="0" y="720">
+    <statement name="BEFOREPURCHASE_STACK">
+      <block type="controls_if" id="udv3_initial_or_recovery">
+        <mutation xmlns="http://www.w3.org/1999/xhtml" else="1"></mutation>
+        <value name="IF0">
+          <block type="variables_get" id="udv3_check_has_loss">
+            <field name="VAR" id="udv3_has_loss">HasLoss</field>
+          </block>
+        </value>
+        <statement name="DO0">
+          <block type="controls_if" id="udv3_parity_gate">
+            <value name="IF0">
+              <block type="logic_operation" id="udv3_even_or_odd">
+                <field name="OP">OR</field>
+                <value name="A">
+                  <block type="last_digits_condition" id="udv3_two_even">
+                    <field name="CONDITION">ALL_EVEN</field>
+                    <value name="N">
+                      <block type="math_number" id="udv3_even_count">
+                        <field name="NUM">2</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+                <value name="B">
+                  <block type="last_digits_condition" id="udv3_two_odd">
+                    <field name="CONDITION">ALL_ODD</field>
+                    <value name="N">
+                      <block type="math_number" id="udv3_odd_count">
+                        <field name="NUM">2</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+              </block>
+            </value>
+            <statement name="DO0">
+              <block type="purchase" id="udv3_recovery_purchase">
+                <field name="PURCHASE_LIST">DIGITUNDER</field>
+              </block>
+            </statement>
+          </block>
+        </statement>
+        <statement name="ELSE">
+          <block type="purchase" id="udv3_initial_purchase">
+            <field name="PURCHASE_LIST">DIGITUNDER</field>
+          </block>
+        </statement>
+      </block>
+    </statement>
+  </block>
+</xml>
