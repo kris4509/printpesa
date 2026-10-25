@@ -202,7 +202,7 @@ const BOT_CATALOGUE = [
         id: 27,
         name: 'Under Destroyer V3',
         description:
-            'Volatility 100 (1s) Under 8 strategy. After a loss, waits for two consecutive ticks with matching parity before the next trade and doubles the stake.',
+            'Volatility 100 (1s) Under 8 strategy. After a loss, doubles the stake and buys Odd after two even ticks or Even after two odd ticks.',
         isPremium: true,
         isAdvanced: true,
         xmlFile: 'Under Destroyer V3.xml',

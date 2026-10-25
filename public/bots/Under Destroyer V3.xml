@@ -314,21 +314,26 @@
           </block>
         </value>
         <statement name="DO0">
-          <block type="controls_if" id="udv3_parity_gate">
+          <block type="controls_if" id="udv3_buy_opposite_parity">
+            <mutation xmlns="http://www.w3.org/1999/xhtml" else="1"></mutation>
             <value name="IF0">
-              <block type="logic_operation" id="udv3_even_or_odd">
-                <field name="OP">OR</field>
-                <value name="A">
-                  <block type="last_digits_condition" id="udv3_two_even">
-                    <field name="CONDITION">ALL_EVEN</field>
-                    <value name="N">
-                      <block type="math_number" id="udv3_even_count">
-                        <field name="NUM">2</field>
-                      </block>
-                    </value>
+              <block type="last_digits_condition" id="udv3_two_even">
+                <field name="CONDITION">ALL_EVEN</field>
+                <value name="N">
+                  <block type="math_number" id="udv3_even_count">
+                    <field name="NUM">2</field>
                   </block>
                 </value>
-                <value name="B">
+              </block>
+            </value>
+            <statement name="DO0">
+              <block type="purchase" id="udv3_recovery_odd_purchase">
+                <field name="PURCHASE_LIST">DIGITODD</field>
+              </block>
+            </statement>
+            <statement name="ELSE">
+              <block type="controls_if" id="udv3_check_two_odd">
+                <value name="IF0">
                   <block type="last_digits_condition" id="udv3_two_odd">
                     <field name="CONDITION">ALL_ODD</field>
                     <value name="N">
@@ -338,11 +343,11 @@
                     </value>
                   </block>
                 </value>
-              </block>
-            </value>
-            <statement name="DO0">
-              <block type="purchase" id="udv3_recovery_purchase">
-                <field name="PURCHASE_LIST">DIGITUNDER</field>
+                <statement name="DO0">
+                  <block type="purchase" id="udv3_recovery_even_purchase">
+                    <field name="PURCHASE_LIST">DIGITEVEN</field>
+                  </block>
+                </statement>
               </block>
             </statement>
           </block>
