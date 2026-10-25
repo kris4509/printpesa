@@ -90,7 +90,7 @@ const MiniDcirclesPanel: React.FC = () => {
         const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
         const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
         const currentPos = togglePosition || {
-            x: window.innerWidth - 64,
+            x: window.innerWidth - 144,
             y: window.innerHeight - 120,
         };
         toggleDragStartRef.current = {
