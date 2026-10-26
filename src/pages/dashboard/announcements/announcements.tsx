@@ -49,6 +49,7 @@ const Announcements = observer(({ is_mobile, is_tablet, handleTabChange }: TAnno
     const [notifications, setNotifications] = React.useState([] as TNotifications[]);
     // API-fetched announcements (from /api/announcements.json)
     const [api_announcements, setApiAnnouncements] = React.useState<TAnnouncementItem[]>([]);
+    const liveMaintenanceAnnouncement = React.useRef<TAnnouncementItem | null>(null);
 
     const action_button_class_name = 'announcements__label';
 
@@ -135,11 +136,31 @@ const Announcements = observer(({ is_mobile, is_tablet, handleTabChange }: TAnno
         return temp_localstorage_data;
     };
 
-    // Fetch live announcements from /api/announcements.json
+    // Keep the site-managed announcement feed fresh while the app remains open.
     React.useEffect(() => {
-        fetch('/api/announcements.json')
-            .then(res => (res.ok ? res.json() : []))
-            .then((items: TApiAnnouncement[]) => {
+        let isMounted = true;
+
+        const refreshAnnouncements = async () => {
+            try {
+                const response = await fetch('/api/announcements.json', { cache: 'no-store' });
+                if (!response.ok) {
+                    throw new Error(`Announcements request failed with status ${response.status}`);
+                }
+                const items: unknown = await response.json();
+                if (
+                    !Array.isArray(items) ||
+                    !items.every(
+                        (item): item is TApiAnnouncement =>
+                            typeof item?.id === 'string' &&
+                            typeof item?.title === 'string' &&
+                            typeof item?.message === 'string' &&
+                            typeof item?.date === 'string'
+                    )
+                ) {
+                    throw new Error('Announcements feed returned an invalid response.');
+                }
+
+                if (!isMounted) return;
                 const mapped: TAnnouncementItem[] = items.map(item => ({
                     id: item.id,
                     icon: IconAnnounce,
@@ -149,21 +170,18 @@ const Announcements = observer(({ is_mobile, is_tablet, handleTabChange }: TAnno
                     buttonAction: BUTTON_ACTION_TYPE.NO_ACTION,
                     actionText: '',
                 }));
+                if (liveMaintenanceAnnouncement.current) {
+                    mapped.unshift(liveMaintenanceAnnouncement.current);
+                }
                 setApiAnnouncements(mapped);
-                const temp_localstorage_data = updateNotifications(mapped);
-                storeDataInLocalStorage(temp_localstorage_data);
-                setReadAnnouncementsMap(temp_localstorage_data);
-            })
-            .catch(() => {
-                // Fallback: load static list only
-                const temp_localstorage_data = updateNotifications([]);
-                storeDataInLocalStorage(temp_localstorage_data);
-                setReadAnnouncementsMap(temp_localstorage_data);
-            });
+            } catch (error) {
+                console.error('Unable to refresh announcements:', error);
+            }
+        };
 
         // Listen to real-time Deriv WebSocket website_status maintenance broadcasts
         const handleWebsiteStatus = (status: any) => {
-            if (status?.site_status === 'maintenance' || status?.message) {
+            if (status?.site_status === 'maintenance') {
                 const maintenance_item: TAnnouncementItem = {
                     id: 'DERIV_LIVE_WEBSITE_STATUS',
                     icon: IconAnnounce,
@@ -173,22 +191,44 @@ const Announcements = observer(({ is_mobile, is_tablet, handleTabChange }: TAnno
                     buttonAction: BUTTON_ACTION_TYPE.NO_ACTION,
                     actionText: '',
                 };
-                setApiAnnouncements(prev => {
-                    const exists = prev.some(item => item.id === maintenance_item.id);
-                    const updated = exists ? prev : [maintenance_item, ...prev];
-                    updateNotifications(updated);
-                    return updated;
-                });
+                liveMaintenanceAnnouncement.current = maintenance_item;
+                setApiAnnouncements(prev => [
+                    maintenance_item,
+                    ...prev.filter(item => item.id !== maintenance_item.id),
+                ]);
+            } else if (status?.site_status === 'up' && liveMaintenanceAnnouncement.current) {
+                liveMaintenanceAnnouncement.current = null;
+                setApiAnnouncements(prev => prev.filter(item => item.id !== 'DERIV_LIVE_WEBSITE_STATUS'));
             }
         };
 
-        try {
-            globalObserver.register('website_status', handleWebsiteStatus);
-        } catch (e) {
-            // Ignore if observer not ready
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        globalObserver.register('website_status', handleWebsiteStatus);
+        void refreshAnnouncements();
+
+        const refreshInterval = window.setInterval(() => {
+            void refreshAnnouncements();
+        }, 5 * 60 * 1000);
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+                void refreshAnnouncements();
+            }
+        };
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        return () => {
+            isMounted = false;
+            window.clearInterval(refreshInterval);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            globalObserver.unregister('website_status', handleWebsiteStatus);
+        };
     }, []);
+
+    React.useEffect(() => {
+        const temp_localstorage_data = updateNotifications(api_announcements);
+        storeDataInLocalStorage(temp_localstorage_data);
+        setReadAnnouncementsMap(temp_localstorage_data);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [api_announcements]);
 
     React.useEffect(() => {
         const number_ammount_active_announce = Object.values(read_announcements_map).filter(value => value).length;
