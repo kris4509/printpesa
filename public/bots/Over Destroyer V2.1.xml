@@ -121,7 +121,15 @@
                                           </block>
                                         </value>
                                         <next>
-                                          <block type="variables_set" id="over21_set_entry_point_2">
+                                          <block type="variables_set" id="over21_initialize_prediction">
+                                            <field name="VAR" id="Z{#dYY8DJU^$WD2`(c6r">Prediction</field>
+                                            <value name="VALUE">
+                                              <block type="math_number" id="over21_initial_prediction_value">
+                                                <field name="NUM">1</field>
+                                              </block>
+                                            </value>
+                                            <next>
+                                              <block type="variables_set" id="over21_set_entry_point_2">
                                             <field name="VAR" id="over21_entry_point">Entry Point (0-9)</field>
                                             <value name="VALUE">
                                               <block type="math_number" id="over21_entry_default_1">
@@ -145,6 +153,8 @@
                                                       </block>
                                                     </value>
                                                   </block>
+                                                </next>
+                                              </block>
                                                 </next>
                                               </block>
                                             </next>
