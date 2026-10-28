@@ -202,7 +202,7 @@ const BOT_CATALOGUE = [
         id: 27,
         name: 'Under Destroyer V3',
         description:
-            'Volatility 100 (1s) Under 8 strategy. After a loss, doubles the stake and buys Odd after two even ticks or Even after two odd ticks.',
+            'Waits for the configurable entry digit (default 9) before its first Under 8 trade, then uses its existing loss-recovery strategy.',
         isPremium: true,
         isAdvanced: true,
         xmlFile: 'Under Destroyer V3.xml',
@@ -211,7 +211,7 @@ const BOT_CATALOGUE = [
         id: 28,
         name: 'Over Destroyer V3',
         description:
-            'Volatility 100 (1s) Over 1 strategy. After a loss, doubles the stake and buys Odd after two even ticks or Even after two odd ticks.',
+            'Waits for the configurable entry digit (default 5) before its first Over 1 trade, then uses its existing loss-recovery strategy.',
         isPremium: true,
         isAdvanced: true,
         xmlFile: 'Over Destroyer V3.xml',

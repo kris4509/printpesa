@@ -209,6 +209,16 @@ export default class JournalStore {
 
         const { message, className, message_type, sound, block_id, variable_name } = data;
         const selected_quick_strategy = quick_strategy.selected_strategy_for_notofy;
+        const is_destroyer_threshold_notification = [
+            'odv3_notify_target_profit',
+            'odv3_notify_stop_loss',
+            'udv3_notify_target_profit',
+            'udv3_notify_stop_loss',
+        ].includes(block_id || '');
+
+        if (is_destroyer_threshold_notification) {
+            window.alert(typeof message === 'string' ? message : message.message);
+        }
 
         // Special handling for stat notifications by block_id
         const isStatNotification =
