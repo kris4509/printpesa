@@ -216,6 +216,24 @@ const BOT_CATALOGUE = [
         isAdvanced: true,
         xmlFile: 'Over Destroyer V3.xml',
     },
+    {
+        id: 29,
+        name: 'Over Destroyer V2.1',
+        description:
+            'Waits for entry digit 5, then trades up to three consecutive wins. After a loss recovery, it pauses and waits for the entry digit again.',
+        isPremium: true,
+        isAdvanced: true,
+        xmlFile: 'Over Destroyer V2.1.xml',
+    },
+    {
+        id: 30,
+        name: 'Under Destroyer V2.1',
+        description:
+            'Waits for entry digit 9, then trades up to three consecutive wins. After a loss recovery, it pauses and waits for the entry digit again.',
+        isPremium: true,
+        isAdvanced: true,
+        xmlFile: 'Under Destroyer V2.1.xml',
+    },
 ];
 
 // ─── Bots Store List ───────────────────────────────────────────────────────
@@ -239,6 +257,8 @@ const ADVANCED_BOT_NAMES = [
     'Straddle Shift',
     'Under Destroyer V3',
     'Over Destroyer V3',
+    'Over Destroyer V2.1',
+    'Under Destroyer V2.1',
 ];
 
 
