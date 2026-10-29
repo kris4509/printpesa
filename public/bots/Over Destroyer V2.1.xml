@@ -12,7 +12,6 @@
     <variable id="S?8/a#vUN;]n.oefn_8J">Martingale</variable>
     <variable id="over21_entry_point">Entry Point (0-9)</variable>
     <variable id="over21_cycle_active">CycleActive</variable>
-    <variable id="over21_cycle_wins">CycleWins</variable>
     <variable id="over21_run_profit">RunProfit</variable>
   </variables>
   <block type="trade_definition" id="jlglZV%y32QNeef:%G3!" deletable="false" x="0" y="60">
@@ -146,25 +145,7 @@
                                                       </block>
                                                     </value>
                                                     <next>
-                                                      <block type="variables_set" id="over21_set_cycle_wins_6">
-                                                        <field name="VAR" id="over21_cycle_wins">CycleWins</field>
-                                                        <value name="VALUE">
-                                                          <block type="math_number" id="over21_wins_zero_5">
-                                                            <field name="NUM">0</field>
-                                                          </block>
-                                                        </value>
-                                                        <next>
-                                                          <block type="variables_set" id="over21_initialize_run_profit">
-                                                            <field name="VAR" id="over21_run_profit">RunProfit</field>
-                                                            <value name="VALUE">
-                                                              <block type="math_number" id="over21_run_profit_zero">
-                                                                <field name="NUM">0</field>
-                                                              </block>
-                                                            </value>
-                                                          </block>
-                                                        </next>
-                                                      </block>
-                                                    </next>
+                                                      </next>
                                                   </block>
                                                 </next>
                                               </block>
@@ -369,132 +350,23 @@
                   </block>
                 </value>
                 <statement name="DO0">
-                  <block type="controls_if" id="over21_fix_recovery_or_clean_win_26">
-                    <mutation xhtml:else="1" />
-                    <value name="IF0">
-                      <block type="logic_compare" id="over21_fix_has_recovered_loss_25">
-                        <field name="OP">GT</field>
-                        <value name="A">
-                          <block type="variables_get" id="over21_fix_get_losses_23">
-                            <field name="VAR" id="#$3t6q4Wr9Pl2kRP0/`X">LossCount</field>
-                          </block>
-                        </value>
-                        <value name="B">
-                          <block type="math_number" id="over21_fix_zero_losses_24">
-                            <field name="NUM">0</field>
-                          </block>
-                        </value>
+                  <block type="variables_set" id="over21_v2logic_1">
+                    <field name="VAR" id="#$3t6q4Wr9Pl2kRP0/`X">LossCount</field>
+                    <value name="VALUE">
+                      <block type="math_number" id="over21_v2logic_2">
+                        <field name="NUM">0</field>
                       </block>
                     </value>
-                    <statement name="DO0">
-                      <block type="variables_set" id="over21_fix_variables_set_3">
-                        <field name="VAR" id="#$3t6q4Wr9Pl2kRP0/`X">LossCount</field>
+                    <next>
+                      <block type="variables_set" id="over21_v2logic_3">
+                        <field name="VAR" id="d,qP)6}.{_Bm+6*=LH2)">Stake</field>
                         <value name="VALUE">
-                          <block type="math_number" id="over21_fix_math_number_4">
-                            <field name="NUM">0</field>
+                          <block type="variables_get" id="over21_v2logic_4">
+                            <field name="VAR" id="z5.Knh|6[jnrppo~64d(">InitialStake</field>
                           </block>
                         </value>
-                        <next>
-                          <block type="variables_set" id="over21_fix_variables_set_5">
-                            <field name="VAR" id="d,qP)6}.{_Bm+6*=LH2)">Stake</field>
-                            <value name="VALUE">
-                              <block type="variables_get" id="over21_fix_variables_get_6">
-                                <field name="VAR" id="z5.Knh|6[jnrppo~64d(">InitialStake</field>
-                              </block>
-                            </value>
-                            <next>
-                              <block type="variables_set" id="over21_fix_reset_recovery_wins_12">
-                                <field name="VAR" id="over21_cycle_wins">CycleWins</field>
-                                <value name="VALUE">
-                                  <block type="math_number" id="over21_fix_recovery_wins_zero_11">
-                                    <field name="NUM">0</field>
-                                  </block>
-                                </value>
-                                <next>
-                                  <block type="variables_set" id="over21_fix_pause_after_recovery_14">
-                                    <field name="VAR" id="over21_cycle_active">CycleActive</field>
-                                    <value name="VALUE">
-                                      <block type="logic_boolean" id="over21_fix_pause_recovery_false_13">
-                                        <field name="BOOL">FALSE</field>
-                                      </block>
-                                    </value>
-                                  </block>
-                                </next>
-                              </block>
-                            </next>
-                          </block>
-                        </next>
                       </block>
-                    </statement>
-                    <statement name="ELSE">
-                      <block type="variables_set" id="over21_fix_variables_set_7">
-                        <field name="VAR" id="#$3t6q4Wr9Pl2kRP0/`X">LossCount</field>
-                        <value name="VALUE">
-                          <block type="math_number" id="over21_fix_math_number_8">
-                            <field name="NUM">0</field>
-                          </block>
-                        </value>
-                        <next>
-                          <block type="variables_set" id="over21_fix_variables_set_9">
-                            <field name="VAR" id="d,qP)6}.{_Bm+6*=LH2)">Stake</field>
-                            <value name="VALUE">
-                              <block type="variables_get" id="over21_fix_variables_get_10">
-                                <field name="VAR" id="z5.Knh|6[jnrppo~64d(">InitialStake</field>
-                              </block>
-                            </value>
-                            <next>
-                              <block type="math_change" id="over21_fix_increment_cycle_wins_15">
-                                <field name="VAR" id="over21_cycle_wins">CycleWins</field>
-                                <value name="DELTA">
-                                  <block type="math_number" id="over21_fix_increment_one_16">
-                                    <field name="NUM">1</field>
-                                  </block>
-                                </value>
-                                <next>
-                                  <block type="controls_if" id="over21_fix_three_win_limit_22">
-                                    <value name="IF0">
-                                      <block type="logic_compare" id="over21_fix_three_win_check_21">
-                                        <field name="OP">GTE</field>
-                                        <value name="A">
-                                          <block type="variables_get" id="over21_fix_get_wins_19">
-                                            <field name="VAR" id="over21_cycle_wins">CycleWins</field>
-                                          </block>
-                                        </value>
-                                        <value name="B">
-                                          <block type="math_number" id="over21_fix_three_wins_20">
-                                            <field name="NUM">3</field>
-                                          </block>
-                                        </value>
-                                      </block>
-                                    </value>
-                                    <statement name="DO0">
-                                      <block type="variables_set" id="over21_fix_pause_after_three_18">
-                                        <field name="VAR" id="over21_cycle_active">CycleActive</field>
-                                        <value name="VALUE">
-                                          <block type="logic_boolean" id="over21_fix_pause_three_false_17">
-                                            <field name="BOOL">FALSE</field>
-                                          </block>
-                                        </value>
-                                        <next>
-                                          <block type="variables_set" id="over21_reset_wins_after_batch">
-                                            <field name="VAR" id="over21_cycle_wins">CycleWins</field>
-                                            <value name="VALUE">
-                                              <block type="math_number" id="over21_reset_wins_after_batch_value">
-                                                <field name="NUM">0</field>
-                                              </block>
-                                            </value>
-                                          </block>
-                                        </next>
-                                      </block>
-                                    </statement>
-                                  </block>
-                                </next>
-                              </block>
-                            </next>
-                          </block>
-                        </next>
-                      </block>
-                    </statement>
+                    </next>
                   </block>
                 </statement>
                 <statement name="ELSE">

@@ -220,7 +220,7 @@ const BOT_CATALOGUE = [
         id: 29,
         name: 'Over Destroyer V2.1',
         description:
-            'Waits for entry digit 5, then trades up to three consecutive wins. After a loss recovery, it pauses and waits for the entry digit again.',
+            'Waits for entry digit 5, then continues the original Over Destroyer V2 trading and recovery logic until its target profit or stop loss is reached.',
         isPremium: true,
         isAdvanced: true,
         xmlFile: 'Over Destroyer V2.1.xml',
@@ -229,7 +229,7 @@ const BOT_CATALOGUE = [
         id: 30,
         name: 'Under Destroyer V2.1',
         description:
-            'Waits for entry digit 9, then trades up to three consecutive wins. After a loss recovery, it pauses and waits for the entry digit again.',
+            'Waits for entry digit 9, then continues the original Under Destroyer V2 trading and recovery logic until its target profit or stop loss is reached.',
         isPremium: true,
         isAdvanced: true,
         xmlFile: 'Under Destroyer V2.1.xml',
