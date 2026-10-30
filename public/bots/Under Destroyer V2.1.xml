@@ -316,7 +316,7 @@
             </value>
           </block>
         </statement>
-        <statement name="ELSE">
+        <next>
           <block type="controls_if" id="~C,I/H/qr-R{OR%1G}_W">
             <xhtml:mutation else="1" />
             <value name="IF0">
@@ -384,7 +384,7 @@
               <block type="trade_again" id="RYcAuUrF4L(1rte*F_y;" />
             </next>
           </block>
-        </statement>
+        </next>
       </block>
     </statement>
   </block>
