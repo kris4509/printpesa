@@ -441,8 +441,18 @@
                   </block>
                 </value>
                 <statement name="DO0">
-                  <block type="purchase" id="!91aG2Y*G1.p=EBnc*`N">
-                    <field name="PURCHASE_LIST">DIGITOVER</field>
+                  <block type="variables_set" id="over21_set_first_prediction">
+                    <field name="VAR" id="Z{#dYY8DJU^$WD2`(c6r">Prediction</field>
+                    <value name="VALUE">
+                      <block type="variables_get" id="over21_get_first_over_prediction">
+                        <field name="VAR" id="lh~gI^07[hGlr9C@_-rL">OverPrediction1</field>
+                      </block>
+                    </value>
+                    <next>
+                      <block type="purchase" id="!91aG2Y*G1.p=EBnc*`N">
+                        <field name="PURCHASE_LIST">DIGITOVER</field>
+                      </block>
+                    </next>
                   </block>
                 </statement>
                 <value name="IF1">
@@ -461,13 +471,33 @@
                   </block>
                 </value>
                 <statement name="DO1">
-                  <block type="purchase" id=")nz=f?;,y8caGbNBPSTh">
-                    <field name="PURCHASE_LIST">DIGITOVER</field>
+                  <block type="variables_set" id="over21_set_second_prediction">
+                    <field name="VAR" id="Z{#dYY8DJU^$WD2`(c6r">Prediction</field>
+                    <value name="VALUE">
+                      <block type="variables_get" id="over21_get_second_over_prediction">
+                        <field name="VAR" id="Pn%78+HN5T1kaVIqVrgO">OverPrediction2</field>
+                      </block>
+                    </value>
+                    <next>
+                      <block type="purchase" id=")nz=f?;,y8caGbNBPSTh">
+                        <field name="PURCHASE_LIST">DIGITOVER</field>
+                      </block>
+                    </next>
                   </block>
                 </statement>
                 <statement name="ELSE">
-                  <block type="purchase" id="W:YIvo51vfpk98/Iy8.Z">
-                    <field name="PURCHASE_LIST">DIGITUNDER</field>
+                  <block type="variables_set" id="over21_set_under_prediction">
+                    <field name="VAR" id="Z{#dYY8DJU^$WD2`(c6r">Prediction</field>
+                    <value name="VALUE">
+                      <block type="variables_get" id="over21_get_under_prediction">
+                        <field name="VAR" id="t|;gprbg4@.R(~**j2nV">UnderPrediction</field>
+                      </block>
+                    </value>
+                    <next>
+                      <block type="purchase" id="W:YIvo51vfpk98/Iy8.Z">
+                        <field name="PURCHASE_LIST">DIGITUNDER</field>
+                      </block>
+                    </next>
                   </block>
                 </statement>
               </block>
