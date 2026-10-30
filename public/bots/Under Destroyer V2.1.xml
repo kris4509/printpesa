@@ -1,4 +1,4 @@
-<xml xmlns="https://developers.google.com/blockly/xml" xmlns:xhtml="http://www.w3.org/1999/xhtml" is_dbot="true" collection="false">
+<xml xmlns="https://developers.google.com/blockly/xml" is_dbot="true" collection="false">
   <variables>
     <variable id="r}My)YwBHYA!rQ%6e+5s">InitalStake</variable>
     <variable id=":R{%x(5U-[oH9~|w[,4N">Stake</variable>
@@ -68,7 +68,7 @@
                 <field name="VAR" id="R#M/M_Vy,2VE%B+VLNnb">TakeProfit</field>
                 <value name="VALUE">
                   <block type="math_number" id="dwYp`~dor2Vcf|}kd}C*">
-                        <field name="NUM">3</field>
+                    <field name="NUM">3</field>
                   </block>
                 </value>
                 <next>
@@ -76,7 +76,7 @@
                     <field name="VAR" id="3%0g}eb[o4w7x5c3=aj1">StopLoss</field>
                     <value name="VALUE">
                       <block type="math_number" id="U^OPxXb;E_E?,/.ssg~e">
-                          <field name="NUM">6</field>
+                        <field name="NUM">6</field>
                       </block>
                     </value>
                     <next>
@@ -120,31 +120,21 @@
                                           </block>
                                         </value>
                                         <next>
-                                          <block type="variables_set" id="under21_initialize_prediction">
-                                            <field name="VAR" id="q:gMilx*vgn#BXdfxDbT">Prediction</field>
+                                          <block type="variables_set" id="under21_init_entry_point">
+                                            <field name="VAR" id="under21_entry_point">Entry Point (0-9)</field>
                                             <value name="VALUE">
-                                              <block type="math_number" id="under21_initialize_prediction_value">
-                                                <field name="NUM">8</field>
+                                              <block type="math_number" id="under21_init_entry_point_val">
+                                                <field name="NUM">9</field>
                                               </block>
                                             </value>
                                             <next>
-                                              <block type="variables_set" id="under21_set_entry_point">
-                                                <field name="VAR" id="under21_entry_point">Entry Point (0-9)</field>
+                                              <block type="variables_set" id="under21_init_entry_activated">
+                                                <field name="VAR" id="under21_entry_activated">EntryPointActivated</field>
                                                 <value name="VALUE">
-                                                  <block type="math_number" id="under21_entry_point_default">
-                                                    <field name="NUM">9</field>
+                                                  <block type="logic_boolean" id="under21_init_entry_activated_val">
+                                                    <field name="BOOL">FALSE</field>
                                                   </block>
                                                 </value>
-                                                <next>
-                                                  <block type="variables_set" id="under21_initialize_entry_activated">
-                                                    <field name="VAR" id="under21_entry_activated">EntryPointActivated</field>
-                                                    <value name="VALUE">
-                                                      <block type="logic_boolean" id="under21_entry_activated_false">
-                                                        <field name="BOOL">FALSE</field>
-                                                      </block>
-                                                    </value>
-                                                  </block>
-                                                </next>
                                               </block>
                                             </next>
                                           </block>
@@ -169,7 +159,7 @@
     </statement>
     <statement name="SUBMARKET">
       <block type="controls_if" id="b^v[5QZ(gG:m]{E`f$*B">
-        <xhtml:mutation elseif="1" else="1" />
+        <mutation xmlns="http://www.w3.org/1999/xhtml" elseif="1" else="1"></mutation>
         <value name="IF0">
           <block type="logic_compare" id="8pWW%n9xP/GOU{-,]Mx/">
             <field name="OP">EQ</field>
@@ -232,7 +222,7 @@
         </statement>
         <next>
           <block type="trade_definition_tradeoptions" id="wS7oDqS,(f%(sA4,P,li">
-            <xhtml:mutation has_first_barrier="false" has_second_barrier="false" has_prediction="true" />
+            <mutation xmlns="http://www.w3.org/1999/xhtml" has_first_barrier="false" has_second_barrier="false" has_prediction="true"></mutation>
             <field name="DURATIONTYPE_LIST">t</field>
             <value name="DURATION">
               <shadow type="math_number_positive" id="ctm8xhCc#6,1qb+3ls^-">
@@ -263,12 +253,12 @@
   <block type="after_purchase" id="ChY@=sLvSo88OEI_P{^K" x="714" y="60">
     <statement name="AFTERPURCHASE_STACK">
       <block type="controls_if" id="E/mn8EdK8S(6BTQL7u1o">
-        <xhtml:mutation elseif="1" else="1" />
+        <mutation xmlns="http://www.w3.org/1999/xhtml" elseif="1" else="1"></mutation>
         <value name="IF0">
           <block type="logic_compare" id="@ly0J(=*X-?x)Yp?ld=X">
             <field name="OP">GTE</field>
             <value name="A">
-              <block type="total_profit" id="r{se#4.%}4dW+[zF|TF+" />
+              <block type="total_profit" id="r{se#4.%}4dW+[zF|TF+"></block>
             </value>
             <value name="B">
               <block type="variables_get" id="o}Mxa7!:Uq7xB6+O~~Yv">
@@ -290,7 +280,7 @@
           <block type="logic_compare" id="6J{Lwq9/avRCz3DP}PFe">
             <field name="OP">LTE</field>
             <value name="A">
-              <block type="total_profit" id="0E!sP$ccR0MHQa8bm,y:" />
+              <block type="total_profit" id="0E!sP$ccR0MHQa8bm,y:"></block>
             </value>
             <value name="B">
               <block type="math_single" id="Gya1?2IfUYEtOf`bW}47">
@@ -316,9 +306,9 @@
             </value>
           </block>
         </statement>
-        <next>
+        <statement name="ELSE">
           <block type="controls_if" id="~C,I/H/qr-R{OR%1G}_W">
-            <xhtml:mutation else="1" />
+            <mutation xmlns="http://www.w3.org/1999/xhtml" else="1"></mutation>
             <value name="IF0">
               <block type="contract_check_result" id="1g%v2MvcO1$pZp0BmDE{">
                 <field name="CHECK_RESULT">win</field>
@@ -381,10 +371,10 @@
               </block>
             </statement>
             <next>
-              <block type="trade_again" id="RYcAuUrF4L(1rte*F_y;" />
+              <block type="trade_again" id="RYcAuUrF4L(1rte*F_y;"></block>
             </next>
           </block>
-        </next>
+        </statement>
       </block>
     </statement>
   </block>
@@ -404,7 +394,7 @@
               <block type="logic_compare" id="under21_entry_digit_match">
                 <field name="OP">EQ</field>
                 <value name="A">
-                  <block type="last_digit" id="under21_last_digit" />
+                  <block type="last_digit" id="under21_last_digit"></block>
                 </value>
                 <value name="B">
                   <block type="variables_get" id="under21_get_entry_point">
@@ -424,7 +414,7 @@
             </value>
             <statement name="DO0">
               <block type="controls_if" id="9btlJU(lt_l.^1GtG`Mx">
-                <xhtml:mutation else="1" />
+                <mutation xmlns="http://www.w3.org/1999/xhtml" else="1"></mutation>
                 <value name="IF0">
                   <block type="logic_compare" id="?Ac@K_M)Df?hvb]G8|bh">
                     <field name="OP">LT</field>
@@ -441,63 +431,13 @@
                   </block>
                 </value>
                 <statement name="DO0">
-                  <block type="controls_if" id="under21_set_under_prediction">
-                    <mutation xmlns="http://www.w3.org/1999/xhtml" else="1" />
-                    <value name="IF0">
-                      <block type="logic_compare" id="under21_check_first_prediction">
-                        <field name="OP">EQ</field>
-                        <value name="A">
-                          <block type="variables_get" id="under21_first_prediction_loss_count">
-                            <field name="VAR" id="(WC}R(C-X.RoXL9|uO7W">LossCount</field>
-                          </block>
-                        </value>
-                        <value name="B">
-                          <block type="math_number" id="under21_first_prediction_zero">
-                            <field name="NUM">0</field>
-                          </block>
-                        </value>
-                      </block>
-                    </value>
-                    <statement name="DO0">
-                      <block type="variables_set" id="under21_set_first_prediction">
-                        <field name="VAR" id="q:gMilx*vgn#BXdfxDbT">Prediction</field>
-                        <value name="VALUE">
-                          <block type="variables_get" id="under21_get_first_under_prediction">
-                            <field name="VAR" id="%RrYb{O#aY]CjnPY+*^v">UnderPrediction1</field>
-                          </block>
-                        </value>
-                      </block>
-                    </statement>
-                    <statement name="ELSE">
-                      <block type="variables_set" id="under21_set_second_prediction">
-                        <field name="VAR" id="q:gMilx*vgn#BXdfxDbT">Prediction</field>
-                        <value name="VALUE">
-                          <block type="variables_get" id="under21_get_second_under_prediction">
-                            <field name="VAR" id="jscFx#Tu.KTrd~4H?e;c">UnderPrediction2</field>
-                          </block>
-                        </value>
-                      </block>
-                    </statement>
-                    <next>
-                      <block type="purchase" id="Bd$qO=w%tF.gURM6PvwG">
-                        <field name="PURCHASE_LIST">DIGITUNDER</field>
-                      </block>
-                    </next>
+                  <block type="purchase" id="Bd$qO=w%tF.gURM6PvwG">
+                    <field name="PURCHASE_LIST">DIGITUNDER</field>
                   </block>
                 </statement>
                 <statement name="ELSE">
-                  <block type="variables_set" id="under21_set_over_prediction">
-                    <field name="VAR" id="q:gMilx*vgn#BXdfxDbT">Prediction</field>
-                    <value name="VALUE">
-                      <block type="variables_get" id="under21_get_over_prediction">
-                        <field name="VAR" id="BP|SBs{`y;[kbOhiz]Cc">OverPrediction</field>
-                      </block>
-                    </value>
-                    <next>
-                      <block type="purchase" id="@,u`7s5$l(Pb4/RbgE?U">
-                        <field name="PURCHASE_LIST">DIGITOVER</field>
-                      </block>
-                    </next>
+                  <block type="purchase" id="@,u`7s5$l(Pb4/RbgE?U">
+                    <field name="PURCHASE_LIST">DIGITOVER</field>
                   </block>
                 </statement>
               </block>

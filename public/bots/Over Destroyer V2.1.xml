@@ -1,4 +1,4 @@
-<xml xmlns="https://developers.google.com/blockly/xml" xmlns:xhtml="http://www.w3.org/1999/xhtml" is_dbot="true" collection="false">
+<xml xmlns="https://developers.google.com/blockly/xml" is_dbot="true" collection="false">
   <variables>
     <variable id="z5.Knh|6[jnrppo~64d(">InitialStake</variable>
     <variable id="d,qP)6}.{_Bm+6*=LH2)">Stake</variable>
@@ -68,7 +68,7 @@
                 <field name="VAR" id="y/0C9G:[53J)_20=RRMK">TakeProfit</field>
                 <value name="VALUE">
                   <block type="math_number" id="a3AKC,2Cb;$Y!UWU#:;3">
-                        <field name="NUM">3</field>
+                    <field name="NUM">3</field>
                   </block>
                 </value>
                 <next>
@@ -76,7 +76,7 @@
                     <field name="VAR" id="IQkD+?DzQR16FGb-KV_P">StopLoss</field>
                     <value name="VALUE">
                       <block type="math_number" id="}f!6JnD+uoXA-1i(x-au">
-                          <field name="NUM">6</field>
+                        <field name="NUM">6</field>
                       </block>
                     </value>
                     <next>
@@ -120,31 +120,21 @@
                                           </block>
                                         </value>
                                         <next>
-                                          <block type="variables_set" id="over21_initialize_prediction">
-                                            <field name="VAR" id="Z{#dYY8DJU^$WD2`(c6r">Prediction</field>
+                                          <block type="variables_set" id="over21_init_entry_point">
+                                            <field name="VAR" id="over21_entry_point">Entry Point (0-9)</field>
                                             <value name="VALUE">
-                                              <block type="math_number" id="over21_initialize_prediction_value">
-                                                <field name="NUM">1</field>
+                                              <block type="math_number" id="over21_init_entry_point_val">
+                                                <field name="NUM">5</field>
                                               </block>
                                             </value>
                                             <next>
-                                              <block type="variables_set" id="over21_set_entry_point">
-                                                <field name="VAR" id="over21_entry_point">Entry Point (0-9)</field>
+                                              <block type="variables_set" id="over21_init_entry_activated">
+                                                <field name="VAR" id="over21_entry_activated">EntryPointActivated</field>
                                                 <value name="VALUE">
-                                                  <block type="math_number" id="over21_entry_point_default">
-                                                    <field name="NUM">5</field>
+                                                  <block type="logic_boolean" id="over21_init_entry_activated_val">
+                                                    <field name="BOOL">FALSE</field>
                                                   </block>
                                                 </value>
-                                                <next>
-                                                  <block type="variables_set" id="over21_initialize_entry_activated">
-                                                    <field name="VAR" id="over21_entry_activated">EntryPointActivated</field>
-                                                    <value name="VALUE">
-                                                      <block type="logic_boolean" id="over21_entry_activated_false">
-                                                        <field name="BOOL">FALSE</field>
-                                                      </block>
-                                                    </value>
-                                                  </block>
-                                                </next>
                                               </block>
                                             </next>
                                           </block>
@@ -169,7 +159,7 @@
     </statement>
     <statement name="SUBMARKET">
       <block type="controls_if" id="j:fabbX5oXpzGgrB{T+h">
-        <xhtml:mutation elseif="1" else="1" />
+        <mutation xmlns="http://www.w3.org/1999/xhtml" elseif="1" else="1"></mutation>
         <value name="IF0">
           <block type="logic_compare" id="4rkQqoI]D*UAly2$lD,!">
             <field name="OP">EQ</field>
@@ -232,7 +222,7 @@
         </statement>
         <next>
           <block type="trade_definition_tradeoptions" id="RKz`q_o-xe08/f{clN]h">
-            <xhtml:mutation has_first_barrier="false" has_second_barrier="false" has_prediction="true" />
+            <mutation xmlns="http://www.w3.org/1999/xhtml" has_first_barrier="false" has_second_barrier="false" has_prediction="true"></mutation>
             <field name="DURATIONTYPE_LIST">t</field>
             <value name="DURATION">
               <shadow type="math_number_positive" id="e]IiZcGv7EM=t8h:qugC">
@@ -263,12 +253,12 @@
   <block type="after_purchase" id=".Ho`zN[Wg%#C]e^VT}tu" x="714" y="60">
     <statement name="AFTERPURCHASE_STACK">
       <block type="controls_if" id="hF+MS}vah5++*BM/+D_+">
-        <xhtml:mutation elseif="1" else="1" />
+        <mutation xmlns="http://www.w3.org/1999/xhtml" elseif="1" else="1"></mutation>
         <value name="IF0">
           <block type="logic_compare" id="n1fmNkKvm@@Rd^P},Xo/">
             <field name="OP">GTE</field>
             <value name="A">
-              <block type="total_profit" id="v~ByX,ysvh,n!X*)/cpi" />
+              <block type="total_profit" id="v~ByX,ysvh,n!X*)/cpi"></block>
             </value>
             <value name="B">
               <block type="variables_get" id="3/VZdY5`E`4UdW10d`-^">
@@ -290,7 +280,7 @@
           <block type="logic_compare" id="P5c%,cK,SKD5pq3ux^T7">
             <field name="OP">LTE</field>
             <value name="A">
-              <block type="total_profit" id="H*gKC?b6rE:ld{!=#/`I" />
+              <block type="total_profit" id="H*gKC?b6rE:ld{!=#/`I"></block>
             </value>
             <value name="B">
               <block type="math_single" id="YKpxp-{e+%G;KuxS7,nq">
@@ -316,9 +306,9 @@
             </value>
           </block>
         </statement>
-        <next>
+        <statement name="ELSE">
           <block type="controls_if" id="G?,Ee-V68T~^gTT`uZ37">
-            <xhtml:mutation else="1" />
+            <mutation xmlns="http://www.w3.org/1999/xhtml" else="1"></mutation>
             <value name="IF0">
               <block type="contract_check_result" id="hv(hm^j9N;;`9APV{^dZ">
                 <field name="CHECK_RESULT">win</field>
@@ -381,10 +371,10 @@
               </block>
             </statement>
             <next>
-              <block type="trade_again" id="7UK%,hBAz9J9JD2S)4i+" />
+              <block type="trade_again" id="7UK%,hBAz9J9JD2S)4i+"></block>
             </next>
           </block>
-        </next>
+        </statement>
       </block>
     </statement>
   </block>
@@ -404,7 +394,7 @@
               <block type="logic_compare" id="over21_entry_digit_match">
                 <field name="OP">EQ</field>
                 <value name="A">
-                  <block type="last_digit" id="over21_last_digit" />
+                  <block type="last_digit" id="over21_last_digit"></block>
                 </value>
                 <value name="B">
                   <block type="variables_get" id="over21_get_entry_point">
@@ -424,7 +414,7 @@
             </value>
             <statement name="DO0">
               <block type="controls_if" id="mX^w|xnbf-]_pEdvODCz">
-                <xhtml:mutation elseif="1" else="1" />
+                <mutation xmlns="http://www.w3.org/1999/xhtml" elseif="1" else="1"></mutation>
                 <value name="IF0">
                   <block type="logic_compare" id="u8zO#N5UB.+$U_wDWP2T">
                     <field name="OP">EQ</field>
@@ -441,18 +431,8 @@
                   </block>
                 </value>
                 <statement name="DO0">
-                  <block type="variables_set" id="over21_set_first_prediction">
-                    <field name="VAR" id="Z{#dYY8DJU^$WD2`(c6r">Prediction</field>
-                    <value name="VALUE">
-                      <block type="variables_get" id="over21_get_first_over_prediction">
-                        <field name="VAR" id="lh~gI^07[hGlr9C@_-rL">OverPrediction1</field>
-                      </block>
-                    </value>
-                    <next>
-                      <block type="purchase" id="!91aG2Y*G1.p=EBnc*`N">
-                        <field name="PURCHASE_LIST">DIGITOVER</field>
-                      </block>
-                    </next>
+                  <block type="purchase" id="!91aG2Y*G1.p=EBnc*`N">
+                    <field name="PURCHASE_LIST">DIGITOVER</field>
                   </block>
                 </statement>
                 <value name="IF1">
@@ -471,33 +451,13 @@
                   </block>
                 </value>
                 <statement name="DO1">
-                  <block type="variables_set" id="over21_set_second_prediction">
-                    <field name="VAR" id="Z{#dYY8DJU^$WD2`(c6r">Prediction</field>
-                    <value name="VALUE">
-                      <block type="variables_get" id="over21_get_second_over_prediction">
-                        <field name="VAR" id="Pn%78+HN5T1kaVIqVrgO">OverPrediction2</field>
-                      </block>
-                    </value>
-                    <next>
-                      <block type="purchase" id=")nz=f?;,y8caGbNBPSTh">
-                        <field name="PURCHASE_LIST">DIGITOVER</field>
-                      </block>
-                    </next>
+                  <block type="purchase" id=")nz=f?;,y8caGbNBPSTh">
+                    <field name="PURCHASE_LIST">DIGITOVER</field>
                   </block>
                 </statement>
                 <statement name="ELSE">
-                  <block type="variables_set" id="over21_set_under_prediction">
-                    <field name="VAR" id="Z{#dYY8DJU^$WD2`(c6r">Prediction</field>
-                    <value name="VALUE">
-                      <block type="variables_get" id="over21_get_under_prediction">
-                        <field name="VAR" id="t|;gprbg4@.R(~**j2nV">UnderPrediction</field>
-                      </block>
-                    </value>
-                    <next>
-                      <block type="purchase" id="W:YIvo51vfpk98/Iy8.Z">
-                        <field name="PURCHASE_LIST">DIGITUNDER</field>
-                      </block>
-                    </next>
+                  <block type="purchase" id="W:YIvo51vfpk98/Iy8.Z">
+                    <field name="PURCHASE_LIST">DIGITUNDER</field>
                   </block>
                 </statement>
               </block>
