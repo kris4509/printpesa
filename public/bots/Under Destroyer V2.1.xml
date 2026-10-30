@@ -248,9 +248,6 @@
               </block>
             </value>
             <value name="PREDICTION">
-              <shadow type="math_number_positive" id="J}O{k0D)3v$[E5.`V;#(" inline="true">
-                <field name="NUM">1</field>
-              </shadow>
               <block type="variables_get" id="AP,x}yb?LVoE3wEPN!uv">
                 <field name="VAR" id="q:gMilx*vgn#BXdfxDbT">Prediction</field>
               </block>
