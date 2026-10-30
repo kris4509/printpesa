@@ -68,7 +68,7 @@
                 <field name="VAR" id="R#M/M_Vy,2VE%B+VLNnb">TakeProfit</field>
                 <value name="VALUE">
                   <block type="math_number" id="dwYp`~dor2Vcf|}kd}C*">
-                    <field name="NUM">1</field>
+                        <field name="NUM">3</field>
                   </block>
                 </value>
                 <next>
@@ -76,7 +76,7 @@
                     <field name="VAR" id="3%0g}eb[o4w7x5c3=aj1">StopLoss</field>
                     <value name="VALUE">
                       <block type="math_number" id="U^OPxXb;E_E?,/.ssg~e">
-                        <field name="NUM">3</field>
+                          <field name="NUM">6</field>
                       </block>
                     </value>
                     <next>
@@ -120,21 +120,31 @@
                                           </block>
                                         </value>
                                         <next>
-                                          <block type="variables_set" id="under21_set_entry_point">
-                                            <field name="VAR" id="under21_entry_point">Entry Point (0-9)</field>
+                                          <block type="variables_set" id="under21_initialize_prediction">
+                                            <field name="VAR" id="q:gMilx*vgn#BXdfxDbT">Prediction</field>
                                             <value name="VALUE">
-                                              <block type="math_number" id="under21_entry_point_default">
-                                                <field name="NUM">9</field>
+                                              <block type="math_number" id="under21_initialize_prediction_value">
+                                                <field name="NUM">8</field>
                                               </block>
                                             </value>
                                             <next>
-                                              <block type="variables_set" id="under21_initialize_entry_activated">
-                                                <field name="VAR" id="under21_entry_activated">EntryPointActivated</field>
+                                              <block type="variables_set" id="under21_set_entry_point">
+                                                <field name="VAR" id="under21_entry_point">Entry Point (0-9)</field>
                                                 <value name="VALUE">
-                                                  <block type="logic_boolean" id="under21_entry_activated_false">
-                                                    <field name="BOOL">FALSE</field>
+                                                  <block type="math_number" id="under21_entry_point_default">
+                                                    <field name="NUM">9</field>
                                                   </block>
                                                 </value>
+                                                <next>
+                                                  <block type="variables_set" id="under21_initialize_entry_activated">
+                                                    <field name="VAR" id="under21_entry_activated">EntryPointActivated</field>
+                                                    <value name="VALUE">
+                                                      <block type="logic_boolean" id="under21_entry_activated_false">
+                                                        <field name="BOOL">FALSE</field>
+                                                      </block>
+                                                    </value>
+                                                  </block>
+                                                </next>
                                               </block>
                                             </next>
                                           </block>

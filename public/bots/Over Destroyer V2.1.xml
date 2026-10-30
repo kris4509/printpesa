@@ -68,7 +68,7 @@
                 <field name="VAR" id="y/0C9G:[53J)_20=RRMK">TakeProfit</field>
                 <value name="VALUE">
                   <block type="math_number" id="a3AKC,2Cb;$Y!UWU#:;3">
-                    <field name="NUM">1</field>
+                        <field name="NUM">3</field>
                   </block>
                 </value>
                 <next>
@@ -76,7 +76,7 @@
                     <field name="VAR" id="IQkD+?DzQR16FGb-KV_P">StopLoss</field>
                     <value name="VALUE">
                       <block type="math_number" id="}f!6JnD+uoXA-1i(x-au">
-                        <field name="NUM">3</field>
+                          <field name="NUM">6</field>
                       </block>
                     </value>
                     <next>
@@ -120,21 +120,31 @@
                                           </block>
                                         </value>
                                         <next>
-                                          <block type="variables_set" id="over21_set_entry_point">
-                                            <field name="VAR" id="over21_entry_point">Entry Point (0-9)</field>
+                                          <block type="variables_set" id="over21_initialize_prediction">
+                                            <field name="VAR" id="Z{#dYY8DJU^$WD2`(c6r">Prediction</field>
                                             <value name="VALUE">
-                                              <block type="math_number" id="over21_entry_point_default">
-                                                <field name="NUM">5</field>
+                                              <block type="math_number" id="over21_initialize_prediction_value">
+                                                <field name="NUM">1</field>
                                               </block>
                                             </value>
                                             <next>
-                                              <block type="variables_set" id="over21_initialize_entry_activated">
-                                                <field name="VAR" id="over21_entry_activated">EntryPointActivated</field>
+                                              <block type="variables_set" id="over21_set_entry_point">
+                                                <field name="VAR" id="over21_entry_point">Entry Point (0-9)</field>
                                                 <value name="VALUE">
-                                                  <block type="logic_boolean" id="over21_entry_activated_false">
-                                                    <field name="BOOL">FALSE</field>
+                                                  <block type="math_number" id="over21_entry_point_default">
+                                                    <field name="NUM">5</field>
                                                   </block>
                                                 </value>
+                                                <next>
+                                                  <block type="variables_set" id="over21_initialize_entry_activated">
+                                                    <field name="VAR" id="over21_entry_activated">EntryPointActivated</field>
+                                                    <value name="VALUE">
+                                                      <block type="logic_boolean" id="over21_entry_activated_false">
+                                                        <field name="BOOL">FALSE</field>
+                                                      </block>
+                                                    </value>
+                                                  </block>
+                                                </next>
                                               </block>
                                             </next>
                                           </block>
