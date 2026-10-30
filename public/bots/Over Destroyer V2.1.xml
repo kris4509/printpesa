@@ -11,8 +11,7 @@
     <variable id="IQkD+?DzQR16FGb-KV_P">StopLoss</variable>
     <variable id="S?8/a#vUN;]n.oefn_8J">Martingale</variable>
     <variable id="over21_entry_point">Entry Point (0-9)</variable>
-    <variable id="over21_cycle_active">CycleActive</variable>
-    <variable id="over21_run_profit">RunProfit</variable>
+    <variable id="over21_entry_activated">EntryPointActivated</variable>
   </variables>
   <block type="trade_definition" id="jlglZV%y32QNeef:%G3!" deletable="false" x="0" y="60">
     <statement name="TRADE_OPTIONS">
@@ -69,7 +68,7 @@
                 <field name="VAR" id="y/0C9G:[53J)_20=RRMK">TakeProfit</field>
                 <value name="VALUE">
                   <block type="math_number" id="a3AKC,2Cb;$Y!UWU#:;3">
-                    <field name="NUM">3</field>
+                    <field name="NUM">1</field>
                   </block>
                 </value>
                 <next>
@@ -77,7 +76,7 @@
                     <field name="VAR" id="IQkD+?DzQR16FGb-KV_P">StopLoss</field>
                     <value name="VALUE">
                       <block type="math_number" id="}f!6JnD+uoXA-1i(x-au">
-                        <field name="NUM">6</field>
+                        <field name="NUM">3</field>
                       </block>
                     </value>
                     <next>
@@ -121,33 +120,21 @@
                                           </block>
                                         </value>
                                         <next>
-                                          <block type="variables_set" id="over21_initialize_prediction">
-                                            <field name="VAR" id="Z{#dYY8DJU^$WD2`(c6r">Prediction</field>
+                                          <block type="variables_set" id="over21_set_entry_point">
+                                            <field name="VAR" id="over21_entry_point">Entry Point (0-9)</field>
                                             <value name="VALUE">
-                                              <block type="math_number" id="over21_initial_prediction_value">
-                                                <field name="NUM">1</field>
+                                              <block type="math_number" id="over21_entry_point_default">
+                                                <field name="NUM">5</field>
                                               </block>
                                             </value>
                                             <next>
-                                              <block type="variables_set" id="over21_set_entry_point_2">
-                                                <field name="VAR" id="over21_entry_point">Entry Point (0-9)</field>
+                                              <block type="variables_set" id="over21_initialize_entry_activated">
+                                                <field name="VAR" id="over21_entry_activated">EntryPointActivated</field>
                                                 <value name="VALUE">
-                                                  <block type="math_number" id="over21_entry_default_1">
-                                                    <field name="NUM">5</field>
+                                                  <block type="logic_boolean" id="over21_entry_activated_false">
+                                                    <field name="BOOL">FALSE</field>
                                                   </block>
                                                 </value>
-                                                <next>
-                                                  <block type="variables_set" id="over21_set_cycle_active_4">
-                                                    <field name="VAR" id="over21_cycle_active">CycleActive</field>
-                                                    <value name="VALUE">
-                                                      <block type="logic_boolean" id="over21_active_false_3">
-                                                        <field name="BOOL">FALSE</field>
-                                                      </block>
-                                                    </value>
-                                                    <next>
-                                                      </next>
-                                                  </block>
-                                                </next>
                                               </block>
                                             </next>
                                           </block>
@@ -265,176 +252,152 @@
   </block>
   <block type="after_purchase" id=".Ho`zN[Wg%#C]e^VT}tu" x="714" y="60">
     <statement name="AFTERPURCHASE_STACK">
-      <block type="variables_set" id="over21_update_run_profit">
-        <field name="VAR" id="over21_run_profit">RunProfit</field>
-        <value name="VALUE">
-          <block type="math_arithmetic" id="over21_add_trade_profit">
-            <field name="OP">ADD</field>
+      <block type="controls_if" id="hF+MS}vah5++*BM/+D_+">
+        <xhtml:mutation elseif="1" else="1" />
+        <value name="IF0">
+          <block type="logic_compare" id="n1fmNkKvm@@Rd^P},Xo/">
+            <field name="OP">GTE</field>
             <value name="A">
-              <block type="variables_get" id="over21_get_run_profit">
-                <field name="VAR" id="over21_run_profit">RunProfit</field>
-              </block>
+              <block type="total_profit" id="v~ByX,ysvh,n!X*)/cpi" />
             </value>
             <value name="B">
-              <block type="read_details" id="over21_read_contract_profit">
-                <field name="DETAIL_INDEX">4</field>
+              <block type="variables_get" id="3/VZdY5`E`4UdW10d`-^">
+                <field name="VAR" id="y/0C9G:[53J)_20=RRMK">TakeProfit</field>
               </block>
             </value>
           </block>
         </value>
-        <next>
-          <block type="controls_if" id="hF+MS}vah5++*BM/+D_+">
-            <xhtml:mutation elseif="1" else="1" />
+        <statement name="DO0">
+          <block type="text_print" id="yvce=-,]5=rh[U9TQ3^D">
+            <value name="TEXT">
+              <shadow type="text" id="eDFCJPqegL}^LqTHQg,.">
+                <field name="TEXT">You just got to hit the profit💲, RUN!! </field>
+              </shadow>
+            </value>
+          </block>
+        </statement>
+        <value name="IF1">
+          <block type="logic_compare" id="P5c%,cK,SKD5pq3ux^T7">
+            <field name="OP">LTE</field>
+            <value name="A">
+              <block type="total_profit" id="H*gKC?b6rE:ld{!=#/`I" />
+            </value>
+            <value name="B">
+              <block type="math_single" id="YKpxp-{e+%G;KuxS7,nq">
+                <field name="OP">NEG</field>
+                <value name="NUM">
+                  <shadow type="math_number" id="0f178kca%+VT,Luq(3,8">
+                    <field name="NUM">9</field>
+                  </shadow>
+                  <block type="variables_get" id="RUh3dneiOe30nBieW21*">
+                    <field name="VAR" id="IQkD+?DzQR16FGb-KV_P">StopLoss</field>
+                  </block>
+                </value>
+              </block>
+            </value>
+          </block>
+        </value>
+        <statement name="DO1">
+          <block type="text_print" id="HFv#VoqdG#d)nYGkTP+]">
+            <value name="TEXT">
+              <shadow type="text" id="wCOY68?H31,km.L-Kz/2">
+                <field name="TEXT">KEEP ON TRYING NO GIVING UP </field>
+              </shadow>
+            </value>
+          </block>
+        </statement>
+        <statement name="ELSE">
+          <block type="controls_if" id="G?,Ee-V68T~^gTT`uZ37">
+            <xhtml:mutation else="1" />
             <value name="IF0">
-              <block type="logic_compare" id="n1fmNkKvm@@Rd^P},Xo/">
-                <field name="OP">GTE</field>
-                <value name="A">
-                  <block type="variables_get" id="over21_run_profit_for_limit_1">
-                    <field name="VAR" id="over21_run_profit">RunProfit</field>
-                  </block>
-                </value>
-                <value name="B">
-                  <block type="variables_get" id="3/VZdY5`E`4UdW10d`-^">
-                    <field name="VAR" id="y/0C9G:[53J)_20=RRMK">TakeProfit</field>
-                  </block>
-                </value>
+              <block type="contract_check_result" id="hv(hm^j9N;;`9APV{^dZ">
+                <field name="CHECK_RESULT">win</field>
               </block>
             </value>
             <statement name="DO0">
-              <block type="text_print" id="over21_fix_profit_message_1">
-                <value name="TEXT">
-                  <shadow type="text" id="over21_fix_profit_message_text_2">
-                    <field name="TEXT">You just got to hit the profit💲, RUN!! </field>
-                  </shadow>
-                </value>
-              </block>
-            </statement>
-            <value name="IF1">
-              <block type="logic_compare" id="P5c%,cK,SKD5pq3ux^T7">
-                <field name="OP">LTE</field>
-                <value name="A">
-                  <block type="variables_get" id="over21_run_profit_for_limit_2">
-                    <field name="VAR" id="over21_run_profit">RunProfit</field>
+              <block type="variables_set" id="7jOOJ---R|.TinVnt,3f">
+                <field name="VAR" id="#$3t6q4Wr9Pl2kRP0/`X">LossCount</field>
+                <value name="VALUE">
+                  <block type="math_number" id="4i4l~J1@Sb0o7NQcS,M.">
+                    <field name="NUM">0</field>
                   </block>
                 </value>
-                <value name="B">
-                  <block type="math_single" id="YKpxp-{e+%G;KuxS7,nq">
-                    <field name="OP">NEG</field>
-                    <value name="NUM">
-                      <shadow type="math_number" id="0f178kca%+VT,Luq(3,8">
-                        <field name="NUM">9</field>
-                      </shadow>
-                      <block type="variables_get" id="RUh3dneiOe30nBieW21*">
-                        <field name="VAR" id="IQkD+?DzQR16FGb-KV_P">StopLoss</field>
-                      </block>
-                    </value>
-                  </block>
-                </value>
-              </block>
-            </value>
-            <statement name="DO1">
-              <block type="text_print" id="HFv#VoqdG#d)nYGkTP+]">
-                <value name="TEXT">
-                  <shadow type="text" id="wCOY68?H31,km.L-Kz/2">
-                    <field name="TEXT">KEEP ON TRYING NO GIVING UP </field>
-                  </shadow>
-                </value>
-              </block>
-            </statement>
-            <statement name="ELSE">
-              <block type="controls_if" id="G?,Ee-V68T~^gTT`uZ37">
-                <xhtml:mutation else="1" />
-                <value name="IF0">
-                  <block type="contract_check_result" id="hv(hm^j9N;;`9APV{^dZ">
-                    <field name="CHECK_RESULT">win</field>
-                  </block>
-                </value>
-                <statement name="DO0">
-                  <block type="variables_set" id="over21_v2logic_1">
-                    <field name="VAR" id="#$3t6q4Wr9Pl2kRP0/`X">LossCount</field>
-                    <value name="VALUE">
-                      <block type="math_number" id="over21_v2logic_2">
-                        <field name="NUM">0</field>
-                      </block>
-                    </value>
-                    <next>
-                      <block type="variables_set" id="over21_v2logic_3">
-                        <field name="VAR" id="d,qP)6}.{_Bm+6*=LH2)">Stake</field>
-                        <value name="VALUE">
-                          <block type="variables_get" id="over21_v2logic_4">
-                            <field name="VAR" id="z5.Knh|6[jnrppo~64d(">InitialStake</field>
-                          </block>
-                        </value>
-                      </block>
-                    </next>
-                  </block>
-                </statement>
-                <statement name="ELSE">
-                  <block type="variables_set" id="Nice7_jlqrpW$M#t+6a+">
+                <next>
+                  <block type="variables_set" id=":0A~6/,Q[[$utI;wl793">
                     <field name="VAR" id="d,qP)6}.{_Bm+6*=LH2)">Stake</field>
                     <value name="VALUE">
-                      <block type="math_arithmetic" id="K]4s+aJ.Kv](h1?AavvU">
-                        <field name="OP">MULTIPLY</field>
-                        <value name="A">
-                          <shadow type="math_number" id="jHVOS.)0huP7H(I[mhI[">
-                            <field name="NUM">1</field>
-                          </shadow>
-                          <block type="variables_get" id="ugFY2^:fu$X$w{Dg!a;)">
-                            <field name="VAR" id="d,qP)6}.{_Bm+6*=LH2)">Stake</field>
-                          </block>
-                        </value>
-                        <value name="B">
-                          <shadow type="math_number" id="w|ZdTXKVMV2RQDZ-rVTX">
-                            <field name="NUM">1</field>
-                          </shadow>
-                          <block type="variables_get" id=":DAO,EzhB-l4{6K{8$EJ">
-                            <field name="VAR" id="S?8/a#vUN;]n.oefn_8J">Martingale</field>
-                          </block>
-                        </value>
+                      <block type="variables_get" id="P+:Z9|bzEN+w%f^l/j.v">
+                        <field name="VAR" id="z5.Knh|6[jnrppo~64d(">InitialStake</field>
                       </block>
                     </value>
-                    <next>
-                      <block type="math_change" id="T4+Xl}4e8tko/.lom)n?">
-                        <field name="VAR" id="#$3t6q4Wr9Pl2kRP0/`X">LossCount</field>
-                        <value name="DELTA">
-                          <shadow type="math_number" id="~^}~JJC#5;^ipq-MS8bx">
-                            <field name="NUM">1</field>
-                          </shadow>
-                        </value>
-                      </block>
-                    </next>
                   </block>
-                </statement>
-                <next>
-                  <block type="trade_again" id="7UK%,hBAz9J9JD2S)4i+" />
                 </next>
               </block>
             </statement>
+            <statement name="ELSE">
+              <block type="variables_set" id="Nice7_jlqrpW$M#t+6a+">
+                <field name="VAR" id="d,qP)6}.{_Bm+6*=LH2)">Stake</field>
+                <value name="VALUE">
+                  <block type="math_arithmetic" id="K]4s+aJ.Kv](h1?AavvU">
+                    <field name="OP">MULTIPLY</field>
+                    <value name="A">
+                      <shadow type="math_number" id="jHVOS.)0huP7H(I[mhI[">
+                        <field name="NUM">1</field>
+                      </shadow>
+                      <block type="variables_get" id="ugFY2^:fu$X$w{Dg!a;)">
+                        <field name="VAR" id="d,qP)6}.{_Bm+6*=LH2)">Stake</field>
+                      </block>
+                    </value>
+                    <value name="B">
+                      <shadow type="math_number" id="w|ZdTXKVMV2RQDZ-rVTX">
+                        <field name="NUM">1</field>
+                      </shadow>
+                      <block type="variables_get" id=":DAO,EzhB-l4{6K{8$EJ">
+                        <field name="VAR" id="S?8/a#vUN;]n.oefn_8J">Martingale</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+                <next>
+                  <block type="math_change" id="T4+Xl}4e8tko/.lom)n?">
+                    <field name="VAR" id="#$3t6q4Wr9Pl2kRP0/`X">LossCount</field>
+                    <value name="DELTA">
+                      <shadow type="math_number" id="~^}~JJC#5;^ipq-MS8bx">
+                        <field name="NUM">1</field>
+                      </shadow>
+                    </value>
+                  </block>
+                </next>
+              </block>
+            </statement>
+            <next>
+              <block type="trade_again" id="7UK%,hBAz9J9JD2S)4i+" />
+            </next>
           </block>
-        </next>
+        </statement>
       </block>
     </statement>
   </block>
   <block type="before_purchase" id="9#p-}o,=h:agC)L=if$H" deletable="false" x="0" y="1414">
     <statement name="BEFOREPURCHASE_STACK">
-      <block type="variables_set" id="over21_update_cycle_active_12">
-        <field name="VAR" id="over21_cycle_active">CycleActive</field>
+      <block type="variables_set" id="over21_update_entry_activated">
+        <field name="VAR" id="over21_entry_activated">EntryPointActivated</field>
         <value name="VALUE">
-          <block type="logic_operation" id="over21_activate_on_entry_10">
+          <block type="logic_operation" id="over21_entry_trigger_or_latch">
             <field name="OP">OR</field>
             <value name="A">
-              <block type="variables_get" id="over21_get_cycle_active_11">
-                <field name="VAR" id="over21_cycle_active">CycleActive</field>
+              <block type="variables_get" id="over21_entry_latched">
+                <field name="VAR" id="over21_entry_activated">EntryPointActivated</field>
               </block>
             </value>
             <value name="B">
-              <block type="logic_compare" id="over21_entry_match_9">
+              <block type="logic_compare" id="over21_entry_digit_match">
                 <field name="OP">EQ</field>
                 <value name="A">
-                  <block type="last_digit" id="over21_entry_last_digit_7" />
+                  <block type="last_digit" id="over21_last_digit" />
                 </value>
                 <value name="B">
-                  <block type="variables_get" id="over21_get_entry_point_8">
+                  <block type="variables_get" id="over21_get_entry_point">
                     <field name="VAR" id="over21_entry_point">Entry Point (0-9)</field>
                   </block>
                 </value>
@@ -443,10 +406,10 @@
           </block>
         </value>
         <next>
-          <block type="controls_if" id="over21_wait_for_entry_14">
+          <block type="controls_if" id="over21_entry_gate">
             <value name="IF0">
-              <block type="variables_get" id="over21_check_cycle_active_13">
-                <field name="VAR" id="over21_cycle_active">CycleActive</field>
+              <block type="variables_get" id="over21_check_entry_activated">
+                <field name="VAR" id="over21_entry_activated">EntryPointActivated</field>
               </block>
             </value>
             <statement name="DO0">

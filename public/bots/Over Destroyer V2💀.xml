@@ -66,7 +66,7 @@
                 <field name="VAR" id="y/0C9G:[53J)_20=RRMK">TakeProfit</field>
                 <value name="VALUE">
                   <block type="math_number" id="a3AKC,2Cb;$Y!UWU#:;3">
-                    <field name="NUM">1</field>
+                    <field name="NUM">3</field>
                   </block>
                 </value>
                 <next>
@@ -74,7 +74,7 @@
                     <field name="VAR" id="IQkD+?DzQR16FGb-KV_P">StopLoss</field>
                     <value name="VALUE">
                       <block type="math_number" id="}f!6JnD+uoXA-1i(x-au">
-                        <field name="NUM">3</field>
+                        <field name="NUM">6</field>
                       </block>
                     </value>
                     <next>
