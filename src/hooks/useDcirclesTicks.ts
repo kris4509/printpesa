@@ -48,6 +48,23 @@ const doForgetSubscription = () => {
 const connectAndSubscribe = async (generation: number) => {
     const market = currentMarket;
     const tickCount = currentTickCount;
+    let hasReceivedHistory = false;
+    let pendingTicks: any[] = [];
+
+    const appendTick = (tick: any) => {
+        const price = Number(tick.quote);
+        const pipSize = Number(tick.pip_size ?? currentPipSize);
+        if (!Number.isFinite(price) || !Number.isInteger(pipSize) || pipSize < 0) return;
+
+        currentPipSize = pipSize;
+        const digit = getLastDigit(price, pipSize);
+        currentPrice = price.toFixed(pipSize);
+
+        const lastPrice = ticks.length > 0 ? ticks[ticks.length - 1].price : price;
+        const direction: 'rise' | 'fall' = price >= lastPrice ? 'rise' : 'fall';
+        const updated = [...ticks, { price, digit, direction }];
+        ticks = updated.length > currentTickCount ? updated.slice(-currentTickCount) : updated;
+    };
 
     try {
         const socketUrl = await getSocketURL();
@@ -56,6 +73,8 @@ const connectAndSubscribe = async (generation: number) => {
         wsRef = ws;
 
         const handleMessage = (event: MessageEvent) => {
+            if (generation !== connectionGeneration || ws !== wsRef) return;
+
             let data: any;
             try {
                 data = JSON.parse(event.data);
@@ -74,26 +93,39 @@ const connectAndSubscribe = async (generation: number) => {
                 data.msg_type === 'history' &&
                 data.echo_req?.ticks_history === market
             ) {
-                // pip_size can be at top level in the history response
-                const pSize: number = data.pip_size ?? 2;
+                if (data.subscription) {
+                    subscriptionId = data.subscription.id;
+                }
+
+                const pSize: number = Number(data.pip_size ?? currentPipSize);
+                if (!Number.isInteger(pSize) || pSize < 0) {
+                    console.error('[DcirclesTicks] History response has an invalid pip size:', data.pip_size);
+                    return;
+                }
                 currentPipSize = pSize;
 
                 const history = data.history;
-                if (history?.prices) {
-                    const rawPrices: number[] = history.prices;
-                    ticks = rawPrices.map((price, idx) => {
-                        const digit = getLastDigit(price, pSize);
-                        const prevPrice = idx > 0 ? rawPrices[idx - 1] : price;
-                        const direction: 'rise' | 'fall' =
-                            price >= prevPrice ? 'rise' : 'fall';
-                        return { price, digit, direction };
-                    });
-                    currentPrice =
-                        ticks.length > 0
-                            ? ticks[ticks.length - 1].price.toFixed(pSize)
-                            : '---';
-                    notify();
+                if (!Array.isArray(history?.prices)) {
+                    console.error('[DcirclesTicks] History response did not contain tick prices:', data);
+                    return;
                 }
+                const rawPrices: number[] = history.prices;
+                ticks = rawPrices.map((price, idx) => {
+                    const digit = getLastDigit(price, pSize);
+                    const prevPrice = idx > 0 ? rawPrices[idx - 1] : price;
+                    const direction: 'rise' | 'fall' =
+                        price >= prevPrice ? 'rise' : 'fall';
+                    return { price, digit, direction };
+                });
+                currentPrice =
+                    ticks.length > 0
+                        ? ticks[ticks.length - 1].price.toFixed(pSize)
+                        : '---';
+
+                hasReceivedHistory = true;
+                pendingTicks.forEach(appendTick);
+                pendingTicks = [];
+                notify();
             }
 
             // ── Live tick response ────────────────────────────────────────
@@ -102,30 +134,15 @@ const connectAndSubscribe = async (generation: number) => {
                 data.tick?.symbol === market
             ) {
                 const tick = data.tick;
-                // pip_size comes from the tick object itself
-                const pSize: number = tick.pip_size ?? currentPipSize;
-                currentPipSize = pSize;
-
                 if (data.subscription) {
                     subscriptionId = data.subscription.id;
                 }
 
-                const price: number = tick.quote;
-                const digit = getLastDigit(price, pSize);
-                currentPrice = price.toFixed(pSize);
-
-                const lastPrice =
-                    ticks.length > 0 ? ticks[ticks.length - 1].price : price;
-                const direction: 'rise' | 'fall' =
-                    price >= lastPrice ? 'rise' : 'fall';
-
-                const updated = [...ticks, { price, digit, direction }];
-                // Trim to window size
-                ticks =
-                    updated.length > currentTickCount
-                        ? updated.slice(updated.length - currentTickCount)
-                        : updated;
-
+                if (!hasReceivedHistory) {
+                    pendingTicks.push(tick);
+                    return;
+                }
+                appendTick(tick);
                 notify();
             }
         };
@@ -138,14 +155,12 @@ const connectAndSubscribe = async (generation: number) => {
             ws.send(
                 JSON.stringify({
                     ticks_history: market,
-                    adjust_start_time: 1,
                     count: tickCount,
                     end: 'latest',
-                    start: 1,
+                    subscribe: 1,
                     style: 'ticks',
                 })
             );
-            ws.send(JSON.stringify({ ticks: market, subscribe: 1 }));
         });
         ws.addEventListener('close', () => {
             if (generation !== connectionGeneration || ws !== wsRef) return;

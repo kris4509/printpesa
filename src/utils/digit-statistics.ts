@@ -5,6 +5,7 @@ export type TDigitFrequencyAnalysis =
     | 'SECOND_LEAST_FREQUENT';
 
 export type TDigitPercentageAnalysis = 'EVEN_PERCENTAGE' | 'ODD_PERCENTAGE' | 'OVER' | 'UNDER';
+export type TDigitDistributionRank = 'highest' | 'second' | 'lowest' | 'second_low' | 'neutral';
 
 const isDigit = (value: number) => Number.isInteger(value) && value >= 0 && value <= 9;
 const isValidBarrier = (value: number | undefined): value is number =>
@@ -18,6 +19,36 @@ export const getDigitCounts = (digits: readonly number[]) => {
         }
     });
     return counts;
+};
+
+export const getDigitDistribution = (digits: readonly number[]) => {
+    const counts = getDigitCounts(digits);
+    const total = counts.reduce((sum, count) => sum + count, 0);
+    const percentages = counts.map(count => ((count / (total || 1)) * 100).toFixed(2));
+    const frequencies = Array.from(new Set(counts)).sort((a, b) => b - a);
+    const rankMap: Record<number, TDigitDistributionRank> = {};
+
+    if (frequencies.length > 1) {
+        const highest = frequencies[0];
+        const second = frequencies[1];
+        const lowest = frequencies[frequencies.length - 1];
+        const secondLowest = frequencies.length > 2 ? frequencies[frequencies.length - 2] : null;
+
+        counts.forEach((count, digit) => {
+            if (count === highest) rankMap[digit] = 'highest';
+            else if (count === second) rankMap[digit] = 'second';
+            else if (count === lowest && frequencies.length > 2) rankMap[digit] = 'lowest';
+            else if (secondLowest !== null && count === secondLowest && frequencies.length > 3) {
+                rankMap[digit] = 'second_low';
+            } else rankMap[digit] = 'neutral';
+        });
+    } else {
+        counts.forEach((_, digit) => {
+            rankMap[digit] = 'neutral';
+        });
+    }
+
+    return { counts, percentages, rankMap };
 };
 
 export const getDigitFrequency = (digits: readonly number[], analysis_type: TDigitFrequencyAnalysis) => {

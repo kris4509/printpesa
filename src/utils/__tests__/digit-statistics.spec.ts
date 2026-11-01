@@ -1,8 +1,29 @@
-import { getDigitCounts, getDigitFrequency, getDigitPercentage } from '../digit-statistics';
+import { getDigitCounts, getDigitDistribution, getDigitFrequency, getDigitPercentage } from '../digit-statistics';
 
 describe('digit statistics', () => {
     it('counts valid digits and ignores values outside the digit range', () => {
         expect(getDigitCounts([0, 1, 1, 9, -1, 10])).toEqual([1, 2, 0, 0, 0, 0, 0, 0, 0, 1]);
+    });
+
+    it('calculates digit percentages from valid ticks and returns one shared rank map', () => {
+        const { counts, percentages, rankMap } = getDigitDistribution([0, 1, 1, 9, -1, 10]);
+
+        expect(counts).toEqual([1, 2, 0, 0, 0, 0, 0, 0, 0, 1]);
+        expect(percentages).toEqual([
+            '25.00',
+            '50.00',
+            '0.00',
+            '0.00',
+            '0.00',
+            '0.00',
+            '0.00',
+            '0.00',
+            '0.00',
+            '25.00',
+        ]);
+        expect(rankMap[1]).toBe('highest');
+        expect(rankMap[0]).toBe('second');
+        expect(rankMap[2]).toBe('lowest');
     });
 
     it('returns frequency-ranked digits with deterministic tie-breaking', () => {

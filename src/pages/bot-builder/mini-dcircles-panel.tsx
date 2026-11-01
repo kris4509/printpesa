@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { DCIRCLES_MARKETS } from '@/constants/dcircles-markets';
 import { useDcirclesTicks } from '@/hooks/useDcirclesTicks';
+import { getDigitDistribution } from '@/utils/digit-statistics';
 import './mini-dcircles-panel.scss';
 
 const TICK_COUNTS = [
@@ -90,7 +91,7 @@ const MiniDcirclesPanel: React.FC = () => {
         const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
         const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
         const currentPos = togglePosition || {
-            x: window.innerWidth - 144,
+            x: window.innerWidth - 224,
             y: window.innerHeight - 120,
         };
         toggleDragStartRef.current = {
@@ -141,38 +142,7 @@ const MiniDcirclesPanel: React.FC = () => {
 
     // Use .toFixed(2) to match dcircles page and Deriv's SmartChart precision
     const { percentages, rankMap } = useMemo(() => {
-        const countsArray = Array(10).fill(0);
-        ticks.forEach(t => {
-            if (t.digit >= 0 && t.digit <= 9) countsArray[t.digit]++;
-        });
-
-        const total = ticks.length || 1;
-        const pcts = countsArray.map(c => ((c / total) * 100).toFixed(2));
-
-        const uniqueCounts = Array.from(new Set(countsArray)).sort((a, b) => b - a);
-        const rMap: Record<number, string> = {};
-
-        if (uniqueCounts.length > 1) {
-            const top1 = uniqueCounts[0];
-            const top2 = uniqueCounts[1];
-            const bot1 = uniqueCounts[uniqueCounts.length - 1];
-            const bot2 = uniqueCounts.length > 2 ? uniqueCounts[uniqueCounts.length - 2] : null;
-
-            countsArray.forEach((cnt, digit) => {
-                if (cnt === top1) rMap[digit] = 'highest';
-                else if (cnt === top2) rMap[digit] = 'second';
-                else if (cnt === bot1 && uniqueCounts.length > 2) rMap[digit] = 'lowest';
-                else if (bot2 !== null && cnt === bot2 && uniqueCounts.length > 3)
-                    rMap[digit] = 'second_low';
-                else rMap[digit] = 'neutral';
-            });
-        } else {
-            countsArray.forEach((_, digit) => {
-                rMap[digit] = 'neutral';
-            });
-        }
-
-        return { percentages: pcts, rankMap: rMap };
+        return getDigitDistribution(ticks.map(tick => tick.digit));
     }, [ticks]);
 
     const patternMetrics = useMemo(() => {

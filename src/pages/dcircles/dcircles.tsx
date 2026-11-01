@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { Localize } from '@deriv-com/translations';
 import { DCIRCLES_MARKETS } from '@/constants/dcircles-markets';
 import { useDcirclesTicks } from '@/hooks/useDcirclesTicks';
-import { getDigitCounts, getDigitPercentage } from '@/utils/digit-statistics';
+import { getDigitDistribution, getDigitPercentage } from '@/utils/digit-statistics';
 import './dcircles.scss';
 
 const TICK_COUNTS = [
@@ -33,34 +33,9 @@ const Dcircles = observer(() => {
     // Uses .toFixed(2) to match Deriv's SmartChart precision (2 decimal places).
     const { counts, percentages, rankMap, highestInfo, secondInfo, lowestInfo, secondLowInfo } =
         useMemo(() => {
-            const countsArray = getDigitCounts(ticks.map(tick => tick.digit));
-
-            const total = ticks.length || 1;
-            const pcts = countsArray.map(c => ((c / total) * 100).toFixed(2));
-
-            const uniqueCounts = Array.from(new Set(countsArray)).sort((a, b) => b - a);
-
-            const rMap: Record<number, 'highest' | 'second' | 'lowest' | 'second_low' | 'neutral'> = {};
-
-            if (uniqueCounts.length > 1) {
-                const top1 = uniqueCounts[0];
-                const top2 = uniqueCounts[1];
-                const bot1 = uniqueCounts[uniqueCounts.length - 1];
-                const bot2 = uniqueCounts.length > 2 ? uniqueCounts[uniqueCounts.length - 2] : null;
-
-                countsArray.forEach((cnt, digit) => {
-                    if (cnt === top1) rMap[digit] = 'highest';
-                    else if (cnt === top2) rMap[digit] = 'second';
-                    else if (cnt === bot1 && uniqueCounts.length > 2) rMap[digit] = 'lowest';
-                    else if (bot2 !== null && cnt === bot2 && uniqueCounts.length > 3)
-                        rMap[digit] = 'second_low';
-                    else rMap[digit] = 'neutral';
-                });
-            } else {
-                countsArray.forEach((_, digit) => {
-                    rMap[digit] = 'neutral';
-                });
-            }
+            const { percentages: pcts, rankMap: rMap } = getDigitDistribution(
+                ticks.map(tick => tick.digit)
+            );
 
             const getFirstDigitForRank = (rankType: string) => {
                 const entry = Object.entries(rMap).find(([, r]) => r === rankType);
@@ -70,7 +45,6 @@ const Dcircles = observer(() => {
             };
 
             return {
-                counts: countsArray,
                 percentages: pcts,
                 rankMap: rMap,
                 highestInfo: getFirstDigitForRank('highest'),
