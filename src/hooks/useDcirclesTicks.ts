@@ -4,6 +4,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { getSocketURL } from '@/components/shared';
+import { getMarketPipSize, getPipSize } from '@/utils/market-pip-size';
 
 export interface TickData {
     price: number;
@@ -49,12 +50,27 @@ const connectAndSubscribe = async (generation: number) => {
     const market = currentMarket;
     const tickCount = currentTickCount;
     let hasReceivedHistory = false;
+    let hasRequestedHistory = false;
     let pendingTicks: any[] = [];
+
+    const requestTickHistory = (ws: WebSocket) => {
+        if (hasRequestedHistory) return;
+        hasRequestedHistory = true;
+        ws.send(
+            JSON.stringify({
+                ticks_history: market,
+                count: tickCount,
+                end: 'latest',
+                subscribe: 1,
+                style: 'ticks',
+            })
+        );
+    };
 
     const appendTick = (tick: any) => {
         const price = Number(tick.quote);
-        const pipSize = Number(tick.pip_size ?? currentPipSize);
-        if (!Number.isFinite(price) || !Number.isInteger(pipSize) || pipSize < 0) return;
+        const pipSize = getPipSize(tick.pip_size) ?? currentPipSize;
+        if (!Number.isFinite(price)) return;
 
         currentPipSize = pipSize;
         const digit = getLastDigit(price, pipSize);
@@ -88,6 +104,23 @@ const connectAndSubscribe = async (generation: number) => {
                 return;
             }
 
+            if (data.msg_type === 'active_symbols' && Array.isArray(data.active_symbols)) {
+                const symbol = data.active_symbols.find(
+                    (item: any) => item.symbol === market || item.underlying_symbol === market
+                );
+                const pipSize = symbol ? getMarketPipSize(symbol) : null;
+                if (pipSize === null) {
+                    console.error(`[DcirclesTicks] Could not resolve tick precision for ${market}.`);
+                    currentPrice = 'Precision unavailable';
+                    notify();
+                    return;
+                }
+
+                currentPipSize = pipSize;
+                requestTickHistory(ws);
+                return;
+            }
+
             // ── History response ──────────────────────────────────────────
             if (
                 data.msg_type === 'history' &&
@@ -97,8 +130,8 @@ const connectAndSubscribe = async (generation: number) => {
                     subscriptionId = data.subscription.id;
                 }
 
-                const pSize: number = Number(data.pip_size ?? currentPipSize);
-                if (!Number.isInteger(pSize) || pSize < 0) {
+                const pSize = data.pip_size === undefined ? currentPipSize : getPipSize(data.pip_size);
+                if (pSize === null) {
                     console.error('[DcirclesTicks] History response has an invalid pip size:', data.pip_size);
                     return;
                 }
@@ -152,15 +185,7 @@ const connectAndSubscribe = async (generation: number) => {
             if (generation !== connectionGeneration || ws !== wsRef) return;
 
             reconnectAttempt = 0;
-            ws.send(
-                JSON.stringify({
-                    ticks_history: market,
-                    count: tickCount,
-                    end: 'latest',
-                    subscribe: 1,
-                    style: 'ticks',
-                })
-            );
+            ws.send(JSON.stringify({ active_symbols: 'brief' }));
         });
         ws.addEventListener('close', () => {
             if (generation !== connectionGeneration || ws !== wsRef) return;

@@ -1,4 +1,4 @@
-export const DCIRCLES_MARKETS = [
+export const VOLATILITY_MARKETS = [
     { value: 'R_10', label: 'Volatility 10 Index', shortLabel: 'Vol 10' },
     { value: 'R_25', label: 'Volatility 25 Index', shortLabel: 'Vol 25' },
     { value: 'R_50', label: 'Volatility 50 Index', shortLabel: 'Vol 50' },
@@ -13,3 +13,13 @@ export const DCIRCLES_MARKETS = [
     { value: '1HZ90V', label: 'Volatility 90 (1s) Index', shortLabel: 'Vol 90 (1s)' },
     { value: '1HZ100V', label: 'Volatility 100 (1s) Index', shortLabel: 'Vol 100 (1s)' },
 ] as const;
+
+const JUMP_MARKETS = [
+    { value: 'JD10', label: 'Jump 10 Index', shortLabel: 'Jump 10' },
+    { value: 'JD25', label: 'Jump 25 Index', shortLabel: 'Jump 25' },
+    { value: 'JD50', label: 'Jump 50 Index', shortLabel: 'Jump 50' },
+    { value: 'JD75', label: 'Jump 75 Index', shortLabel: 'Jump 75' },
+    { value: 'JD100', label: 'Jump 100 Index', shortLabel: 'Jump 100' },
+] as const;
+
+export const DCIRCLES_MARKETS = [...VOLATILITY_MARKETS, ...JUMP_MARKETS] as const;

@@ -9,7 +9,7 @@ import {
     runIrreversibleEvents,
 } from '../../../utils';
 import { defineContract } from '../../images';
-import { DCIRCLES_MARKETS } from '@/constants/dcircles-markets';
+import { VOLATILITY_MARKETS } from '@/constants/dcircles-markets';
 
 window.Blockly.Blocks.trade_definition = {
     init() {
@@ -224,7 +224,7 @@ window.Blockly.JavaScript.javascriptGenerator.forBlock.trade_definition = block 
           },
           autoScanVolatilityMarkets: {
             enabled: ${auto_scan_enabled},
-            symbols: ${JSON.stringify(DCIRCLES_MARKETS.map(market => market.value))},
+            symbols: ${JSON.stringify(VOLATILITY_MARKETS.map(market => market.value))},
           },
         });
         ${initialization.trim()}
